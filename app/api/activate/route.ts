@@ -76,20 +76,29 @@ export async function POST(request: NextRequest) {
     const plan     = gasData.license.plan || 'v2_tool'
     const products = getProductsForPlan(plan)
 
-    // ── Step 2: Get current user from Supabase session ────
+       // ── Step 2: Get current user from Supabase session ────
     const cookieStore = cookies()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          getAll() { return cookieStore.getAll() },
-          setAll(cookiesToSet) {
+          get(name: string) {
+            return cookieStore.get(name)?.value
+          },
+          set(name: string, value: string, options: any) {
             try {
-              cookiesToSet.forEach(({ name, value, options }) =>
-                cookieStore.set(name, value, options)
-              )
-            } catch {}
+              cookieStore.set({ name, value, ...options })
+            } catch (error) {
+              // This can be ignored in Route Handlers
+            }
+          },
+          remove(name: string, options: any) {
+            try {
+              cookieStore.set({ name, value: '', ...options })
+            } catch (error) {
+              // This can be ignored in Route Handlers
+            }
           },
         },
       }
@@ -103,6 +112,7 @@ export async function POST(request: NextRequest) {
         { status: 401 }
       )
     }
+
 
     // ── Step 3: Check if key is already used by someone else ──
     const { data: existingProfile } = await supabase
