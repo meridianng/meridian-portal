@@ -1616,9 +1616,6 @@ footer {
 
 `
 
-// ── Agreed WOD content ─────────────────────────────────────────────────
-// Story: Oloriebi land + ₦800k version
-// Reality: the full decode
 
 export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
   const [page, setPage]       = useState<'home'|'about'|'products'|'contact'>('home')
@@ -1640,7 +1637,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
     setTimeout(() => setToastShow(false), 3500)
   }
 
-  // Scroll reveal
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
@@ -1655,7 +1652,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
     return () => observer.disconnect()
   }, [page])
 
-  // Close menu on route change
+
   useEffect(() => { setMenuOpen(false) }, [page])
 
   const navLinks = (
