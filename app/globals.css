@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;700&family=Cormorant+Garamond:wght@600;700&display=swap');
 
-/* ── DESIGN TOKENS ─────────────────────────────────────────── */
+
 :root {
   --bg:          #030B18;
   --bg-2:        #050E1C;
@@ -36,7 +36,7 @@
   --glow-card:   0 0 0 1px var(--border-gold), 0 0 24px var(--gold-glow);
 }
 
-/* ── RESET ──────────────────────────────────────────────────── */
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 16px; scroll-behavior: smooth; }
 body {
@@ -50,7 +50,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Grid dot background */
+
 body::before {
   content: '';
   position: fixed;
@@ -61,7 +61,7 @@ body::before {
   z-index: 0;
 }
 
-/* Ambient glow */
+
 body::after {
   content: '';
   position: fixed;
@@ -82,11 +82,11 @@ a:hover { text-decoration: underline; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: var(--border-hi); border-radius: 2px; }
 
-/* ── TYPOGRAPHY ─────────────────────────────────────────────── */
+
 .serif { font-family: var(--font-serif); }
 .mono  { font-family: var(--font-mono); }
 
-/* ── AUTH PAGES ─────────────────────────────────────────────── */
+
 .auth-page {
   min-height: 100vh;
   display: flex;
@@ -166,7 +166,7 @@ a:hover { text-decoration: underline; }
   line-height: 1.65;
 }
 
-/* ── FORMS ──────────────────────────────────────────────────── */
+
 .form-group { margin-bottom: 18px; }
 
 .form-label {
@@ -208,7 +208,7 @@ a:hover { text-decoration: underline; }
   line-height: 1.4;
 }
 
-/* ── BUTTONS ────────────────────────────────────────────────── */
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -282,7 +282,7 @@ a:hover { text-decoration: underline; }
 }
 .auth-link-row a { color: var(--gold); }
 
-/* Loading state */
+
 .btn-loading { position: relative; color: transparent !important; }
 .btn-loading::after {
   content: '';
@@ -298,14 +298,14 @@ a:hover { text-decoration: underline; }
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-/* ── DASHBOARD LAYOUT ───────────────────────────────────────── */
+
 .dashboard {
   min-height: 100vh;
   position: relative;
   z-index: 1;
 }
 
-/* Header */
+
 .dash-header {
   display: flex;
   align-items: center;
@@ -381,14 +381,14 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 
-/* Dashboard body */
+
 .dash-body {
   max-width: 1100px;
   margin: 0 auto;
   padding: 48px 32px 80px;
 }
 
-/* Hero greeting */
+
 .dash-hero { margin-bottom: 48px; }
 
 .dash-greeting {
@@ -409,7 +409,7 @@ a:hover { text-decoration: underline; }
   max-width: 520px;
 }
 
-/* Activate Key Banner */
+
 .activate-banner {
   display: flex;
   align-items: center;
@@ -444,7 +444,7 @@ a:hover { text-decoration: underline; }
   line-height: 1.5;
 }
 
-/* Active key display */
+
 .key-display {
   display: flex;
   align-items: center;
@@ -494,7 +494,7 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 
-/* Section headings */
+
 .section-label {
   font-family: var(--font-mono);
   font-size: 9px;
@@ -515,7 +515,7 @@ a:hover { text-decoration: underline; }
   background: var(--border);
 }
 
-/* ── PRODUCT GRID ────────────────────────────────────────────── */
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -536,7 +536,7 @@ a:hover { text-decoration: underline; }
   gap: 0;
 }
 
-/* Subtle corner glow on hover */
+
 .product-card::before {
   content: '';
   position: absolute;
@@ -552,17 +552,17 @@ a:hover { text-decoration: underline; }
 .product-card:hover { border-color: var(--border-hi); }
 .product-card:hover::before { opacity: 1; }
 
-/* Unlocked state */
+
 .product-card.unlocked {
   border-color: var(--border-gold);
   box-shadow: var(--glow-card);
 }
 .product-card.unlocked::before { opacity: 1; }
 
-/* Locked state */
+
 .product-card.locked { opacity: 0.8; }
 
-/* Coming soon state */
+
 .product-card.coming-soon {
   opacity: 0.55;
   cursor: default;
@@ -714,7 +714,7 @@ a:hover { text-decoration: underline; }
   cursor: not-allowed;
 }
 
-/* ── ACTIVATE PAGE ───────────────────────────────────────────── */
+
 .activate-page {
   min-height: 100vh;
   position: relative;
@@ -792,7 +792,7 @@ a:hover { text-decoration: underline; }
   line-height: 1.6;
 }
 
-/* ── SYSTEM MESSAGES ─────────────────────────────────────────── */
+
 .sys-msg {
   padding: 10px 14px;
   border-radius: var(--r-sm);
@@ -806,7 +806,7 @@ a:hover { text-decoration: underline; }
 .sys-error { color: var(--red);    background: var(--red-bg);    border-color: var(--red-border); }
 .sys-info  { color: var(--text-2); background: rgba(255,255,255,0.02); border-color: var(--border); }
 
-/* ── FOOTER ──────────────────────────────────────────────────── */
+
 .dash-footer {
   border-top: 1px solid var(--border);
   padding: 20px 32px;
@@ -824,7 +824,7 @@ a:hover { text-decoration: underline; }
   letter-spacing: 0.1em;
 }
 
-/* ── COPY BUTTON ─────────────────────────────────────────────── */
+
 .copy-btn {
   background: transparent;
   border: 1px solid var(--border);
@@ -842,7 +842,7 @@ a:hover { text-decoration: underline; }
 .copy-btn:hover { color: var(--gold); border-color: var(--gold-dim); background: var(--gold-glow); }
 .copy-btn.copied { color: var(--green); border-color: var(--green-border); background: var(--green-bg); }
 
-/* ── RESPONSIVE ──────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
   .auth-card { padding: 32px 24px; }
   .dash-header { padding: 12px 16px; }
@@ -856,7 +856,7 @@ a:hover { text-decoration: underline; }
 }
 
 
-/* Brand in header */
+
 .dash-brand {
   display: flex;
   align-items: center;
@@ -886,7 +886,7 @@ a:hover { text-decoration: underline; }
   margin-top: 3px;
 }
 
-/* Plan badge in header */
+
 .dash-plan-badge {
   padding: 2px 8px;
   background: var(--gold-glow);
@@ -900,7 +900,7 @@ a:hover { text-decoration: underline; }
   white-space: nowrap;
 }
 
-/* Hero eyebrow */
+
 .dash-hero-eyebrow {
   font-family: var(--font-mono);
   font-size: 10px;
@@ -932,7 +932,7 @@ a:hover { text-decoration: underline; }
   margin-top: 8px;
 }
 
-/* Key display — rebuilt */
+
 .key-display {
   display: flex;
   align-items: center;
@@ -992,7 +992,7 @@ a:hover { text-decoration: underline; }
   color: var(--green);
 }
 
-/* Activate banner — link style */
+
 .activate-banner {
   display: flex;
   align-items: center;
@@ -1021,7 +1021,7 @@ a:hover { text-decoration: underline; }
 
 .activate-banner-arrow { color: var(--gold); margin-left: auto; font-size: 18px; }
 
-/* Dashboard section label */
+
 .dash-section-label {
   font-family: var(--font-mono);
   font-size: 9px;
@@ -1036,7 +1036,7 @@ a:hover { text-decoration: underline; }
 }
 .dash-section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-/* New product grid */
+
 .products-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -1044,7 +1044,7 @@ a:hover { text-decoration: underline; }
   margin-bottom: 48px;
 }
 
-/* New product card */
+
 .product-card {
   background: var(--card);
   border: 1px solid var(--border);
@@ -1073,7 +1073,6 @@ a:hover { text-decoration: underline; }
 .product-card--soon { opacity: 0.5; cursor: default; }
 .product-card--soon:hover { transform: none; box-shadow: none; }
 
-/* Accent bar using CSS var from inline style */
 .product-card-bar {
   height: 3px;
   background: linear-gradient(90deg, var(--accent, var(--gold)), transparent);
@@ -1083,7 +1082,7 @@ a:hover { text-decoration: underline; }
   background: linear-gradient(90deg, var(--accent, var(--gold)), rgba(201,168,76,0.3));
 }
 
-/* Card top row */
+
 .product-card-top {
   display: flex;
   align-items: center;
@@ -1107,7 +1106,7 @@ a:hover { text-decoration: underline; }
   color: var(--gold);
 }
 
-/* Status badge using SVG icons */
+
 .product-status-badge {
   display: inline-flex;
   align-items: center;
@@ -1139,7 +1138,7 @@ a:hover { text-decoration: underline; }
   border: 1px solid rgba(245,158,11,0.2);
 }
 
-/* Card text */
+
 .product-card-name {
   font-family: var(--font-serif);
   font-size: 24px;
@@ -1191,7 +1190,7 @@ a:hover { text-decoration: underline; }
   letter-spacing: 0.04em;
 }
 
-/* Buttons for the new card design */
+
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -1249,7 +1248,7 @@ a:hover { text-decoration: underline; }
   color: var(--gold);
 }
 
-/* Help section */
+
 .dash-help {
   display: flex;
   align-items: center;
