@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { CopyButton } from '@/components/CopyButton'
 
-// ── SVG Icons — no emojis ──
+
 const IconBook = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
 const IconGrad = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
 const IconChart = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
@@ -20,7 +20,7 @@ const IconMail = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const IconSignout = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
 const IconGrid = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
 
-// ── Products ──
+
 const PRODUCTS = [
   { id:'dictionary', name:'MoneySpeak',      tag:'500 terms · Nigerian English',           desc:'Every financial word that has ever confused you — explained with a story you will actually recognise.',         Icon:IconBook,    url:'/dictionary',                                                         selar:process.env.NEXT_PUBLIC_SELAR_URL||'https://selar.com/m/meridian_ng', live:false, price:'₦4,500',    accent:'#C8972A' },
   { id:'course',     name:'Stock School',    tag:'Zero to confident investor · 11 phases',  desc:'From "what is a share?" to building a real NGX portfolio. No jargon. No assumed knowledge.',                 Icon:IconGrad,    url:process.env.NEXT_PUBLIC_COURSE_URL||'https://learn.meridianng.com',   selar:process.env.NEXT_PUBLIC_SELAR_URL||'https://selar.com/m/meridian_ng', live:true,  price:'₦18,000',   accent:'#C8972A' },
@@ -54,7 +54,7 @@ function wodCounter() {
   return (day % 500) + 1
 }
 
-// Derive bar gradient colour key from accent colour
+
 function barGradient(accent: string) {
   if (accent === '#1A7A47') return `linear-gradient(90deg, #1A7A47, rgba(26,122,71,0.15))`
   if (accent === '#D4891A') return `linear-gradient(90deg, #D4891A, rgba(212,137,26,0.15))`
