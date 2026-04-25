@@ -1,564 +1,2292 @@
 'use client'
 
-import { useState, useRef } from 'react'
-import Link from 'next/link'
+import { useState, useEffect, useRef } from 'react'
 
+const MERIDIAN_CSS = `
+/* ================================================================
+   MERIDIAN — Design System v2
+   Direction: Precision Editorial × Nigerian warmth × Private bank calm
+   Fonts: Cormorant (soul/display) + Instrument Sans (clarity/body) + DM Mono (data)
+   ================================================================ */
+:root {
+  --forest:      #0A3B1F;
+  --forest-mid:  #145C31;
+  --forest-light:#1E8048;
+  --cream:       #F8F4EC;
+  --cream-2:     #EDE8DE;
+  --cream-3:     #E4DDCF;
+  --gold:        #B8922A;
+  --gold-light:  #D4A83C;
+  --gold-pale:   #F0D896;
+  --charcoal:    #181818;
+  --ink:         #2D2D2D;
+  --muted:       #6E6860;
+  --border:      rgba(10,59,31,0.12);
+  --border-gold: rgba(184,146,42,0.3);
 
-export default function LandingPage() {
+  --serif:  'Cormorant', Georgia, serif;
+  --sans:   'Instrument Sans', system-ui, sans-serif;
+  --mono:   'DM Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--sans);
+  background: var(--cream);
+  color: var(--charcoal);
+  line-height: 1.65;
+  overflow-x: hidden;
+  font-size: 17px;
+}
+
+/* Grain texture */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9998;
+  mix-blend-mode: multiply;
+}
+
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font-family: var(--sans); }
+img { max-width: 100%; display: block; }
+
+/* Routing */
+.page { display: none; }
+.page.active { display: block; }
+
+/* ═══════════════════════════════
+   NAVIGATION
+═══════════════════════════════ */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 68px;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5vw;
+  background: rgba(248,244,236,0.94);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+
+/* ── LOGO ── */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* SVG logo mark sizing */
+.logo-svg { width: 36px; height: 36px; }
+
+.logo-wordmark {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--forest);
+  line-height: 1;
+}
+
+.logo-wordmark small {
+  display: block;
+  font-size: 8px;
+  letter-spacing: 0.28em;
+  color: var(--gold);
+  margin-top: 3px;
+  font-weight: 400;
+}
+
+/* Nav links */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0; right: 0;
+  height: 1px;
+  background: var(--forest);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.25s;
+}
+
+.nav-links a:hover, .nav-links a.active {
+  color: var(--forest);
+}
+.nav-links a:hover::after,
+.nav-links a.active::after { transform: scaleX(1); }
+
+/* Nav actions */
+.nav-actions { display: flex; align-items: center; gap: 10px; }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--sans);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: all 0.22s;
+  border-radius: 2px;
+  white-space: nowrap;
+}
+
+.btn-sm   { padding: 9px 18px; font-size: 13px; }
+.btn-md   { padding: 13px 28px; font-size: 15px; }
+.btn-lg   { padding: 18px 44px; font-size: 17px; }
+.btn-xl   { padding: 22px 56px; font-size: 18px; }
+
+.btn-forest {
+  background: var(--forest);
+  color: var(--cream);
+  border: 2px solid var(--forest);
+}
+.btn-forest:hover {
+  background: var(--forest-mid);
+  border-color: var(--forest-mid);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(10,59,31,0.22);
+}
+.btn-forest:active { transform: translateY(0); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--forest);
+  border: 2px solid var(--forest);
+}
+.btn-outline:hover {
+  background: var(--forest);
+  color: var(--cream);
+}
+
+.btn-gold {
+  background: var(--gold);
+  color: white;
+  border: 2px solid var(--gold);
+}
+.btn-gold:hover {
+  background: var(--gold-light);
+  border-color: var(--gold-light);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(184,146,42,0.3);
+}
+
+.btn-cream {
+  background: var(--cream);
+  color: var(--forest);
+  border: 2px solid rgba(10,59,31,0.25);
+}
+.btn-cream:hover {
+  background: white;
+  border-color: var(--forest);
+}
+
+/* Hamburger */
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+}
+.hamburger span {
+  width: 22px; height: 1.5px;
+  background: var(--forest);
+  display: block;
+  transition: all 0.3s;
+}
+
+/* Mobile menu */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 68px; left: 0; right: 0;
+  background: var(--cream);
+  border-bottom: 1px solid var(--border);
+  padding: 24px 5vw 32px;
+  z-index: 490;
+  flex-direction: column;
+  gap: 4px;
+}
+.mobile-menu.open { display: flex; }
+.mobile-menu a {
+  padding: 14px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border);
+}
+.mobile-menu a:last-child { border-bottom: none; }
+
+/* ═══════════════════════════════
+   LAYOUT PRIMITIVES
+═══════════════════════════════ */
+.pt-nav { padding-top: 68px; }
+
+.wrap { max-width: 1160px; margin: 0 auto; padding: 0 5vw; }
+.wrap-sm { max-width: 720px; margin: 0 auto; padding: 0 5vw; }
+.wrap-md { max-width: 960px; margin: 0 auto; padding: 0 5vw; }
+
+.sec { padding: 96px 5vw; }
+.sec-sm { padding: 64px 5vw; }
+.sec-forest { background: var(--forest); }
+.sec-cream2 { background: var(--cream-2); }
+.sec-cream3 { background: var(--cream-3); }
+
+/* ═══════════════════════════════
+   TYPOGRAPHY SYSTEM
+═══════════════════════════════ */
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+.eyebrow::before {
+  content: '';
+  display: block;
+  width: 28px; height: 1px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+.eyebrow-center { justify-content: center; }
+.eyebrow-light { color: rgba(240,216,150,0.7); }
+.eyebrow-light::before { background: rgba(240,216,150,0.5); }
+
+.display {
+  font-family: var(--serif);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--forest);
+}
+.display-xl  { font-size: clamp(52px, 7vw, 96px); }
+.display-lg  { font-size: clamp(42px, 5.5vw, 76px); }
+.display-md  { font-size: clamp(34px, 4vw, 58px); }
+.display-sm  { font-size: clamp(26px, 3vw, 42px); }
+.display-xs  { font-size: clamp(22px, 2.5vw, 32px); }
+
+.display em  { font-style: italic; color: var(--gold); }
+.on-forest   { color: var(--cream) !important; }
+.on-forest em { color: var(--gold-pale) !important; }
+
+.lead {
+  font-size: clamp(18px, 2vw, 22px);
+  font-weight: 400;
+  line-height: 1.75;
+  color: var(--muted);
+}
+.lead strong { color: var(--ink); font-weight: 600; }
+.lead-light { color: rgba(248,244,236,0.68); }
+.lead-light strong { color: var(--cream); }
+
+.body-text {
+  font-size: 17px;
+  line-height: 1.8;
+  color: var(--muted);
+}
+
+/* ═══════════════════════════════
+   REVEAL ANIMATIONS
+═══════════════════════════════ */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.in { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+.reveal-d4 { transition-delay: 0.4s; }
+
+/* ═══════════════════════════════
+   ██  HOME — HERO  (ATTENTION)
+═══════════════════════════════ */
+.hero {
+  min-height: calc(100vh - 68px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Left column */
+.hero-left {
+  padding: 80px 6vw 80px 5vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+/* Decorative rule */
+.hero-left::before {
+  content: '';
+  position: absolute;
+  top: 0; bottom: 0; right: -1px;
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--border), var(--border), transparent);
+}
+
+.hero-headline {
+  font-family: var(--serif);
+  font-size: clamp(46px, 5.5vw, 82px);
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.015em;
+  color: var(--forest);
+  margin-bottom: 28px;
+}
+
+.hero-headline em {
+  font-style: italic;
+  color: var(--gold);
+  display: block;
+}
+
+.hero-sub {
+  font-size: clamp(18px, 1.8vw, 21px);
+  line-height: 1.75;
+  color: var(--muted);
+  font-weight: 400;
+  margin-bottom: 44px;
+  max-width: 480px;
+}
+
+.hero-sub strong { color: var(--ink); font-weight: 600; }
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.hero-trust {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.trust-dots {
+  display: flex;
+}
+.trust-dots span {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--cream);
+  background: var(--forest);
+  color: var(--gold-pale);
+  font-family: var(--serif);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-left: -8px;
+}
+.trust-dots span:first-child { margin-left: 0; background: var(--forest-mid); }
+.trust-dots span:nth-child(2) { background: var(--forest-light); }
+
+.trust-text {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+.trust-text strong { color: var(--charcoal); font-weight: 600; }
+
+/* Right column — live demo */
+.hero-right {
+  padding: 60px 5vw 60px 6vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  background: linear-gradient(135deg, rgba(10,59,31,0.03) 0%, transparent 60%);
+  position: relative;
+  z-index: 2;
+}
+
+/* Word of the Day card — premium */
+.wod-card {
+  background: white;
+  border-radius: 8px;
+  padding: 28px 32px;
+  box-shadow: 0 4px 32px rgba(10,59,31,0.09), 0 1px 4px rgba(10,59,31,0.06);
+  border: 1px solid rgba(10,59,31,0.07);
+  position: relative;
+  overflow: hidden;
+}
+
+.wod-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--forest), var(--gold));
+}
+
+.wod-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.wod-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-gold);
+}
+
+.wod-term {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--forest);
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.wod-phonetic {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 16px;
+}
+
+.wod-definition {
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.7;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+.wod-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 0;
+}
+
+.wod-story-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 10px;
+}
+
+.wod-story {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.75;
+  font-style: italic;
+}
+
+.wod-story strong {
+  font-style: normal;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.wod-reality {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: rgba(10,59,31,0.05);
+  border-radius: 4px;
+  font-size: 13px;
+  color: var(--forest-mid);
+  line-height: 1.65;
+}
+
+/* Mini product grid */
+.hero-mini-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.mini-tile {
+  background: white;
+  border-radius: 6px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: box-shadow 0.2s, transform 0.2s;
+  cursor: pointer;
+}
+
+.mini-tile:hover {
+  box-shadow: 0 6px 20px rgba(10,59,31,0.1);
+  transform: translateY(-2px);
+}
+
+.mini-tile-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.mini-tile-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--forest);
+  margin-bottom: 3px;
+}
+
+.mini-tile-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ═══════════════════════════════
+   ██  PAIN (INTEREST)
+═══════════════════════════════ */
+.pain-sec {
+  background: var(--forest);
+  padding: 100px 5vw;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative quotation mark */
+.pain-sec::before {
+  content: '❝';
+  position: absolute;
+  top: -30px;
+  right: 4vw;
+  font-size: 240px;
+  color: rgba(255,255,255,0.04);
+  font-family: var(--serif);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.pain-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.1fr;
+  gap: 80px;
+  align-items: start;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.pain-heading {
+  font-family: var(--serif);
+  font-size: clamp(38px, 5vw, 70px);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.08;
+  letter-spacing: -0.015em;
+  margin-bottom: 28px;
+}
+
+.pain-heading em { font-style: italic; color: var(--gold-pale); }
+
+.pain-body {
+  font-size: 18px;
+  color: rgba(248,244,236,0.68);
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+
+.pain-body strong { color: var(--cream); }
+
+.pain-scenes {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.scene {
+  background: rgba(248,244,236,0.05);
+  border: 1px solid rgba(248,244,236,0.1);
+  border-left: 3px solid var(--gold-pale);
+  border-radius: 0 6px 6px 0;
+  padding: 22px 24px;
+}
+
+.scene-tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--gold-pale);
+  opacity: 0.7;
+  margin-bottom: 10px;
+}
+
+.scene-text {
+  font-size: 16px;
+  color: rgba(248,244,236,0.82);
+  line-height: 1.7;
+}
+
+.scene-text strong { color: var(--cream); font-weight: 600; }
+
+/* ═══════════════════════════════
+   ██  BEFORE/AFTER (DESIRE)
+═══════════════════════════════ */
+.ba-sec {
+  padding: 96px 5vw;
+  background: var(--cream-2);
+  position: relative;
+}
+
+.ba-header {
+  text-align: center;
+  max-width: 680px;
+  margin: 0 auto 64px;
+}
+
+.ba-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  gap: 28px;
+  align-items: stretch;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.ba-col {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ba-col-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  display: inline-block;
+  width: fit-content;
+  margin-bottom: 8px;
+}
+
+.ba-col.before .ba-col-label {
+  background: rgba(180,60,60,0.1);
+  color: #8B2020;
+}
+
+.ba-col.after .ba-col-label {
+  background: rgba(10,59,31,0.1);
+  color: var(--forest);
+}
+
+.ba-item {
+  padding: 18px 20px;
+  border-radius: 6px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.ba-col.before .ba-item {
+  background: rgba(180,60,60,0.06);
+  border: 1px solid rgba(180,60,60,0.12);
+  color: #6B2020;
+}
+
+.ba-col.after .ba-item {
+  background: rgba(10,59,31,0.07);
+  border: 1px solid rgba(10,59,31,0.12);
+  color: var(--forest-mid);
+  font-weight: 500;
+}
+
+.ba-divider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 52px;
+}
+
+.ba-arrow {
+  width: 44px;
+  height: 44px;
+  background: var(--forest);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-pale);
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.ba-arrow-line {
+  width: 1px;
+  flex: 1;
+  background: linear-gradient(to bottom, var(--border), transparent);
+}
+
+/* ═══════════════════════════════
+   ██  DICTIONARY LEAD SECTION
+═══════════════════════════════ */
+.dict-lead {
+  padding: 96px 5vw;
+  background: var(--cream);
+}
+
+.dict-lead-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.dict-terms-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dict-term-card {
+  background: white;
+  border-radius: 8px;
+  padding: 22px 26px;
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+}
+
+.dict-term-card:hover {
+  transform: translateX(6px);
+  box-shadow: 0 8px 28px rgba(10,59,31,0.09);
+}
+
+.dict-term-card::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--gold);
+}
+
+.dict-term-word {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--forest);
+  margin-bottom: 6px;
+}
+
+.dict-term-plain {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+.dict-term-plain strong { color: var(--ink); font-weight: 600; }
+
+.dict-see-more {
+  text-align: center;
+  margin-top: 8px;
+  font-size: 14px;
+  color: var(--gold);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.dict-see-more:hover { color: var(--gold-light); }
+
+/* ═══════════════════════════════
+   ██  PRODUCTS OVERVIEW (DESIRE)
+═══════════════════════════════ */
+.products-overview {
+  padding: 64px 5vw 96px;
+  background: var(--cream-3);
+}
+
+.products-header {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 56px;
+}
+
+.products-4 {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  max-width: 1160px;
+  margin: 0 auto 40px;
+}
+
+.product-tile {
+  background: white;
+  border-radius: 8px;
+  padding: 32px 26px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s, box-shadow 0.25s;
+  cursor: pointer;
+}
+
+.product-tile:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 16px 48px rgba(10,59,31,0.12);
+}
+
+.product-tile::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--forest), var(--gold));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s;
+}
+
+.product-tile:hover::before { transform: scaleX(1); }
+
+.tile-icon { font-size: 26px; margin-bottom: 16px; }
+
+.tile-name {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--forest);
+  margin-bottom: 8px;
+  line-height: 1.15;
+}
+
+.tile-pitch {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+  flex: 1;
+  margin-bottom: 20px;
+}
+
+.tile-price {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 14px;
+}
+
+.tile-cta {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--forest);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tile-cta::after {
+  content: '→';
+  transition: transform 0.2s;
+}
+
+.product-tile:hover .tile-cta::after { transform: translateX(4px); }
+
+/* Chase Sapa section */
+.sapa-banner {
+  background: var(--forest);
+  border-radius: 8px;
+  padding: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  max-width: 1160px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+.sapa-text .eyebrow { margin-bottom: 16px; }
+
+.sapa-headline {
+  font-family: var(--serif);
+  font-size: clamp(30px, 3.5vw, 48px);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  margin-bottom: 12px;
+}
+
+.sapa-headline em { font-style: italic; color: var(--gold-pale); }
+
+.sapa-sub {
+  font-size: 16px;
+  color: rgba(248,244,236,0.65);
+  line-height: 1.7;
+  max-width: 560px;
+}
+
+/* ═══════════════════════════════
+   ██  TRUST SECTION
+═══════════════════════════════ */
+.trust-sec {
+  padding: 96px 5vw;
+  background: var(--cream);
+}
+
+.trust-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+/* Founder note */
+.founder-note {
+  background: white;
+  border-radius: 8px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.founder-note::before {
+  content: '❝';
+  font-family: var(--serif);
+  font-size: 80px;
+  color: rgba(10,59,31,0.07);
+  position: absolute;
+  top: 16px;
+  left: 24px;
+  line-height: 1;
+}
+
+.founder-body {
+  font-family: var(--serif);
+  font-size: 20px;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.75;
+  margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.founder-sig {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.founder-avatar {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--forest);
+  color: var(--gold-pale);
+  font-family: var(--serif);
+  font-size: 18px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.founder-name {
+  font-weight: 600;
+  color: var(--charcoal);
+  font-size: 15px;
+}
+.founder-title { font-size: 13px; color: var(--muted); }
+
+/* Trust signals */
+.trust-signals { display: flex; flex-direction: column; gap: 20px; }
+
+.trust-point {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+}
+
+.trust-icon {
+  width: 44px; height: 44px;
+  border-radius: 8px;
+  background: rgba(10,59,31,0.07);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.trust-point-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--forest);
+  margin-bottom: 5px;
+}
+
+.trust-point-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+
+/* Scam alert */
+.scam-alert {
+  background: rgba(180,60,60,0.05);
+  border: 1px solid rgba(180,60,60,0.15);
+  border-radius: 8px;
+  padding: 28px 32px;
+  max-width: 1160px;
+  margin: 40px auto 0;
+}
+
+.scam-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #8B2020;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.scam-items {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+}
+
+.scam-item {
+  padding: 12px 16px;
+  background: rgba(180,60,60,0.07);
+  border-radius: 4px;
+  font-size: 14px;
+  color: #7A2020;
+  line-height: 1.5;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.scam-item::before { content: '✕'; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+
+/* ═══════════════════════════════
+   ██  FINAL CTA (ACTION)
+═══════════════════════════════ */
+.cta-final {
+  background: var(--forest);
+  padding: 120px 5vw;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Decorative M watermark */
+.cta-final::before {
+  content: 'M';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--serif);
+  font-size: 600px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.022);
+  user-select: none;
+  pointer-events: none;
+  line-height: 1;
+}
+
+.cta-headline {
+  font-family: var(--serif);
+  font-size: clamp(40px, 6vw, 82px);
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.06;
+  letter-spacing: -0.015em;
+  max-width: 900px;
+  margin: 0 auto 24px;
+}
+
+.cta-headline em { font-style: italic; color: var(--gold-pale); }
+
+.cta-sub {
+  font-size: 20px;
+  color: rgba(248,244,236,0.62);
+  max-width: 560px;
+  margin: 0 auto 56px;
+  line-height: 1.75;
+}
+
+/* Pricing pills embedded in CTA */
+.cta-pricing {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 48px;
+}
+
+.price-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(248,244,236,0.08);
+  border: 1px solid rgba(248,244,236,0.15);
+  border-radius: 100px;
+  padding: 10px 20px;
+}
+
+.price-pill-icon { font-size: 16px; }
+.price-pill-name { font-size: 14px; color: var(--cream); font-weight: 500; }
+.price-pill-amount { font-family: var(--mono); font-size: 13px; color: var(--gold-pale); }
+
+.price-pill.featured {
+  background: rgba(184,146,42,0.2);
+  border-color: rgba(184,146,42,0.35);
+}
+
+.cta-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+
+.cta-footnote {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: rgba(248,244,236,0.3);
+  letter-spacing: 0.08em;
+}
+
+/* ═══════════════════════════════
+   PRODUCTS PAGE (SUBPAGE)
+═══════════════════════════════ */
+.products-page-hero {
+  background: var(--forest);
+  padding: 96px 5vw 80px;
+}
+
+.products-page-hero-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.product-deep-card {
+  background: white;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.product-deep-accent {
+  height: 5px;
+  background: linear-gradient(90deg, var(--forest), var(--gold));
+}
+
+.product-deep-body {
+  padding: 48px 44px;
+}
+
+.product-deep-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.product-deep-meta {}
+
+.product-deep-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(10,59,31,0.08);
+  color: var(--forest-mid);
+  padding: 5px 12px;
+  border-radius: 100px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.product-deep-name {
+  font-family: var(--serif);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 700;
+  color: var(--forest);
+  letter-spacing: -0.015em;
+  margin-bottom: 6px;
+}
+
+.product-deep-tagline {
+  font-size: 18px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.product-price-block { text-align: right; flex-shrink: 0; }
+
+.product-price-main {
+  font-family: var(--serif);
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--forest);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.product-price-note {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.product-story-block {
+  background: rgba(10,59,31,0.04);
+  border-left: 3px solid var(--gold);
+  padding: 22px 26px;
+  border-radius: 0 6px 6px 0;
+  margin-bottom: 28px;
+  font-size: 17px;
+  color: var(--ink);
+  line-height: 1.8;
+  font-style: italic;
+}
+
+.product-story-block strong { font-style: normal; font-weight: 600; }
+
+.product-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+.feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.55;
+}
+
+.feature-check {
+  width: 20px; height: 20px;
+  min-width: 20px;
+  background: var(--forest);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  margin-top: 2px;
+}
+
+/* ═══════════════════════════════
+   FOOTER
+═══════════════════════════════ */
+footer {
+  background: var(--charcoal);
+  padding: 64px 5vw 40px;
+  color: rgba(248,244,236,0.6);
+}
+
+.footer-inner {
+  max-width: 1160px;
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1fr;
+  gap: 40px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(248,244,236,0.08);
+  margin-bottom: 36px;
+}
+
+.footer-brand-desc {
+  font-size: 14px;
+  line-height: 1.75;
+  margin-top: 18px;
+  max-width: 260px;
+}
+
+.footer-col-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-light);
+  margin-bottom: 20px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.footer-links a {
+  font-size: 14px;
+  color: rgba(248,244,236,0.55);
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.footer-links a:hover { color: var(--cream); }
+
+.footer-bottom {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.footer-legal { font-size: 13px; }
+.footer-legal a { color: rgba(248,244,236,0.45); cursor: pointer; transition: color 0.2s; }
+.footer-legal a:hover { color: var(--cream); }
+.footer-legal span { margin: 0 8px; opacity: 0.4; }
+
+.footer-disclaimer {
+  font-size: 12px;
+  max-width: 520px;
+  text-align: right;
+  opacity: 0.35;
+  line-height: 1.65;
+}
+
+/* ═══════════════════════════════
+   TERMS MODAL
+═══════════════════════════════ */
+.modal-bg {
+  position: fixed;
+  inset: 0;
+  background: rgba(10,59,31,0.55);
+  backdrop-filter: blur(8px);
+  z-index: 9000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-bg.open { display: flex; }
+
+.modal-box {
+  background: var(--cream);
+  border-radius: 10px;
+  padding: 56px 52px;
+  max-width: 720px;
+  width: 100%;
+  max-height: 88vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 40px 100px rgba(0,0,0,0.25);
+}
+
+.modal-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  width: 36px; height: 36px;
+  background: rgba(10,59,31,0.08);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--forest);
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.modal-close:hover { background: rgba(10,59,31,0.15); }
+
+.modal-title {
+  font-family: var(--serif);
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--forest);
+  margin-bottom: 32px;
+  letter-spacing: -0.015em;
+}
+
+.modal-section { margin-bottom: 28px; padding-bottom: 28px; border-bottom: 1px solid var(--border); }
+.modal-section:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.modal-section h3 { font-family: var(--serif); font-size: 20px; font-weight: 700; color: var(--forest); margin-bottom: 12px; }
+.modal-section p { font-size: 16px; color: var(--muted); line-height: 1.8; }
+
+/* ═══════════════════════════════
+   TOAST
+═══════════════════════════════ */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%) translateY(72px);
+  background: var(--forest);
+  color: var(--cream);
+  padding: 12px 28px;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 500;
+  z-index: 9999;
+  transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+  white-space: nowrap;
+  box-shadow: 0 8px 32px rgba(10,59,31,0.28);
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ═══════════════════════════════
+   RESPONSIVE
+═══════════════════════════════ */
+@media (max-width: 1024px) {
+  .products-4 { grid-template-columns: 1fr 1fr; }
+  .footer-top { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  .nav-links, .nav-actions { display: none; }
+  .hamburger { display: flex; }
+
+  .hero { grid-template-columns: 1fr; min-height: auto; }
+  .hero-left { padding: 60px 5vw 40px; }
+  .hero-left::before { display: none; }
+  .hero-right { padding: 0 5vw 60px; }
+  .hero-mini-grid { grid-template-columns: 1fr 1fr; }
+
+  .pain-grid { grid-template-columns: 1fr; gap: 48px; }
+  .ba-grid { grid-template-columns: 1fr; }
+  .ba-divider { flex-direction: row; padding-top: 0; }
+  .ba-arrow-line { display: none; }
+
+  .dict-lead-inner { grid-template-columns: 1fr; gap: 40px; }
+  .products-4 { grid-template-columns: 1fr; }
+  .trust-grid { grid-template-columns: 1fr; gap: 40px; }
+  .scam-items { grid-template-columns: 1fr; }
+  .cta-pricing { flex-direction: column; align-items: center; }
+  .product-deep-header { flex-direction: column; }
+  .product-price-block { text-align: left; }
+  .product-features { grid-template-columns: 1fr; }
+  .footer-top { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; }
+  .footer-disclaimer { text-align: left; }
+  .sapa-banner { flex-direction: column; text-align: center; }
+  .modal-box { padding: 40px 24px; }
+}
+/* ══════════════════════════════════════
+   HOW IT WORKS SECTION
+══════════════════════════════════════ */
+.how-section {
+  background: var(--forest);
+  padding: 100px 5vw;
+}
+.how-header {
+  text-align: center;
+  margin-bottom: 70px;
+}
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  max-width: 1100px;
+  margin: 0 auto;
+  position: relative;
+}
+.how-steps::before {
+  content: '';
+  position: absolute;
+  top: 28px; left: 0; right: 0;
+  height: 1px;
+  background: rgba(248,244,236,0.12);
+}
+.how-step {
+  position: relative;
+  z-index: 1;
+}
+.how-step-num {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: rgba(248,244,236,0.1);
+  border: 1.5px solid rgba(248,244,236,0.2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 20px; font-weight: 500;
+  color: var(--gold-pale);
+  margin-bottom: 24px;
+  letter-spacing: -0.01em;
+}
+.how-step-title {
+  font-family: var(--serif);
+  font-size: 24px; font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 14px;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.how-step-desc {
+  font-size: 15px;
+  color: rgba(248,244,236,0.62);
+  line-height: 1.75;
+}
+.headline {
+  font-family: var(--serif);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.015em;
+  color: var(--forest);
+}
+.headline em { font-style: italic; color: var(--gold); }
+.subtext {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--muted);
+}
+@media (max-width: 768px) {
+  .how-steps { grid-template-columns: 1fr; }
+  .how-steps::before { display: none; }
+}
+
+`
+
+// ── Agreed WOD content ─────────────────────────────────────────────────
+// Story: Oloriebi land + ₦800k version
+// Reality: the full decode
+
+export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
+  const [page, setPage]       = useState<'home'|'about'|'products'|'contact'>('home')
+  const [menuOpen, setMenuOpen] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
-  const [menuOpen,  setMenuOpen]  = useState(false)
-  const howRef  = useRef<HTMLElement>(null)
+  const [toastMsg, setToastMsg]   = useState('')
+  const [toastShow, setToastShow] = useState(false)
+  const mainRef = useRef<HTMLDivElement>(null)
 
-  function scrollToHow() {
-    howRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  function showPage(name: string) {
+    setPage(name as any)
+    setMenuOpen(false)
+    window.scrollTo({ top: 0, behavior: 'instant' })
   }
+
+  function showToast(msg: string) {
+    setToastMsg(msg)
+    setToastShow(true)
+    setTimeout(() => setToastShow(false), 3500)
+  }
+
+  // Scroll reveal
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('in')
+          observer.unobserve(e.target)
+        }
+      })
+    }, { threshold: 0.08 })
+    const els = document.querySelectorAll('.reveal:not(.in)')
+    els.forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [page])
+
+  // Close menu on route change
+  useEffect(() => { setMenuOpen(false) }, [page])
+
+  const navLinks = (
+    <ul className="nav-links">
+      <li><a className={page === 'home'     ? 'active' : ''} onClick={() => showPage('home')}>Home</a></li>
+      <li><a className={page === 'about'    ? 'active' : ''} onClick={() => showPage('about')}>About</a></li>
+      <li><a className={page === 'products' ? 'active' : ''} onClick={() => showPage('products')}>Products</a></li>
+      <li><a className={page === 'contact'  ? 'active' : ''} onClick={() => showPage('contact')}>Contact</a></li>
+    </ul>
+  )
 
   return (
     <>
-      {/* ═══════════════════════════════
-          NAVIGATION
-      ═══════════════════════════════ */}
-      <nav style={{
-        position:'fixed',top:0,left:0,right:0,height:68,zIndex:500,
-        display:'flex',alignItems:'center',justifyContent:'space-between',
-        padding:'0 5vw',
-        background:'rgba(249,246,239,0.94)',
-        backdropFilter:'blur(16px)',
-        WebkitBackdropFilter:'blur(16px)',
-        borderBottom:'1px solid rgba(10,61,34,0.1)',
-      }}>
-        {/* Logo */}
-        <Link href="/" style={{display:'flex',alignItems:'center',gap:12,textDecoration:'none',flexShrink:0}}>
-          <div style={{
-            width:36,height:36,borderRadius:'50%',
-            background:'rgba(10,61,34,0.08)',
-            display:'flex',alignItems:'center',justifyContent:'center',
-            fontFamily:'var(--font-serif)',fontSize:17,fontWeight:900,color:'var(--gold)',
-          }}>M</div>
-          <div style={{display:'flex',flexDirection:'column'}}>
-            <span style={{fontFamily:'var(--font-serif)',fontSize:20,fontWeight:700,color:'var(--forest)',letterSpacing:'-0.01em',lineHeight:1}}>Meridian</span>
-            <span style={{fontFamily:'var(--font-mono)',fontSize:8,letterSpacing:'0.18em',textTransform:'uppercase',color:'var(--muted-light)',marginTop:3}}>Finance in plain Nigerian English</span>
-          </div>
-        </Link>
+      <style dangerouslySetInnerHTML={{ __html: MERIDIAN_CSS }} />
 
-        {/* Desktop nav */}
-        <div style={{display:'flex',alignItems:'center',gap:32}} className="nav-desktop">
-          <button onClick={scrollToHow} style={{background:'none',border:'none',cursor:'pointer',fontFamily:'var(--font)',fontSize:14,fontWeight:500,color:'var(--muted)',letterSpacing:'0.01em'}}>How it works</button>
-          <a href="#products" style={{fontFamily:'var(--font)',fontSize:14,fontWeight:500,color:'var(--muted)',textDecoration:'none'}}>Products</a>
-          <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" style={{fontFamily:'var(--font)',fontSize:14,fontWeight:500,color:'var(--muted)',textDecoration:'none'}}>Buy</a>
+      {/* ═══ NAVIGATION ═══ */}
+      <nav id="main-nav">
+        {/* Logo: M in green background circle */}
+        <div className="logo" onClick={() => showPage('home')}>
+          <svg className="logo-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Meridian logo">
+            <circle cx="32" cy="32" r="30" stroke="#0A3B1F" strokeWidth="1.5" fill="none" opacity="0.3"/>
+            <circle cx="32" cy="32" r="26" stroke="#0A3B1F" strokeWidth="2" fill="none"/>
+            <circle cx="32" cy="32" r="20" stroke="#0A3B1F" strokeWidth="0.75" fill="none" opacity="0.25"/>
+            <line x1="32" y1="4" x2="32" y2="9" stroke="#0A3B1F" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="60" y1="32" x2="55" y2="32" stroke="#0A3B1F" strokeWidth="1" strokeLinecap="round" opacity="0.4"/>
+            <line x1="32" y1="60" x2="32" y2="55" stroke="#0A3B1F" strokeWidth="1" strokeLinecap="round" opacity="0.4"/>
+            <line x1="4" y1="32" x2="9" y2="32" stroke="#0A3B1F" strokeWidth="1" strokeLinecap="round" opacity="0.4"/>
+            <line x1="49.5" y1="14.5" x2="47.4" y2="16.6" stroke="#0A3B1F" strokeWidth="0.75" strokeLinecap="round" opacity="0.2"/>
+            <line x1="14.5" y1="14.5" x2="16.6" y2="16.6" stroke="#0A3B1F" strokeWidth="0.75" strokeLinecap="round" opacity="0.2"/>
+            <line x1="49.5" y1="49.5" x2="47.4" y2="47.4" stroke="#0A3B1F" strokeWidth="0.75" strokeLinecap="round" opacity="0.2"/>
+            <line x1="14.5" y1="49.5" x2="16.6" y2="47.4" stroke="#0A3B1F" strokeWidth="0.75" strokeLinecap="round" opacity="0.2"/>
+            <text x="30.5" y="8.5" fontFamily="'DM Mono', monospace" fontSize="4.5" fill="#0A3B1F" fontWeight="500" opacity="0.5">N</text>
+            <polygon points="32,8 29.2,32 32,30 34.8,32" fill="#B8922A"/>
+            <polygon points="32,56 29.2,32 32,34 34.8,32" fill="#0A3B1F" opacity="0.55"/>
+            <circle cx="32" cy="32" r="3.2" fill="#0A3B1F"/>
+            <circle cx="32" cy="32" r="1.6" fill="#B8922A"/>
+            <line x1="24" y1="38" x2="24" y2="26" stroke="#0A3B1F" strokeWidth="1" strokeLinecap="round" opacity="0.18"/>
+            <line x1="24" y1="26" x2="32" y2="33" stroke="#0A3B1F" strokeWidth="1" strokeLinecap="round" opacity="0.18"/>
+            <line x1="32" y1="33" x2="40" y2="26" stroke="#0A3B1F" strokeWidth="1" strokeLinecap="round" opacity="0.18"/>
+            <line x1="40" y1="26" x2="40" y2="38" stroke="#0A3B1F" strokeWidth="1" strokeLinecap="round" opacity="0.18"/>
+          </svg>
+          <div className="logo-wordmark">
+            MERIDIAN
+            <small>Financial Intelligence</small>
+          </div>
         </div>
 
-        <div style={{display:'flex',alignItems:'center',gap:10}}>
-          <Link href="/login" style={{padding:'9px 18px',borderRadius:6,fontFamily:'var(--font)',fontSize:14,fontWeight:600,color:'var(--forest)',border:'1.5px solid rgba(10,61,34,0.2)',textDecoration:'none',transition:'all .2s'}}>Sign in</Link>
-          <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" style={{padding:'9px 20px',borderRadius:6,fontFamily:'var(--font)',fontSize:14,fontWeight:600,background:'var(--forest)',color:'var(--cream)',textDecoration:'none'}}>Get started →</a>
+        {navLinks}
+
+        <div className="nav-actions">
+          <a href="/login" className="btn btn-outline btn-sm">Sign in</a>
+          <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-sm">Get started →</a>
+        </div>
+
+        <div className="hamburger" onClick={() => setMenuOpen(m => !m)} aria-label="Menu">
+          <span/><span/><span/>
         </div>
       </nav>
 
-      <main style={{paddingTop:68}}>
+      {/* Mobile menu */}
+      <div className={`mobile-menu${menuOpen ? ' open' : ''}`} id="mobile-menu">
+        <a onClick={() => showPage('home')}>Home</a>
+        <a onClick={() => showPage('about')}>About</a>
+        <a onClick={() => showPage('products')}>Products</a>
+        <a onClick={() => showPage('contact')}>Contact</a>
+        <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" style={{color:'var(--forest)',fontWeight:600,borderBottom:'none'}}>Get started →</a>
+      </div>
 
-        {/* ═══════════════════════════════
-            HERO
-        ═══════════════════════════════ */}
-        <section style={{
-          display:'grid',gridTemplateColumns:'1fr 1fr',minHeight:'calc(100vh - 68px)',
-          position:'relative',overflow:'hidden',
-        }} className="hero-grid">
+      {/* ═══════════════════════════════════════════════════════
+          HOME PAGE
+      ═══════════════════════════════════════════════════════ */}
+      <div className={`page pt-nav${page === 'home' ? ' active' : ''}`} id="page-home">
 
-          {/* Left */}
-          <div style={{padding:'80px 6vw 80px 5vw',display:'flex',flexDirection:'column',justifyContent:'center',position:'relative',zIndex:2}}>
-            <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--gold)',marginBottom:24,display:'flex',alignItems:'center',gap:10}}>
-              <span style={{display:'block',width:28,height:1,background:'var(--gold)',flexShrink:0}}/>
-              Finance in plain Nigerian English
-            </div>
-
-            <h1 style={{fontFamily:'var(--font-serif)',fontSize:'clamp(46px,5.5vw,80px)',fontWeight:900,lineHeight:1.04,letterSpacing:'-0.02em',color:'var(--forest)',marginBottom:28}}>
+        {/* HERO */}
+        <section className="hero">
+          <div className="hero-left">
+            <div className="eyebrow reveal" style={{marginBottom:'24px'}}>Finance in plain Nigerian English</div>
+            <h1 className="hero-headline reveal reveal-d1">
               Stop guessing<br/>with your money.
-              <em style={{fontStyle:'italic',color:'var(--gold)',display:'block'}}>Confusion is expensive.</em>
+              <em>Confusion is expensive.</em>
             </h1>
-
-            <p style={{fontSize:'clamp(17px,1.8vw,20px)',lineHeight:1.8,color:'var(--muted)',fontWeight:400,marginBottom:44,maxWidth:480}}>
-              Every wrong financial decision costs real money.
-              Meridian exists so you understand <strong style={{color:'var(--ink)'}}>exactly what you are doing</strong> before
-              you invest, buy, or spend — in language your older sibling would use over suya.
+            <p className="hero-sub reveal reveal-d2">
+              Every wrong financial decision costs real money. Meridian exists so you understand <strong>exactly what you&apos;re doing</strong> before you invest, buy, or spend — in language that actually makes sense to you.
             </p>
-
-            <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:48}}>
-              <button
-                onClick={scrollToHow}
-                style={{padding:'16px 36px',borderRadius:6,fontFamily:'var(--font)',fontSize:16,fontWeight:600,background:'var(--forest)',color:'var(--cream)',border:'2px solid var(--forest)',cursor:'pointer'}}
+            <div className="hero-actions reveal reveal-d3">
+              <a
+                href="#how-steps-section"
+                className="btn btn-forest btn-lg"
+                onClick={(e) => {
+                  e.preventDefault()
+                  const el = document.getElementById('how-steps-section')
+                  el?.scrollIntoView({ behavior: 'smooth' })
+                }}
               >
                 Get started →
-              </button>
-              <a
-                href="#products"
-                style={{padding:'16px 28px',borderRadius:6,fontFamily:'var(--font)',fontSize:16,fontWeight:600,background:'transparent',color:'var(--forest)',border:'2px solid rgba(10,61,34,0.2)',textDecoration:'none'}}
-              >
-                See our products
               </a>
+              <button className="btn btn-outline btn-lg" onClick={() => showPage('products')}>See our products</button>
             </div>
-
-            {/* Trust dots */}
-            <div style={{display:'flex',alignItems:'center',gap:14}}>
-              <div style={{display:'flex'}}>
-                {['K','A','T','F'].map((l,i) => (
-                  <div key={l} style={{
-                    width:34,height:34,borderRadius:'50%',
-                    border:'2px solid var(--cream)',
-                    background:i===0?'var(--forest-mid)':i===1?'var(--forest-light)':'var(--forest)',
-                    color:'var(--gold-pale)',
-                    fontFamily:'var(--font-serif)',fontSize:13,fontWeight:700,
-                    display:'flex',alignItems:'center',justifyContent:'center',
-                    marginLeft:i===0?0:-8,zIndex:4-i,position:'relative',
-                  }}>{l}</div>
-                ))}
+            <div className="hero-trust reveal reveal-d4">
+              <div className="trust-dots">
+                <span>K</span><span>A</span><span>T</span><span>F</span>
               </div>
-              <div style={{fontSize:13,color:'var(--muted)',lineHeight:1.5}}>
-                <strong style={{color:'var(--charcoal)'}}>Growing community</strong> of Nigerians<br/>making smarter money decisions
+              <div className="trust-text">
+                <strong>Growing community</strong> of Nigerians<br/>making smarter money decisions
               </div>
             </div>
           </div>
 
-          {/* Right — WOD card */}
-          <div style={{padding:'60px 5vw 60px 4vw',display:'flex',flexDirection:'column',justifyContent:'center',gap:16,position:'relative',zIndex:2}}>
-
-            {/* WOD card */}
-            <div style={{background:'white',borderRadius:10,padding:'28px 32px',boxShadow:'0 4px 32px rgba(10,61,34,0.09)',border:'1px solid rgba(10,61,34,0.07)',position:'relative',overflow:'hidden'}}>
-              <div style={{position:'absolute',top:0,left:0,right:0,height:3,background:'linear-gradient(90deg,var(--forest),var(--gold))'}}/>
-              <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold)',marginBottom:16,display:'flex',alignItems:'center',gap:8}}>
-                ◈ MoneySpeak — Word of the Day — Always Free
-                <span style={{flex:1,height:1,background:'rgba(200,151,42,0.3)'}}/>
+          {/* Hero right — WOD card */}
+          <div className="hero-right">
+            <div className="wod-card reveal">
+              <div className="wod-label">◈ MoneySpeak — Word of the Day — Always Free</div>
+              <div className="wod-term">Liquidity</div>
+              <div className="wod-phonetic">lik · wid · i · tee  ·  noun</div>
+              <div className="wod-definition">How quickly you can turn what you own into cash when you actually need it.</div>
+              <div className="wod-divider"/>
+              <div className="wod-story-label">The Nigerian story</div>
+              <div className="wod-story">
+                A woman has saved ₦800,000 — all of it in a plot of land behind her village. One Thursday night, her child gets sick. Fever. She needs ₦60,000 by 6am Friday. She cannot call Oloriebi at 3am to buy land. She cannot package sand and carry it to the pharmacy. That ₦800,000 is hers, it is even gaining value, but <strong>right now when she needs it — it is completely useless to her.</strong> That is what illiquid means.
               </div>
-              <div style={{fontFamily:'var(--font-serif)',fontSize:36,fontWeight:800,color:'var(--forest)',marginBottom:6,letterSpacing:'-0.01em'}}>Liquidity</div>
-              <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'var(--muted)',marginBottom:16}}>lik · wid · i · tee  ·  noun</div>
-              <div style={{fontSize:15,color:'var(--ink)',lineHeight:1.7,marginBottom:14,fontWeight:500}}>
-                How quickly you can turn what you own into cash when you actually need it.
-              </div>
-              <div style={{height:1,background:'rgba(10,61,34,0.08)',margin:'14px 0'}}/>
-              <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--gold)',marginBottom:10}}>The Nigerian story</div>
-              <div style={{fontSize:14,color:'var(--muted)',lineHeight:1.75,fontStyle:'italic',marginBottom:14}}>
-                A woman has saved ₦800,000 — all of it in a plot of land. One Thursday night, her child wakes with terrible fever. She needs ₦60,000 for the hospital at 2am. She cannot call Oloriebi to buy land at that hour. <strong style={{fontStyle:'normal',color:'var(--ink)'}}>That ₦800,000 is hers, it is even gaining value, but right now it is completely useless to her.</strong>
-              </div>
-              <div style={{background:'rgba(10,61,34,0.05)',border:'1px solid rgba(200,151,42,0.25)',borderRadius:6,padding:'12px 14px'}}>
-                <div style={{fontFamily:'var(--font-mono)',fontSize:9,letterSpacing:'0.18em',textTransform:'uppercase',color:'var(--gold)',marginBottom:8}}>The rule you walk away using</div>
-                <div style={{fontSize:13,color:'var(--muted)',lineHeight:1.72}}>
-                  Before you put money anywhere, ask one question: <strong style={{color:'var(--ink)'}}>"If something happens tonight, can I get this money back in seven days?"</strong> If the answer is no, that investment is illiquid. Keep at least three months of expenses somewhere you can reach overnight. The rest can be invested.
+              <div className="wod-reality">
+                <div style={{fontFamily:'var(--mono)',fontSize:'9px',letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold)',marginBottom:'8px'}}>The rule you walk away using</div>
+                <div style={{fontStyle:'italic',color:'var(--forest-mid)',marginBottom:'8px',fontWeight:600}}>
+                  &ldquo;Always check the liquidity of an investment before you commit your money.&rdquo;
+                </div>
+                <div style={{fontSize:'13px',lineHeight:1.75}}>
+                  That phrase is just asking one question: <strong>&ldquo;If something happens and I need this back in seven days — can I get it out without losing money or waiting months?&rdquo;</strong>
+                  <br/><br/>
+                  If the answer is no, the investment is illiquid. Not automatically wrong — land and long-term shares are supposed to be illiquid. The mistake is locking away your only money there and having nothing left for emergencies.
+                  <br/><br/>
+                  The woman did not make a bad investment. She made the mistake of having <strong>no liquid money at all.</strong> Keep at least three months of expenses somewhere you can reach overnight. Invest the rest.
+                </div>
+                <div style={{marginTop:'12px',fontSize:'13px',color:'var(--gold)',fontWeight:600,cursor:'pointer'}} onClick={() => showPage('products')}>
+                  See all 500 terms in MoneySpeak →
                 </div>
               </div>
             </div>
 
-            {/* Mini product tiles */}
-            <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10}}>
+            <div className="hero-mini-grid reveal reveal-d1">
               {[
                 {icon:'📖',name:'MoneySpeak',desc:'500 terms, Nigerian stories'},
                 {icon:'🎓',name:'Stock School',desc:'Zero to confident investor'},
                 {icon:'📊',name:'Equity Terminal',desc:'Analyse any stock yourself'},
                 {icon:'📒',name:'TraDaq',desc:'Know your real profit'},
               ].map(p => (
-                <a key={p.name} href="#products" style={{background:'white',borderRadius:8,padding:'14px 16px',border:'1px solid rgba(10,61,34,0.08)',display:'flex',alignItems:'flex-start',gap:10,textDecoration:'none',transition:'box-shadow .2s,transform .2s'}}>
-                  <span style={{fontSize:18,flexShrink:0,marginTop:1}}>{p.icon}</span>
+                <div className="mini-tile" key={p.name} onClick={() => showPage('products')}>
+                  <div className="mini-tile-icon">{p.icon}</div>
                   <div>
-                    <div style={{fontSize:13,fontWeight:600,color:'var(--forest)',marginBottom:2}}>{p.name}</div>
-                    <div style={{fontSize:12,color:'var(--muted)',lineHeight:1.5}}>{p.desc}</div>
+                    <div className="mini-tile-name">{p.name}</div>
+                    <div className="mini-tile-desc">{p.desc}</div>
                   </div>
-                </a>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ═══════════════════════════════
-            HOW IT WORKS — 3 steps
-            (this is what "Get started" scrolls to)
-        ═══════════════════════════════ */}
-        <section ref={howRef} id="how" style={{padding:'96px 5vw',background:'var(--cream-dark)'}}>
-          <div style={{maxWidth:680,margin:'0 auto 64px',textAlign:'center'}}>
-            <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--gold)',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'center',gap:10}}>
-              <span style={{display:'block',width:24,height:1,background:'var(--gold)'}}/>
-              Getting started
-              <span style={{display:'block',width:24,height:1,background:'var(--gold)'}}/>
-            </div>
-            <h2 style={{fontFamily:'var(--font-serif)',fontSize:'clamp(34px,4vw,56px)',fontWeight:800,color:'var(--forest)',letterSpacing:'-0.02em',lineHeight:1.06,marginBottom:16}}>
-              Three steps.<br/>
-              <em style={{fontStyle:'italic',color:'var(--gold)'}}>That is all it takes.</em>
-            </h2>
-            <p style={{fontSize:18,color:'var(--muted)',lineHeight:1.75}}>No subscription. No complicated onboarding. Pay once, access forever.</p>
-          </div>
-
-          <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:24,maxWidth:960,margin:'0 auto 64px'}} className="steps-grid">
-            {[
-              {num:'01',title:'Pick your starting point',body:'Dictionary if you want to understand the language. Course if you are ready to invest. Terminal if you already invest and want to analyse properly. TraDaq if you run a business.'},
-              {num:'02',title:'Pay once on Selar',body:'All prices in Naira. One-time payment. No monthly fees. No hidden charges. Your access key arrives in your email within minutes of payment.'},
-              {num:'03',title:'Create an account and activate',body:'Go to meridianng.com, create a free account, paste your key from the email. Your products unlock immediately. One key. Everything included in your plan.'},
-            ].map(s => (
-              <div key={s.num} style={{background:'white',borderRadius:10,padding:'36px 32px',border:'1px solid rgba(10,61,34,0.09)'}}>
-                <div style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.18em',color:'var(--gold)',marginBottom:18}}>{s.num}</div>
-                <h3 style={{fontFamily:'var(--font-serif)',fontSize:24,fontWeight:700,color:'var(--forest)',letterSpacing:'-0.01em',marginBottom:14,lineHeight:1.2}}>{s.title}</h3>
-                <p style={{fontSize:15,color:'var(--muted)',lineHeight:1.75}}>{s.body}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Pricing pills + buy CTA */}
-          <div style={{maxWidth:900,margin:'0 auto',textAlign:'center'}}>
-            <div style={{display:'flex',justifyContent:'center',gap:12,flexWrap:'wrap',marginBottom:36}}>
-              {[
-                {icon:'📖',name:'MoneySpeak',price:'₦4,500'},
-                {icon:'🎓',name:'Stock School',price:'₦18,000'},
-                {icon:'📊',name:'Equity Terminal',price:'₦15,000'},
-                {icon:'✦',name:'Meridian Access (All)',price:'₦35,000 — saves ₦11,500',featured:true},
-              ].map(p => (
-                <div key={p.name} style={{
-                  display:'flex',alignItems:'center',gap:10,
-                  background:p.featured?'rgba(200,151,42,0.15)':'rgba(10,61,34,0.05)',
-                  border:`1px solid ${p.featured?'rgba(200,151,42,0.35)':'rgba(10,61,34,0.1)'}`,
-                  borderRadius:100,padding:'10px 20px',
-                }}>
-                  <span>{p.icon}</span>
-                  <span style={{fontSize:14,color:'var(--forest)',fontWeight:500}}>{p.name}</span>
-                  <span style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--gold)'}}>{p.price}</span>
                 </div>
               ))}
             </div>
-            <a
-              href="https://selar.com/m/meridian_ng"
-              target="_blank" rel="noopener noreferrer"
-              style={{display:'inline-flex',alignItems:'center',gap:8,padding:'18px 52px',borderRadius:6,fontFamily:'var(--font)',fontSize:18,fontWeight:600,background:'var(--gold)',color:'white',textDecoration:'none'}}
-            >
-              Start understanding money →
-            </a>
-            <div style={{marginTop:16,fontFamily:'var(--font-mono)',fontSize:12,color:'var(--muted-light)',letterSpacing:'0.08em'}}>
-              One-time Naira payments via Selar · Instant access · No subscriptions
-            </div>
           </div>
         </section>
 
-        {/* ═══════════════════════════════
-            PAIN SECTION
-        ═══════════════════════════════ */}
-        <section style={{background:'var(--forest)',padding:'100px 5vw',position:'relative',overflow:'hidden'}}>
-          <div style={{position:'absolute',top:-30,right:'4vw',fontFamily:'var(--font-serif)',fontSize:240,color:'rgba(255,255,255,0.04)',pointerEvents:'none',lineHeight:1,userSelect:'none'}}>❝</div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1.1fr',gap:80,alignItems:'start',maxWidth:1100,margin:'0 auto'}} className="pain-grid">
+        {/* PAIN */}
+        <section className="pain-sec">
+          <div className="pain-grid">
             <div>
-              <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'rgba(228,185,74,0.65)',marginBottom:24,display:'flex',alignItems:'center',gap:10}}>
-                <span style={{display:'block',width:28,height:1,background:'rgba(228,185,74,0.45)',flexShrink:0}}/>
-                The honest truth
-              </div>
-              <h2 style={{fontFamily:'var(--font-serif)',fontSize:'clamp(38px,5vw,68px)',fontWeight:800,color:'var(--cream)',lineHeight:1.07,letterSpacing:'-0.02em',marginBottom:28}}>
-                The financial system was never designed to
-                <em style={{fontStyle:'italic',color:'var(--gold-light)'}}> explain itself to you.</em>
+              <div className="eyebrow eyebrow-light reveal" style={{marginBottom:'24px'}}>The honest truth</div>
+              <h2 className="pain-heading reveal reveal-d1">
+                The financial system was never designed<br/>
+                <em>to explain itself to you.</em>
               </h2>
-              <p style={{fontSize:18,color:'rgba(249,246,239,0.62)',lineHeight:1.8,marginBottom:14,fontWeight:300}}>
-                Banks, advisors, and textbooks all speak a language designed to make you <strong style={{color:'var(--cream)'}}>dependent on them.</strong> The more confused you are, the more money they make from your confusion.
+              <p className="pain-body reveal reveal-d2">
+                Banks, advisors, and textbooks all speak a language designed to make you <strong>dependent on them.</strong> The more confused you are, the more money they make from your confusion.
               </p>
-              <p style={{fontSize:18,color:'rgba(249,246,239,0.62)',lineHeight:1.8,fontWeight:300}}>
+              <p className="pain-body reveal reveal-d3">
                 This is not about your intelligence. It is about access. Meridian gives you the access.
               </p>
             </div>
-            <div style={{display:'flex',flexDirection:'column',gap:16}}>
+            <div className="pain-scenes">
               {[
-                {tag:'The family gathering',text:'Your uncle talks about "diversifying his portfolio" and everyone nods respectfully. You are nodding too — but inside you are wondering if portfolio is something you eat with egusi.'},
-                {tag:'Your business',text:'You made ₦400,000 in sales this month. After everything, you do not know if you actually made profit — or just moved money from one pocket to another.'},
-                {tag:'The WhatsApp group',text:'Someone drops a hot investment tip. 40 fire emojis. You want to ask what it means, but you do not want to look like you do not know.'},
-                {tag:'The stock market',text:'You have heard "buy Dangote shares" three times this year. You have the money. But you do not know how to check if it is actually worth buying at today\'s price.'},
-              ].map(s => (
-                <div key={s.tag} style={{background:'rgba(249,246,239,0.05)',border:'1px solid rgba(249,246,239,0.1)',borderLeft:'3px solid rgba(240,216,150,0.6)',borderRadius:'0 6px 6px 0',padding:'20px 22px'}}>
-                  <div style={{fontFamily:'var(--font-mono)',fontSize:9,letterSpacing:'0.18em',textTransform:'uppercase',color:'rgba(240,216,150,0.6)',marginBottom:10}}>{s.tag}</div>
-                  <div style={{fontSize:15,color:'rgba(249,246,239,0.78)',lineHeight:1.72}}>{s.text}</div>
+                {tag:'The family gathering',text:'Your uncle talks about "diversifying his portfolio" and everyone nods respectfully. You're nodding too — but inside you're wondering if portfolio is something you eat with egusi.'},
+                {tag:'Your business',text:'You made ₦400,000 in sales this month. After everything, you don't know if you actually made profit — or just moved money from one pocket to another.'},
+                {tag:'The WhatsApp group',text:'Someone drops a hot investment tip. 40 fire emojis. You want to ask what it means, but you don't want to look like you don't know.'},
+                {tag:'The stock market',text:'You've heard "buy Dangote shares" three times this year. You have the money. But you don't know how to check if it's actually worth buying at today's price.'},
+              ].map((s,i) => (
+                <div className={`scene reveal${i>0?' reveal-d'+i:''}`} key={s.tag}>
+                  <div className="scene-tag">{s.tag}</div>
+                  <div className="scene-text" dangerouslySetInnerHTML={{__html: s.text.replace(/You're/g,'You’re').replace(/don't/g,'don’t').replace(/you've/g,'you’ve').replace(/it's/g,'it’s')}}/>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ═══════════════════════════════
-            BEFORE / AFTER
-        ═══════════════════════════════ */}
-        <section style={{padding:'96px 5vw',background:'var(--cream-3)'}}>
-          <div style={{maxWidth:680,margin:'0 auto 56px',textAlign:'center'}}>
-            <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--gold)',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'center',gap:10}}>
-              <span style={{display:'block',width:24,height:1,background:'var(--gold)'}}/>
-              What changes
-              <span style={{display:'block',width:24,height:1,background:'var(--gold)'}}/>
-            </div>
-            <h2 style={{fontFamily:'var(--font-serif)',fontSize:'clamp(34px,4vw,54px)',fontWeight:800,color:'var(--forest)',letterSpacing:'-0.02em',lineHeight:1.06,marginBottom:16}}>Before Meridian.<br/><em style={{fontStyle:'italic',color:'var(--gold)'}}>After Meridian.</em></h2>
-            <p style={{fontSize:18,color:'var(--muted)',lineHeight:1.75}}>Not about becoming an expert. About never being fooled again.</p>
+        {/* BEFORE / AFTER */}
+        <section className="ba-sec">
+          <div className="ba-header">
+            <div className="eyebrow eyebrow-center reveal" style={{marginBottom:'20px'}}>What changes</div>
+            <h2 className="display display-md reveal reveal-d1" style={{marginBottom:'16px'}}>Before Meridian.<br/>After Meridian.</h2>
+            <p className="lead reveal reveal-d2">This is not about becoming a finance expert. It is about never being fooled again.</p>
           </div>
-          <div style={{display:'grid',gridTemplateColumns:'1fr auto 1fr',gap:24,alignItems:'stretch',maxWidth:960,margin:'0 auto'}} className="ba-grid">
-            <div>
-              <span style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.18em',textTransform:'uppercase',padding:'5px 14px',background:'rgba(180,60,60,0.1)',color:'#8B2020',borderRadius:100,display:'inline-block',marginBottom:18}}>Before Meridian</span>
+          <div className="ba-grid wrap-md">
+            <div className="ba-col before">
+              <div className="ba-col-label">Before Meridian</div>
               {[
                 '"I hear people talk about stocks but I just avoid it. Too complicated for me."',
-                '"I made good sales this month but my account is empty. I do not understand."',
-                '"Someone is promising 30% monthly returns. It sounds off but everyone is doing it."',
-                '"I want to grow my money but I do not know where to start without getting scammed."',
-              ].map(t => (
-                <div key={t} style={{padding:'16px 20px',borderRadius:6,background:'rgba(180,60,60,0.06)',border:'1px solid rgba(180,60,60,0.12)',fontSize:14,color:'#6B2020',lineHeight:1.65,marginBottom:12}}>{t}</div>
+                '"I made good sales this month but my account is empty. I don't understand."',
+                '"My uncle is telling me to invest ₦500k. I can't ask questions — he'll think I'm dumb."',
+                '"Someone is promising 30% monthly returns. It sounds too good, but everyone is doing it."',
+                '"I want to grow my money but I don't know where to start without getting scammed."',
+              ].map((t,i) => (
+                <div className={`ba-item reveal${i>0?' reveal-d'+i:''}`} key={i}>{t}</div>
               ))}
             </div>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'center',padding:'48px 0 0'}} className="ba-arrow-col">
-              <div style={{width:44,height:44,background:'var(--forest)',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',color:'var(--gold-pale)',fontSize:18,flexShrink:0}}>→</div>
+            <div className="ba-divider">
+              <div className="ba-arrow-line"/>
+              <div className="ba-arrow">→</div>
+              <div className="ba-arrow-line"/>
             </div>
-            <div>
-              <span style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.18em',textTransform:'uppercase',padding:'5px 14px',background:'rgba(10,61,34,0.1)',color:'var(--forest)',borderRadius:100,display:'inline-block',marginBottom:18}}>After Meridian</span>
+            <div className="ba-col after">
+              <div className="ba-col-label">After Meridian</div>
               {[
-                '"I now understand what to look for in a company before I invest."',
-                '"TraDaq showed me my real profit was ₦45k, not the ₦400k I was celebrating. I fixed my pricing."',
-                '"I can explain exactly why 30% monthly is impossible for a legitimate business. I did not invest."',
-                '"I started with MoneySpeak. Now I am building a real portfolio on the NGX."',
-              ].map(t => (
-                <div key={t} style={{padding:'16px 20px',borderRadius:6,background:'rgba(10,61,34,0.07)',border:'1px solid rgba(10,61,34,0.12)',fontSize:14,color:'var(--forest-mid)',fontWeight:500,lineHeight:1.65,marginBottom:12}}>{t}</div>
+                '"I now understand what to look for in a company before I invest. I use the Equity Terminal."',
+                '"TraDaq showed me my actual profit is ₦45k, not the ₦400k I was celebrating. I fixed my pricing."',
+                '"I asked my uncle what the ROIC was. He looked at me differently. I already knew the answer."',
+                '"I can now explain exactly why 30% monthly return is impossible for a legitimate business. I didn't invest."',
+                '"I started with the MoneySpeak Dictionary. Now I'm building a real portfolio on the NGX."',
+              ].map((t,i) => (
+                <div className={`ba-item reveal${i>0?' reveal-d'+i:''}`} key={i}>{t}</div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ═══════════════════════════════
-            PRODUCTS
-        ═══════════════════════════════ */}
-        <section id="products" style={{padding:'96px 5vw',background:'var(--cream)'}}>
-          <div style={{maxWidth:700,margin:'0 auto 56px',textAlign:'center'}}>
-            <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'var(--gold)',marginBottom:20,display:'flex',alignItems:'center',justifyContent:'center',gap:10}}>
-              <span style={{display:'block',width:24,height:1,background:'var(--gold)'}}/>
-              Four tools. One purpose.
-              <span style={{display:'block',width:24,height:1,background:'var(--gold)'}}/>
+        {/* DICTIONARY LEAD */}
+        <section className="dict-lead">
+          <div className="dict-lead-inner">
+            <div>
+              <div className="eyebrow reveal" style={{marginBottom:'24px'}}>Start here — always free to try</div>
+              <h2 className="display display-md reveal reveal-d1" style={{marginBottom:'20px'}}>
+                The dictionary you should have had<br/><em>from the beginning.</em>
+              </h2>
+              <p className="lead reveal reveal-d2" style={{marginBottom:'32px'}}>
+                500 financial terms. Every one explained with a Nigerian story, a practical reality check, and zero big grammar. MoneySpeak is your front door to financial clarity.
+              </p>
+              <p className="body-text reveal reveal-d3" style={{marginBottom:'36px'}}>
+                The Word of the Day on this page? That is MoneySpeak. Every day, one new term — free, no payment needed. The full 500 terms, searchable anytime, unlock for ₦4,500.
+              </p>
+              <div className="reveal reveal-d4" style={{display:'flex',gap:'12px',flexWrap:'wrap'}}>
+                <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-md">Get MoneySpeak — ₦4,500</a>
+                <button className="btn btn-outline btn-md" onClick={() => showPage('products')}>See all products</button>
+              </div>
             </div>
-            <h2 style={{fontFamily:'var(--font-serif)',fontSize:'clamp(34px,4vw,56px)',fontWeight:800,color:'var(--forest)',letterSpacing:'-0.02em',lineHeight:1.06,marginBottom:14}}>
-              Chase Sapa for good.
-            </h2>
-            <p style={{fontSize:18,color:'var(--muted)',lineHeight:1.75,maxWidth:580,margin:'0 auto'}}>
-              Every product Meridian builds closes the gap between what finance is and what it has been made to feel like — for people who were never given the right language.
-            </p>
+            <div className="dict-terms-stack">
+              {[
+                {word:'EBITDA',plain:'The <strong>loud, raw money</strong> entering a business before life and government start chopping it. A businessman in Aba tells you "we made ₦100 million!" He hasn't paid his bank loan interest, his FIRS tax, or his delivery truck maintenance yet.'},
+                {word:'Dividend',plain:'You bought Zenith Bank shares. At year end, the CEO says <strong>"let us share thank-you money with our owners."</strong> You get a credit alert while eating suya. You did absolutely nothing. That is a dividend.'},
+                {word:'Compounding',plain:'One male goat, one female goat. They give birth. You don't kill the kids for pepper soup. The kids have more kids. <strong>Before you know it, your backyard has 50 goats from just 2.</strong> That is compounding.'},
+                {word:'Inflation',plain:'In 2015, your ₦500 was a bodybuilder — carried jollof, 2 meats, cold Malt. Today? <strong>It is a lanky boy.</strong> Same paper. The spirit of the money has traveled. That ghost is inflation.'},
+              ].map((d,i) => (
+                <div className={`dict-term-card reveal${i>0?' reveal-d'+i:''}`} key={d.word}>
+                  <div className="dict-term-word">{d.word}</div>
+                  <div className="dict-term-plain" dangerouslySetInnerHTML={{__html:d.plain}}/>
+                </div>
+              ))}
+              <div className="dict-see-more reveal reveal-d4" onClick={() => showPage('products')}>+ 496 more terms in MoneySpeak →</div>
+            </div>
           </div>
+        </section>
 
-          <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:18,maxWidth:1100,margin:'0 auto 40px'}} className="products-4">
+        {/* PRODUCTS OVERVIEW */}
+        <section className="products-overview">
+          <div className="products-header wrap-md">
+            <div className="eyebrow eyebrow-center reveal" style={{marginBottom:'20px'}}>Four tools. One purpose.</div>
+            <h2 className="display display-md reveal reveal-d1" style={{marginBottom:'16px'}}>Chase Sapa for good.</h2>
+            <p className="lead reveal reveal-d2">Every product Meridian builds is designed to close the gap between what finance is and what it has been made to feel like — for people who were never given the right language.</p>
+          </div>
+          <div className="products-4 wrap">
             {[
-              {icon:'📖',name:'MoneySpeak',pitch:'500 financial terms in plain Nigerian English. The front door to financial clarity.',price:'₦4,500 · One-time'},
-              {icon:'🎓',name:'Stock School',pitch:'From "what is a share?" to building a real portfolio. 11 phases. NGX examples throughout.',price:'₦18,000 · One-time'},
-              {icon:'📊',name:'Equity Terminal',pitch:"Don't follow hype. Analyse any company using the same framework serious investors use.",price:'₦15,000 · One-time'},
-              {icon:'📒',name:'TraDaq',pitch:'You made sales. But did you make profit? Track your real numbers in 30 seconds a day.',price:'₦9,000/yr · Coming soon'},
-            ].map(p => (
-              <div key={p.name} style={{background:'white',borderRadius:10,padding:'28px 24px',border:'1px solid rgba(10,61,34,0.09)',display:'flex',flexDirection:'column'}}>
-                <div style={{fontSize:24,marginBottom:14}}>{p.icon}</div>
-                <div style={{fontFamily:'var(--font-serif)',fontSize:22,fontWeight:700,color:'var(--forest)',marginBottom:8,letterSpacing:'-0.01em'}}>{p.name}</div>
-                <div style={{fontSize:14,color:'var(--muted)',lineHeight:1.65,flex:1,marginBottom:18}}>{p.pitch}</div>
-                <div style={{fontFamily:'var(--font-mono)',fontSize:11,color:'var(--gold)',letterSpacing:'0.06em'}}>{p.price}</div>
+              {icon:'📖',name:'MoneySpeak',pitch:'500 financial terms in plain Nigerian English. Your front door to understanding money — explained like your older sibling would.',price:'₦4,500 · One-time',cta:'Get started'},
+              {icon:'🎓',name:'Stock School',pitch:'From "I don't know anything" to building a real portfolio. 11 structured phases using NGX examples, no foreign theory.',price:'₦18,000 · One-time',cta:'Enrol now'},
+              {icon:'📊',name:'Equity Terminal',pitch:'Don't follow hype. Analyse any company using the same framework serious investors use. You input the data. You get the truth.',price:'₦15,000 · One-time',cta:'Get access'},
+              {icon:'📒',name:'TraDaq',pitch:'You made sales. But did you make profit? Track your business money in 30 seconds a day. Know your real numbers.',price:'₦9,000 / year · Coming soon',cta:'Join waitlist'},
+            ].map((p,i) => (
+              <div className={`product-tile reveal${i>0?' reveal-d'+i:''}`} key={p.name} onClick={() => showPage('products')}>
+                <div className="tile-icon">{p.icon}</div>
+                <div className="tile-name">{p.name}</div>
+                <div className="tile-pitch">{p.pitch}</div>
+                <div className="tile-price">{p.price}</div>
+                <div className="tile-cta">{p.cta}</div>
               </div>
             ))}
           </div>
-
-          {/* Bundle banner */}
-          <div style={{background:'var(--forest)',borderRadius:10,padding:'48px',display:'flex',alignItems:'center',justifyContent:'space-between',gap:40,maxWidth:1100,margin:'0 auto',flexWrap:'wrap',position:'relative',overflow:'hidden'}}>
-            <div style={{position:'absolute',right:-60,top:'50%',transform:'translateY(-50%)',fontFamily:'var(--font-serif)',fontSize:300,fontWeight:900,color:'rgba(255,255,255,0.025)',pointerEvents:'none',lineHeight:1,userSelect:'none'}}>M</div>
-            <div style={{position:'relative',zIndex:1}}>
-              <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.22em',textTransform:'uppercase',color:'rgba(228,185,74,0.65)',marginBottom:16}}>The Meridian Access bundle</div>
-              <h3 style={{fontFamily:'var(--font-serif)',fontSize:'clamp(28px,3.5vw,44px)',fontWeight:800,color:'var(--cream)',lineHeight:1.1,letterSpacing:'-0.015em',marginBottom:12}}>
-                Get everything.<br/><em style={{fontStyle:'italic',color:'var(--gold-light)'}}>Save ₦11,500.</em>
-              </h3>
-              <p style={{fontSize:16,color:'rgba(249,246,239,0.6)',lineHeight:1.7,maxWidth:520,fontWeight:300}}>
-                All four Meridian products under one access — ₦35,000. Every tool we build now and in the future, included. One payment. One key. Everything unlocked.
-              </p>
+          <div className="sapa-banner reveal" style={{maxWidth:'1160px',margin:'0 auto'}}>
+            <div className="sapa-text">
+              <div className="eyebrow eyebrow-light" style={{marginBottom:'16px'}}>The Meridian Access bundle</div>
+              <h3 className="sapa-headline">Get everything.<br/><em>Save ₦11,500.</em></h3>
+              <p className="sapa-sub">All four Meridian products under one access — ₦35,000. Every tool we build now and in the future, included. One payment. One key. Everything unlocked.</p>
             </div>
-            <div style={{display:'flex',flexDirection:'column',gap:12,flexShrink:0,position:'relative',zIndex:1}}>
-              <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" style={{padding:'18px 44px',borderRadius:6,fontFamily:'var(--font)',fontSize:17,fontWeight:600,background:'var(--gold)',color:'white',textDecoration:'none'}}>
-                Get Meridian Access — ₦35,000
-              </a>
+            <div style={{display:'flex',flexDirection:'column',gap:'12px',flexShrink:0}}>
+              <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-lg">Get Meridian Access — ₦35,000</a>
+              <button className="btn btn-cream btn-md" onClick={() => showPage('products')}>See individual products →</button>
             </div>
           </div>
         </section>
 
-        {/* ═══════════════════════════════
-            TRUST — Founder note + scam alert
-        ═══════════════════════════════ */}
-        <section style={{padding:'96px 5vw',background:'var(--cream-dark)'}}>
-          <div style={{maxWidth:700,margin:'0 auto 56px',textAlign:'center'}}>
-            <h2 style={{fontFamily:'var(--font-serif)',fontSize:'clamp(32px,4vw,52px)',fontWeight:800,color:'var(--forest)',letterSpacing:'-0.02em',lineHeight:1.06,marginBottom:0}}>
-              Trust is earned with honesty,<br/><em style={{fontStyle:'italic',color:'var(--gold)'}}>not fancy words.</em>
-            </h2>
+        {/* HOW IT WORKS — 3 steps (Get Started scrolls here) */}
+        <section className="how-section" id="how-steps-section">
+          <div className="how-header container-md" style={{maxWidth:'720px',margin:'0 auto',textAlign:'center',marginBottom:'70px'}}>
+            <div className="eyebrow" style={{justifyContent:'center',color:'rgba(249,246,239,0.5)',marginBottom:'16px'}}>Simple process</div>
+            <h2 className="headline" style={{textAlign:'center',color:'var(--cream)',marginBottom:'16px'}}>From visitor to <em>informed</em><br/>in three steps.</h2>
+            <p className="subtext" style={{textAlign:'center',color:'rgba(249,246,239,0.65)'}}>No technical knowledge required. No confusing setup. Just you, your money questions, and Meridian.</p>
           </div>
+          <div className="how-steps" style={{maxWidth:'1100px',margin:'0 auto'}}>
+            <div className="how-step reveal">
+              <div className="how-step-num">1</div>
+              <h3 className="how-step-title">Pick your starting point</h3>
+              <p className="how-step-desc">Not sure where to begin? Start with MoneySpeak — look up the terms you&apos;ve been pretending to understand. Or jump straight into Stock School if you want to learn investing from scratch.</p>
+            </div>
+            <div className="how-step reveal reveal-d1">
+              <div className="how-step-num">2</div>
+              <h3 className="how-step-title">Pay once. Access forever.</h3>
+              <p className="how-step-desc">One-time Naira payment through Selar. You receive your access key by email within minutes. No monthly fees. No subscription traps. No hidden charges. Your access is lifetime.</p>
+            </div>
+            <div className="how-step reveal reveal-d2">
+              <div className="how-step-num">3</div>
+              <h3 className="how-step-title">Create your account and activate.</h3>
+              <p className="how-step-desc">Go to meridianng.com, create a free account, and paste your key. Your products unlock immediately. One key opens everything in your plan — no separate logins, no separate apps.</p>
+            </div>
+          </div>
+        </section>
 
-          <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:60,alignItems:'start',maxWidth:1100,margin:'0 auto'}} className="trust-grid">
-            {/* Founder note */}
-            <div style={{background:'white',borderRadius:10,padding:'40px',border:'1px solid rgba(10,61,34,0.09)',position:'relative'}}>
-              <div style={{fontFamily:'var(--font-serif)',fontSize:80,color:'rgba(10,61,34,0.06)',position:'absolute',top:12,left:22,lineHeight:1,pointerEvents:'none'}}>❝</div>
-              <p style={{fontFamily:'var(--font-serif)',fontSize:20,fontStyle:'italic',color:'var(--ink)',lineHeight:1.8,marginBottom:24,position:'relative',zIndex:1}}>
-                "Finance in Nigeria is not actually complicated. It just gets explained by people who benefit from your confusion — or by textbooks written for completely different realities. We built Meridian because <strong style={{fontStyle:'normal'}}>when you understand what is happening to your money, nobody can mislead you.</strong>"
+        {/* TRUST */}
+        <section className="trust-sec">
+          <div className="wrap-md" style={{marginBottom:'48px'}}>
+            <div className="eyebrow eyebrow-center reveal" style={{marginBottom:'20px'}}>Why we built this</div>
+            <h2 className="display display-md reveal reveal-d1" style={{textAlign:'center',marginBottom:0}}>Trust is earned with honesty,<br/>not <em>fancy words.</em></h2>
+          </div>
+          <div className="trust-grid" style={{maxWidth:'1160px',margin:'0 auto'}}>
+            <div className="founder-note reveal">
+              <p className="founder-body">
+                &ldquo;Finance in Nigeria is not actually complicated. It just gets explained by people who benefit from your confusion — or by textbooks written for completely different realities. We built Meridian because we believe that when you understand what is happening to your money, <strong>nobody can mislead you.</strong>&rdquo;
               </p>
-              <div style={{display:'flex',alignItems:'center',gap:14}}>
-                <div style={{width:44,height:44,borderRadius:'50%',background:'var(--forest)',color:'var(--gold-pale)',fontFamily:'var(--font-serif)',fontSize:18,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>M</div>
+              <div className="founder-sig">
+                <div className="founder-avatar">M</div>
                 <div>
-                  <div style={{fontWeight:600,color:'var(--charcoal)',fontSize:15}}>Meridian Team</div>
-                  <div style={{fontSize:13,color:'var(--muted)'}}>hello@meridianng.com</div>
+                  <div className="founder-name">Meridian Team</div>
+                  <div className="founder-title">hello@meridianng.com</div>
                 </div>
               </div>
             </div>
-
-            {/* Trust points */}
-            <div style={{display:'flex',flexDirection:'column',gap:20}}>
+            <div className="trust-signals">
               {[
-                {icon:'🔒',title:'We never tell you what to buy',desc:'Every Meridian tool puts the decision in your hands. We give understanding, frameworks, and analysis. The choice is always yours.'},
-                {icon:'🇳🇬',title:'Built for Nigerian realities',desc:'NGX stocks. Naira pricing. CBN decisions. Inflation, devaluation, and the real conditions that affect your money — not Wall Street theory.'},
-                {icon:'✉',title:'We actually respond',desc:'Access issue? Question? Email hello@meridianng.com. We respond within a few hours, every time.'},
-                {icon:'💳',title:'One-time Naira payments, no tricks',desc:'Pay once through Selar. Keep access forever. No monthly subscriptions. No hidden fees.'},
-              ].map(t => (
-                <div key={t.title} style={{display:'flex',gap:18,alignItems:'flex-start'}}>
-                  <div style={{width:44,height:44,borderRadius:8,background:'rgba(10,61,34,0.07)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0}}>{t.icon}</div>
+                {icon:'🔒',title:'We never tell you what to buy',desc:'Every Meridian tool puts the decision firmly in your hands. We give you understanding, frameworks, and analysis. The choice is always yours.'},
+                {icon:'🇳🇬',title:'Built for Nigerian realities',desc:'NGX stocks. Naira pricing. CBN decisions. Inflation, devaluation, and the real economic conditions that affect your money — not Wall Street theory.'},
+                {icon:'✉',title:'We actually respond',desc:'Access issue? Question about a product? Email hello@meridianng.com. We respond within a few hours, every time.'},
+                {icon:'💳',title:'One-time Naira payments, no tricks',desc:'Pay once through Selar. Keep access forever. No monthly subscriptions. No hidden fees. Your price today is your price always.'},
+              ].map((t,i) => (
+                <div className={`trust-point reveal${i>0?' reveal-d'+i:''}`} key={t.title}>
+                  <div className="trust-icon">{t.icon}</div>
                   <div>
-                    <div style={{fontSize:16,fontWeight:600,color:'var(--forest)',marginBottom:4}}>{t.title}</div>
-                    <div style={{fontSize:14,color:'var(--muted)',lineHeight:1.65}}>{t.desc}</div>
+                    <div className="trust-point-title">{t.title}</div>
+                    <div className="trust-point-desc">{t.desc}</div>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-
-          {/* Scam alert */}
-          <div style={{background:'rgba(180,60,60,0.05)',border:'1px solid rgba(180,60,60,0.14)',borderRadius:8,padding:'28px 32px',maxWidth:1100,margin:'48px auto 0'}}>
-            <div style={{fontFamily:'var(--font-mono)',fontSize:11,letterSpacing:'0.18em',textTransform:'uppercase',color:'#8B2020',marginBottom:16}}>⚠ Red flags you should now recognise</div>
-            <div style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:12}} className="scam-grid">
+          <div className="scam-alert reveal" style={{maxWidth:'1160px',margin:'48px auto 0'}}>
+            <div className="scam-title">⚠ Red flags you should now recognise</div>
+            <div className="scam-items">
               {[
-                '"Guaranteed 30% monthly return" — no legitimate investment offers guaranteed returns. Always a scam.',
-                '"Just send your money and we invest for you" — if you cannot verify what they do, do not send it.',
-                '"Join our signal group for ₦5,000" — trading signals are not education. Someone profits from your confusion.',
-                '"Limited time — invest today or miss out" — real investments do not expire. Urgency is manipulation.',
-                '"Crypto will 10x in 2 months" — anyone promising specific returns on a specific date is lying.',
-                '"My uncle at CBN says…" — insider claims are almost always false, and acting on real ones is illegal.',
-              ].map(s => (
-                <div key={s} style={{padding:'12px 14px',background:'rgba(180,60,60,0.07)',borderRadius:4,fontSize:14,color:'#7A2020',lineHeight:1.55,display:'flex',alignItems:'flex-start',gap:8}}>
-                  <span style={{fontWeight:700,flexShrink:0}}>✕</span>{s}
-                </div>
+                '"Guaranteed 30% monthly return" — no legitimate investment offers guaranteed returns. This is always a scam.',
+                '"Just send your money and we invest for you" — if you don't understand what they're doing with your money, don't send it.',
+                '"Join our signal group for ₦5,000" — trading signals are not financial education. Someone benefits from your confusion.',
+                '"Limited time offer — invest today or miss out" — real investments don't expire. Urgency is a manipulation tactic.',
+                '"Crypto will 10x in 2 months" — crypto is volatile. Anyone promising specific returns in a specific timeframe is lying.',
+                '"My uncle works at CBN and says…" — insider information claims are almost always false, and acting on real insider info is illegal.',
+              ].map((s,i) => (
+                <div className="scam-item" key={i}>{s}</div>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ═══════════════════════════════
-            FINAL CTA
-        ═══════════════════════════════ */}
-        <section style={{background:'var(--forest)',padding:'120px 5vw',textAlign:'center',position:'relative',overflow:'hidden'}}>
-          <div style={{position:'absolute',top:'50%',left:'50%',transform:'translate(-50%,-50%)',fontFamily:'var(--font-serif)',fontSize:600,fontWeight:900,color:'rgba(255,255,255,0.022)',userSelect:'none',pointerEvents:'none',lineHeight:1}}>M</div>
-          <div style={{position:'relative',zIndex:1}}>
-            <h2 style={{fontFamily:'var(--font-serif)',fontSize:'clamp(40px,6vw,80px)',fontWeight:900,color:'var(--cream)',lineHeight:1.05,letterSpacing:'-0.02em',maxWidth:900,margin:'0 auto 24px'}}>
-              Knowledge is expensive.<br/><em style={{fontStyle:'italic',color:'var(--gold-light)'}}>Confusion costs more.</em>
-            </h2>
-            <p style={{fontSize:20,color:'rgba(249,246,239,0.58)',maxWidth:540,margin:'0 auto 52px',lineHeight:1.75,fontWeight:300}}>
-              Every year you spend confused about money is a year someone else profits from that confusion. Start today.
-            </p>
-
-            {/* Pricing pills */}
-            <div style={{display:'flex',justifyContent:'center',gap:12,flexWrap:'wrap',marginBottom:48}}>
-              {[
-                {icon:'📖',name:'MoneySpeak',price:'₦4,500'},
-                {icon:'🎓',name:'Stock School',price:'₦18,000'},
-                {icon:'📊',name:'Equity Terminal',price:'₦15,000'},
-                {icon:'✦',name:'Meridian Access (All)',price:'₦35,000',featured:true},
-              ].map(p => (
-                <div key={p.name} style={{display:'flex',alignItems:'center',gap:10,background:p.featured?'rgba(200,151,42,0.2)':'rgba(249,246,239,0.08)',border:`1px solid ${p.featured?'rgba(200,151,42,0.35)':'rgba(249,246,239,0.14)'}`,borderRadius:100,padding:'10px 20px'}}>
-                  <span>{p.icon}</span>
-                  <span style={{fontSize:14,color:'var(--cream)',fontWeight:500}}>{p.name}</span>
-                  <span style={{fontFamily:'var(--font-mono)',fontSize:13,color:'var(--gold-light)'}}>{p.price}</span>
-                </div>
-              ))}
-            </div>
-
-            <div style={{display:'flex',justifyContent:'center',gap:14,flexWrap:'wrap',marginBottom:24}}>
-              <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" style={{padding:'20px 56px',borderRadius:6,fontFamily:'var(--font)',fontSize:18,fontWeight:600,background:'var(--gold)',color:'white',textDecoration:'none'}}>
-                Start understanding money →
-              </a>
-              <Link href="/login" style={{padding:'20px 32px',borderRadius:6,fontFamily:'var(--font)',fontSize:18,fontWeight:600,background:'rgba(249,246,239,0.1)',color:'var(--cream)',textDecoration:'none',border:'2px solid rgba(249,246,239,0.25)'}}>
-                Sign in to dashboard
-              </Link>
-            </div>
-            <div style={{fontFamily:'var(--font-mono)',fontSize:12,color:'rgba(249,246,239,0.28)',letterSpacing:'0.08em'}}>
-              One-time Naira payments via Selar · Instant access · No subscriptions
-            </div>
-          </div>
-        </section>
-
-      </main>
-
-      {/* ═══════════════════════════════
-          FOOTER
-      ═══════════════════════════════ */}
-      <footer style={{background:'var(--charcoal)',padding:'64px 5vw 40px',color:'rgba(249,246,239,0.55)'}}>
-        <div style={{maxWidth:1100,margin:'0 auto'}}>
-          <div style={{display:'grid',gridTemplateColumns:'1.8fr 1fr 1fr 1fr',gap:40,paddingBottom:48,borderBottom:'1px solid rgba(249,246,239,0.08)',marginBottom:32}} className="footer-grid">
-            <div>
-              <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:16}}>
-                <div style={{width:32,height:32,borderRadius:'50%',background:'rgba(249,246,239,0.1)',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'var(--font-serif)',fontSize:15,fontWeight:900,color:'var(--gold-light)'}}>M</div>
-                <span style={{fontFamily:'var(--font-serif)',fontSize:20,fontWeight:700,color:'var(--cream)',letterSpacing:'-0.01em'}}>Meridian</span>
-              </div>
-              <p style={{fontSize:14,lineHeight:1.75,maxWidth:260}}>Finance in plain Nigerian English — for investors, business owners, and anyone who has ever felt left out of the conversation.</p>
-            </div>
+        {/* FINAL CTA */}
+        <section className="cta-final" id="final-cta">
+          <div className="eyebrow eyebrow-center eyebrow-light reveal" style={{marginBottom:'32px'}}>Your next step</div>
+          <h2 className="cta-headline reveal reveal-d1">
+            Knowledge is expensive.<br/><em>Confusion costs more.</em>
+          </h2>
+          <p className="cta-sub reveal reveal-d2">
+            Every year you spend confused about money is a year someone else profits from that confusion. Start with whatever makes sense for you — today.
+          </p>
+          <div className="cta-pricing reveal reveal-d3">
             {[
-              {title:'Products',links:[['MoneySpeak','#products'],['Stock School','#products'],['Equity Terminal','#products'],['TraDaq','#products'],['Meridian Access','#products']]},
-              {title:'Company',links:[['About Meridian','#'],['Contact','mailto:hello@meridianng.com'],['Buy on Selar','https://selar.com/m/meridian_ng'],['Dashboard login','/login']]},
-              {title:'Follow us',links:[['Instagram','https://instagram.com/meridianng_'],['LinkedIn','https://linkedin.com/company/meridianng'],['YouTube','https://youtube.com/@MeridianNG'],['Email us','mailto:hello@meridianng.com']]},
-            ].map(col => (
-              <div key={col.title}>
-                <div style={{fontFamily:'var(--font-mono)',fontSize:10,letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold-light)',marginBottom:20}}>{col.title}</div>
-                <div style={{display:'flex',flexDirection:'column',gap:12}}>
-                  {col.links.map(([label,href]) => (
-                    <a key={label} href={href} style={{fontSize:14,color:'rgba(249,246,239,0.5)',textDecoration:'none'}}>{label}</a>
-                  ))}
-                </div>
+              {icon:'📖',name:'MoneySpeak',amount:'₦4,500'},
+              {icon:'🎓',name:'Stock School',amount:'₦18,000'},
+              {icon:'📊',name:'Equity Terminal',amount:'₦15,000'},
+              {icon:'✦',name:'Meridian Access (All)',amount:'₦35,000 — saves ₦11,500',featured:true},
+            ].map(p => (
+              <div className={`price-pill${p.featured?' featured':''}`} key={p.name}>
+                <span className="price-pill-icon">{p.icon}</span>
+                <span className="price-pill-name">{p.name}</span>
+                <span className="price-pill-amount">{p.amount}</span>
               </div>
             ))}
           </div>
-          <div style={{display:'flex',alignItems:'flex-start',justifyContent:'space-between',gap:20,flexWrap:'wrap'}}>
-            <div style={{fontSize:13}}>
+          <div className="cta-actions reveal reveal-d4">
+            <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Start understanding money →</a>
+            <a href="/login" className="btn btn-cream btn-lg">Sign in to dashboard</a>
+          </div>
+          <div className="cta-footnote reveal">One-time Naira payments via Selar · Instant access after purchase · No subscriptions</div>
+        </section>
+
+      </div>{/* /page-home */}
+
+      {/* ═══════════════════════════════════════════════════════
+          ABOUT PAGE
+      ═══════════════════════════════════════════════════════ */}
+      <div className={`page pt-nav${page === 'about' ? ' active' : ''}`} id="page-about">
+        <section className="sec sec-forest" style={{paddingBottom:0}}>
+          <div className="wrap-md" style={{textAlign:'center',paddingBottom:'80px'}}>
+            <div className="eyebrow eyebrow-center eyebrow-light reveal" style={{marginBottom:'24px'}}>Our story</div>
+            <h1 className="display display-lg on-forest reveal reveal-d1" style={{marginBottom:'24px'}}>We built the teacher<br/><em>we wished we had.</em></h1>
+            <p className="lead lead-light reveal reveal-d2">Finance in Nigeria is not complicated. It just gets explained badly — by people who benefit from your confusion, or by textbooks written for completely different realities.</p>
+          </div>
+        </section>
+        <section className="sec">
+          <div className="trust-grid wrap" style={{maxWidth:'1100px',margin:'0 auto'}}>
+            <div>
+              <p className="body-text reveal" style={{marginBottom:'20px'}}>The Naira depreciating. CBN raising rates. Inflation eating savings quietly. Investing on the NGX. Running a business in a market with unpredictable infrastructure. None of these have simple answers.</p>
+              <p className="body-text reveal reveal-d1" style={{marginBottom:'20px'}}>But they all deserve honest, clear explanations — in language that respects your intelligence rather than exploiting your unfamiliarity.</p>
+              <p className="body-text reveal reveal-d2" style={{marginBottom:'20px'}}>Meridian was built because we believe that when you understand what is happening to your money — really understand it, not just nod along — you make better decisions. You are harder to mislead. You are harder to cheat.</p>
+              <p className="body-text reveal reveal-d3" style={{marginBottom:'32px'}}>We are not a bank. We are not a broker. We do not manage your money or tell you what to buy. <strong style={{color:'var(--charcoal)'}}>We just explain things properly.</strong> That is the whole mission.</p>
+              <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-md reveal reveal-d4">See our products</a>
+            </div>
+            <div className="founder-note reveal" style={{background:'var(--cream-2)'}}>
+              <p className="founder-body" style={{marginBottom:'20px'}}>&ldquo;Finance should never feel like it wasn&apos;t made for you. The market woman trying to grow her business, the fresh graduate wondering where to put her first salary, the trader with no clear sense of profit — <strong>these are the people Meridian is built for.</strong>&rdquo;</p>
+              <div style={{padding:'20px',background:'white',borderRadius:'6px',border:'1px solid var(--border)'}}>
+                <div style={{fontFamily:'var(--mono)',fontSize:'10px',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--gold)',marginBottom:'12px'}}>Our three commitments</div>
+                <div style={{display:'flex',flexDirection:'column',gap:'10px'}}>
+                  {['Explain every concept so clearly that a 16-year-old can understand it','Never tell you what to buy — put the decision firmly in your hands','Build for Nigerian realities, not Wall Street theory'].map((c,i) => (
+                    <div style={{fontSize:'15px',color:'var(--ink)',display:'flex',gap:'10px',alignItems:'flex-start'}} key={i}>
+                      <span style={{color:'var(--gold)',fontWeight:700,flexShrink:0}}>0{i+1}</span> {c}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════
+          PRODUCTS PAGE
+      ═══════════════════════════════════════════════════════ */}
+      <div className={`page pt-nav${page === 'products' ? ' active' : ''}`} id="page-products">
+        <section className="products-page-hero">
+          <div className="products-page-hero-inner">
+            <div className="eyebrow eyebrow-center eyebrow-light reveal" style={{marginBottom:'24px'}}>The full Meridian system</div>
+            <h1 className="display display-lg on-forest reveal reveal-d1" style={{marginBottom:'20px'}}>Four tools.<br/><em>One goal.</em></h1>
+            <p className="lead lead-light reveal reveal-d2">Each product solves a specific, real problem Nigerian investors and business owners face. Buy what you need. Pay once. Use forever.</p>
+          </div>
+        </section>
+        <section className="sec">
+          <div className="wrap" style={{maxWidth:'1100px',margin:'0 auto'}}>
+            {[
+              {accent:'',badge:'📖 MoneySpeak',badgeStyle:{},name:'MoneySpeak — Investment Dictionary',tag:'500 terms. Nigerian stories. Your front door to financial clarity.',price:'₦4,500',note:'One-time · Lifetime',story:'You have been nodding along when people say "liquidity," "portfolio diversification," and "bull run." MoneySpeak is for the moment you decide to stop nodding and actually understand. Every term comes with a plain definition, a Nigerian story that makes it real, and a reality check so you know how to use it.',features:['500 terms covering investing, business, and personal finance','Every term explained with a Nigerian story, not a textbook definition','Word of the Day — free, forever, no payment needed','Searchable interface — find any term in under 5 seconds','Organised by category: investing, business, crypto, personal finance','Reality check on every term — how it actually affects your decisions'],ctaColor:'',cta:'Get MoneySpeak — ₦4,500 →'},
+              {accent:'background:linear-gradient(90deg,var(--gold),var(--gold-light))',badge:'🎓 Stock School',badgeStyle:{background:'rgba(184,146,42,0.1)',color:'var(--gold)'},name:'Stock School — Investing Mastery',tag:'From complete beginner to confident, independent investor.',price:'₦18,000',note:'One-time · 11 Phases',story:'Most investing content in Nigeria teaches you to follow tips and signals. Stock School teaches you something different: how to think. How to evaluate a company, understand why it is priced the way it is, and decide independently whether it belongs in your portfolio. No tips. No signals. Just your own judgment — properly informed.',features:['11 structured phases from "what is a share?" to portfolio construction','Nigerian Exchange Group (NGX) examples throughout — not Wall Street','How to read and understand a company's annual report','Valuation frameworks — is a stock cheap or expensive right now?','Risk thinking calibrated to Nigerian market realities','Works directly with Equity Terminal for hands-on practice'],ctaColor:'btn-gold',cta:'Enrol in Stock School — ₦18,000 →'},
+              {accent:'background:linear-gradient(90deg,var(--forest-mid),var(--forest-light))',badge:'📊 Equity Terminal',badgeStyle:{},name:'Equity Terminal — Stock Analyser',tag:'The analysis tool for investors who want to think, not follow.',price:'₦15,000',note:'One-time · Lifetime V2',story:'A stock going up is not the same as a stock being good. The Equity Terminal is a calculator that applies a proven Owner Earnings framework to data you enter from any company's annual report. You put in the numbers. It shows you what the maths says. You decide what to do. This is how serious investors think — not by following tips.',features:['Owner Earnings analysis — the framework serious long-term investors use','Quick Mode: directional results from just 4 inputs — beginner-friendly','Multi-year tracking — see if a company's quality is improving or declining','Calibrated for Nigeria (15% default hurdle rate for NGN investments)','Plain-English verdict with detailed supporting analysis','NGN, USD, GBP, EUR, ZAR, KES, GHS and more'],ctaColor:'',cta:'Get Equity Terminal — ₦15,000 →'},
+              {accent:'background:linear-gradient(90deg,#C17A2A,#E4993A)',badge:'📒 TraDaq — Coming Soon',badgeStyle:{background:'rgba(193,122,42,0.1)',color:'#8B5A18'},name:'TraDaq — Business Money Tracker',tag:'For traders, IG sellers, and anyone running a business without an accountant.',price:'₦9,000',note:'Per year · Early access',story:'Many small business owners in Nigeria are working 12 hours a day and ending the month confused about where the money went. "I made good sales" is not the same as "I made profit." TraDaq shows you the exact difference — in plain language, from your phone, in 30 seconds a day.',features:['Track every sale and every cost — 30 seconds per entry','See your actual profit — not revenue, not "what's in the account"','Categorised expenses: stock, rent, transport, salary, marketing, and more','Plain-English insights: "For every ₦100 you make, ₦23 is real profit"','Phone-first — no laptop, no spreadsheet, no accountant needed','Your data stays on your device — not shared with anyone'],ctaColor:'',cta:'Join the TraDaq waitlist →'},
+            ].map(p => (
+              <div className="product-deep-card reveal" key={p.name}>
+                <div className="product-deep-accent" style={p.accent?{...(()=>{const s={} as any;s.background=p.accent.split(':')?.[1]?.trim()||p.accent;return s})()}:{}}/>
+                <div className="product-deep-body">
+                  <div className="product-deep-header">
+                    <div className="product-deep-meta">
+                      <div className="product-deep-badge" style={p.badgeStyle}>{p.badge}</div>
+                      <div className="product-deep-name">{p.name}</div>
+                      <div className="product-deep-tagline">{p.tag}</div>
+                    </div>
+                    <div className="product-price-block">
+                      <div className="product-price-main">{p.price}</div>
+                      <div className="product-price-note">{p.note}</div>
+                    </div>
+                  </div>
+                  <div className="product-story-block">{p.story}</div>
+                  <div className="product-features">
+                    {p.features.map(f => (
+                      <div className="feature" key={f}><div className="feature-check">✓</div>{f}</div>
+                    ))}
+                  </div>
+                  <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className={`btn btn-forest btn-md${p.ctaColor?' '+p.ctaColor:''}`}>{p.cta}</a>
+                </div>
+              </div>
+            ))}
+            <div className="sapa-banner reveal">
+              <div className="sapa-text">
+                <div className="eyebrow eyebrow-light" style={{marginBottom:'16px'}}>Best value — everything included</div>
+                <h3 className="sapa-headline">Meridian Access.<br/><em>All four products. One payment.</em></h3>
+                <p className="sapa-sub">MoneySpeak, Stock School, Equity Terminal, and TraDaq — all under one access. ₦35,000 total. You save ₦11,500. Every future product Meridian builds is included.</p>
+              </div>
+              <div style={{flexShrink:0}}>
+                <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Get Meridian Access — ₦35,000 →</a>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ═══════════════════════════════════════════════════════
+          CONTACT PAGE
+      ═══════════════════════════════════════════════════════ */}
+      <div className={`page pt-nav${page === 'contact' ? ' active' : ''}`} id="page-contact">
+        <section className="sec">
+          <div className="trust-grid wrap" style={{maxWidth:'1100px',margin:'0 auto'}}>
+            <div>
+              <div className="eyebrow reveal" style={{marginBottom:'20px'}}>Talk to us</div>
+              <h1 className="display display-md reveal reveal-d1" style={{marginBottom:'20px'}}>We actually<br/><em>respond.</em></h1>
+              <p className="lead reveal reveal-d2" style={{marginBottom:'40px'}}>A question about a product. A term you want added to MoneySpeak. An issue with your access. Feedback. Ideas. We read everything.</p>
+              <div className="trust-signals">
+                {[
+                  {icon:'✉',title:'Email',desc:'hello@meridianng.com — we respond within a few hours'},
+                  {icon:'📷',title:'Instagram',desc:'@meridianng_ — DMs open'},
+                  {icon:'🔗',title:'LinkedIn',desc:'linkedin.com/company/meridianng'},
+                  {icon:'▶',title:'YouTube',desc:'@MeridianNG'},
+                ].map((t,i) => (
+                  <div className={`trust-point reveal${i>0?' reveal-d'+i:''}`} key={t.title}>
+                    <div className="trust-icon">{t.icon}</div>
+                    <div><div className="trust-point-title">{t.title}</div><div className="trust-point-desc">{t.desc}</div></div>
+                  </div>
+                ))}
+              </div>
+              <div style={{marginTop:'32px',padding:'22px 24px',background:'var(--cream-2)',borderRadius:'6px',border:'1px solid var(--border)'}} className="reveal">
+                <div style={{fontWeight:600,color:'var(--forest)',marginBottom:'8px',fontSize:'15px'}}>Access key issue?</div>
+                <div style={{fontSize:'15px',color:'var(--muted)',lineHeight:1.7}}>If your key is not working or you did not receive your email after purchase, email us at <strong style={{color:'var(--charcoal)'}}>hello@meridianng.com</strong> with your payment reference number. We will sort it within the hour.</div>
+              </div>
+            </div>
+            <div style={{background:'white',borderRadius:'10px',padding:'48px',border:'1px solid var(--border)',boxShadow:'0 4px 32px rgba(10,59,31,0.07)'}} className="reveal reveal-d1">
+              <h2 style={{fontFamily:'var(--serif)',fontSize:'30px',fontWeight:700,color:'var(--forest)',marginBottom:'8px',letterSpacing:'-0.015em'}}>Send a message</h2>
+              <p style={{fontSize:'16px',color:'var(--muted)',marginBottom:'32px',lineHeight:1.6}}>Tell us what you need. We will get back to you promptly.</p>
+              {[{label:'Your name',type:'text',ph:'e.g. Chinedu Okafor'},{label:'Email address',type:'email',ph:'you@example.com'}].map(f => (
+                <div style={{marginBottom:'22px'}} key={f.label}>
+                  <label style={{display:'block',fontFamily:'var(--mono)',fontSize:'10px',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--muted)',marginBottom:'8px'}}>{f.label}</label>
+                  <input type={f.type} placeholder={f.ph} style={{width:'100%',padding:'14px 18px',background:'var(--cream)',border:'1px solid var(--border)',borderRadius:'4px',fontFamily:'var(--sans)',fontSize:'16px',color:'var(--charcoal)',outline:'none'}}/>
+                </div>
+              ))}
+              <div style={{marginBottom:'22px'}}>
+                <label style={{display:'block',fontFamily:'var(--mono)',fontSize:'10px',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--muted)',marginBottom:'8px'}}>Subject</label>
+                <select style={{width:'100%',padding:'14px 18px',background:'var(--cream)',border:'1px solid var(--border)',borderRadius:'4px',fontFamily:'var(--sans)',fontSize:'16px',color:'var(--charcoal)',outline:'none',cursor:'pointer'}}>
+                  <option>General question</option><option>Access key issue</option><option>Product feedback</option><option>Term request for MoneySpeak</option><option>Business / Partnership</option>
+                </select>
+              </div>
+              <div style={{marginBottom:'28px'}}>
+                <label style={{display:'block',fontFamily:'var(--mono)',fontSize:'10px',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--muted)',marginBottom:'8px'}}>Your message</label>
+                <textarea placeholder="Tell us what you need..." rows={5} style={{width:'100%',padding:'14px 18px',background:'var(--cream)',border:'1px solid var(--border)',borderRadius:'4px',fontFamily:'var(--sans)',fontSize:'16px',color:'var(--charcoal)',outline:'none',resize:'vertical',lineHeight:1.6}}/>
+              </div>
+              <button className="btn btn-forest btn-md" style={{width:'100%',justifyContent:'center'}} onClick={() => showToast('Message sent ✓  We'll reply within a few hours.')}>Send message →</button>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      {/* ═══ FOOTER ═══ */}
+      <footer id="site-footer">
+        <div className="footer-inner">
+          <div className="footer-top">
+            <div>
+              <div className="logo" onClick={() => showPage('home')} style={{marginBottom:0}}>
+                <svg className="logo-svg" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" style={{opacity:0.7}}>
+                  <circle cx="32" cy="32" r="26" stroke="#F8F4EC" strokeWidth="2" fill="none"/>
+                  <line x1="32" y1="4" x2="32" y2="9" stroke="#F8F4EC" strokeWidth="1.5" strokeLinecap="round"/>
+                  <polygon points="32,8 29.2,32 32,30 34.8,32" fill="#D4A83C"/>
+                  <polygon points="32,56 29.2,32 32,34 34.8,32" fill="#F8F4EC" opacity="0.5"/>
+                  <circle cx="32" cy="32" r="3" fill="#F8F4EC" opacity="0.6"/>
+                  <circle cx="32" cy="32" r="1.5" fill="#D4A83C"/>
+                </svg>
+                <div className="logo-wordmark" style={{color:'var(--cream)'}}>MERIDIAN<small style={{color:'var(--gold-light)'}}>Financial Intelligence</small></div>
+              </div>
+              <p className="footer-brand-desc">Finance in plain Nigerian English — for investors, business owners, and anyone who has ever felt left out of the conversation.</p>
+            </div>
+            {[
+              {title:'Products',links:[['MoneySpeak Dictionary','products'],['Stock School','products'],['Equity Terminal','products'],['TraDaq','products'],['Meridian Access (Bundle)','products']]},
+              {title:'Company',links:[['About Meridian','about'],['Contact','contact'],['Buy on Selar','ext:https://selar.com/m/meridian_ng'],['Dashboard login','ext:/login']]},
+              {title:'Follow us',links:[['Instagram','ext:https://instagram.com/meridianng_'],['LinkedIn','ext:https://linkedin.com/company/meridianng'],['YouTube','ext:https://youtube.com/@MeridianNG'],['Email us','ext:mailto:hello@meridianng.com']]},
+            ].map(col => (
+              <div key={col.title}>
+                <div className="footer-col-title">{col.title}</div>
+                <ul className="footer-links">
+                  {col.links.map(([label,target]) => (
+                    <li key={label}>
+                      {target.startsWith('ext:')
+                        ? <a href={target.slice(4)} target={target.slice(4).startsWith('http')?'_blank':undefined} rel="noopener noreferrer">{label}</a>
+                        : <a onClick={() => showPage(target)}>{label}</a>
+                      }
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="footer-bottom">
+            <div className="footer-legal">
               © 2025 Meridian ·{' '}
-              <button onClick={() => setTermsOpen(true)} style={{background:'none',border:'none',cursor:'pointer',color:'rgba(249,246,239,0.45)',fontSize:13,padding:0,fontFamily:'var(--font)'}}>Terms of Use</button>
-              {' '}·{' '}
-              <button onClick={() => setTermsOpen(true)} style={{background:'none',border:'none',cursor:'pointer',color:'rgba(249,246,239,0.45)',fontSize:13,padding:0,fontFamily:'var(--font)'}}>Privacy Policy</button>
+              <a onClick={() => setTermsOpen(true)}>Terms of Use</a>
+              <span> · </span>
+              <a onClick={() => setTermsOpen(true)}>Privacy Policy</a>
             </div>
-            <div style={{fontSize:12,maxWidth:520,textAlign:'right',opacity:.35,lineHeight:1.65}}>
-              Meridian is not a licensed financial advisor. All tools perform analytical calculations based on data you provide. Nothing constitutes financial advice.
-            </div>
+            <div className="footer-disclaimer">Meridian is not a licensed financial advisor. All tools perform analytical calculations based on data you provide. Nothing on this platform constitutes financial advice. Always conduct your own research.</div>
           </div>
         </div>
       </footer>
 
-      {/* Terms Modal */}
-      {termsOpen && (
-        <div
-          onClick={() => setTermsOpen(false)}
-          style={{position:'fixed',inset:0,background:'rgba(10,61,34,0.55)',backdropFilter:'blur(8px)',zIndex:9000,display:'flex',alignItems:'center',justifyContent:'center',padding:20}}
-        >
-          <div onClick={e => e.stopPropagation()} style={{background:'var(--cream)',borderRadius:10,padding:'52px 48px',maxWidth:680,width:'100%',maxHeight:'88vh',overflowY:'auto',position:'relative'}}>
-            <button onClick={() => setTermsOpen(false)} style={{position:'absolute',top:18,right:18,width:34,height:34,borderRadius:'50%',background:'rgba(10,61,34,0.08)',border:'none',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--forest)',fontFamily:'var(--font)'}}>✕</button>
-            <h2 style={{fontFamily:'var(--font-serif)',fontSize:32,fontWeight:800,color:'var(--forest)',marginBottom:28,letterSpacing:'-0.015em'}}>Terms of Use & Privacy</h2>
-            {[
-              {title:'What Meridian is',body:'Meridian is a financial education and analysis platform. Our products help you understand financial concepts, learn about investing, analyse company financials, and track your business finances. We are not a bank, broker, investment advisor, or licensed financial institution.'},
-              {title:'Not financial advice',body:"Nothing on Meridian constitutes financial advice. The tools describe mathematical outputs based on data you entered — not a recommendation to buy, sell, or hold any security. You are solely responsible for all decisions you make."},
-              {title:'Your data and privacy',body:'Your financial data entered in Meridian tools is stored in a private account accessible only to you. We do not sell your personal data to third parties. You can request deletion of your account at any time by emailing hello@meridianng.com.'},
-              {title:'Payments and refunds',body:'All purchases are processed through Selar in Nigerian Naira. Due to the digital nature of our products which provide immediate access upon purchase, we generally do not offer refunds. If you experience a technical issue preventing access, email us and we will resolve it promptly.'},
-              {title:'Contact',body:'For any questions, email hello@meridianng.com. We respond within 24 hours.'},
-            ].map((s,i,arr) => (
-              <div key={s.title} style={{marginBottom:i<arr.length-1?28:0,paddingBottom:i<arr.length-1?28:0,borderBottom:i<arr.length-1?'1px solid rgba(10,61,34,0.1)':'none'}}>
-                <h3 style={{fontFamily:'var(--font-serif)',fontSize:20,fontWeight:700,color:'var(--forest)',marginBottom:10}}>{s.title}</h3>
-                <p style={{fontSize:16,color:'var(--muted)',lineHeight:1.8}}>{s.body}</p>
-              </div>
-            ))}
-          </div>
+      {/* ═══ TERMS MODAL ═══ */}
+      <div className={`modal-bg${termsOpen?' open':''}`} id="terms-modal" onClick={(e) => { if (e.target === e.currentTarget) setTermsOpen(false) }}>
+        <div className="modal-box">
+          <div className="modal-close" onClick={() => setTermsOpen(false)}>✕</div>
+          <h2 className="modal-title">Terms of Use &amp; Privacy</h2>
+          {[
+            {h:'What Meridian is',p:'Meridian is a financial education and analysis platform. Our products help you understand financial concepts, learn about investing, analyse company financials using data you input, and track your business finances. We are not a bank, broker, investment advisor, or licensed financial institution.'},
+            {h:'Not financial advice',p:'Nothing on Meridian constitutes financial advice. The terms "STRONG," "NEUTRAL," and "WEAK" in the Equity Terminal describe the output of a mathematical model based on data you entered — not a recommendation to buy, sell, or hold any security. You are solely responsible for all decisions you make.'},
+            {h:'Your data and privacy',p:'Your financial data entered in Meridian tools is stored in a private account accessible only to you. We do not sell your personal data to third parties. You can request deletion of your account at any time by emailing hello@meridianng.com.'},
+            {h:'Payments and refunds',p:'All purchases are processed through Selar. Due to the digital nature of our products (which provide immediate access upon purchase), we generally do not offer refunds. If you experience a technical issue preventing access, contact hello@meridianng.com and we will resolve it promptly.'},
+            {h:'Contact',p:'For any questions, email hello@meridianng.com. We respond within 24 hours.'},
+          ].map(s => (
+            <div className="modal-section" key={s.h}>
+              <h3>{s.h}</h3>
+              <p>{s.p}</p>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
 
-      {/* Responsive styles */}
-      <style>{`
-        @media (max-width: 1024px) { .products-4 { grid-template-columns: repeat(2,1fr) !important; } .footer-grid { grid-template-columns: 1fr 1fr !important; } }
-        @media (max-width: 768px) {
-          .hero-grid { grid-template-columns: 1fr !important; min-height: auto !important; }
-          .pain-grid { grid-template-columns: 1fr !important; gap: 48px !important; }
-          .ba-grid { grid-template-columns: 1fr !important; }
-          .ba-arrow-col { display: none !important; }
-          .trust-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-          .scam-grid { grid-template-columns: 1fr !important; }
-          .steps-grid { grid-template-columns: 1fr !important; }
-          .products-4 { grid-template-columns: 1fr !important; }
-          .footer-grid { grid-template-columns: 1fr !important; }
-          .nav-desktop { display: none !important; }
-        }
-      `}</style>
+      {/* Toast */}
+      <div className={`toast${toastShow?' show':''}`}>{toastMsg}</div>
     </>
   )
 }
