@@ -854,8 +854,7 @@ a:hover { text-decoration: underline; }
   .key-display { flex-direction: column; align-items: flex-start; gap: 8px; }
   .dash-footer { flex-direction: column; align-items: flex-start; }
 }
-NEW DASHBOARD CLASSES — editorial redesign, no emojis
-   ══════════════════════════════════════════════════════════════ */
+
 
 /* Brand in header */
 .dash-brand {
