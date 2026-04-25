@@ -4,7 +4,7 @@ import { createClient } from '@/lib/supabase/server'
 import { CopyButton } from '@/components/CopyButton'
 import type { Profile, ProductId } from '@/lib/types'
 
-// ── SVG Icons (replaces emojis — no emoji anywhere in the portal) ──
+
 const Icons = {
   Book: () => (
     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -81,7 +81,7 @@ const Icons = {
   ),
 }
 
-// ── Products ──────────────────────────────────────────────────
+
 const PRODUCTS = [
   {
     id:       'dictionary' as ProductId,
@@ -91,7 +91,7 @@ const PRODUCTS = [
     Icon:     Icons.Book,
     url:      '/dictionary',
     selar:    process.env.NEXT_PUBLIC_SELAR_URL || 'https://selar.com/m/meridian_ng',
-    isLive:   false,          // set true when dictionary page is ready
+    isLive:   false,          
     price:    '₦4,500',
     accent:   '#C9A84C',
   },
@@ -162,7 +162,7 @@ async function signOut() {
   redirect('/login')
 }
 
-// ── Page ──────────────────────────────────────────────────────
+
 export default async function DashboardPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -274,8 +274,7 @@ export default async function DashboardPage() {
             const hasAccess = accessSet.has(product.id)
             const isComingSoon = !product.isLive
 
-            // Build the correct launch URL
-            // For Equity Terminal: append the key so it auto-authenticates
+            
             let launchUrl = product.url
             if (hasAccess && product.id === 'terminal' && termKey) {
               launchUrl = `${product.url}?k=${termKey}`
