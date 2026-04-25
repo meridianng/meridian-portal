@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { CopyButton } from '@/components/CopyButton'
 
-// ── SVG Icons — no emojis except 👁 and 🙈 on password fields ──
+
 const IconBook = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
 const IconGrad = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
 const IconChart = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
@@ -21,7 +21,6 @@ const IconMail = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const IconSignout = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
 const IconGrid = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
 
-// ── Products ──
 const PRODUCTS = [
   { id:'dictionary', name:'MoneySpeak',      tag:'500 terms · Nigerian English',          desc:'Every financial word that has ever confused you — explained with a story you will actually recognise.',          Icon:IconBook,    url:'/dictionary',                                                        selar:process.env.NEXT_PUBLIC_SELAR_URL||'https://selar.com/m/meridian_ng', live:false, price:'₦4,500',   accent:'#C8972A' },
   { id:'course',     name:'Stock School',    tag:'Zero to confident investor · 11 phases', desc:'From "what is a share?" to building a real NGX portfolio. No jargon. No assumed knowledge.',                  Icon:IconGrad,   url:process.env.NEXT_PUBLIC_COURSE_URL||'https://learn.meridianng.com',  selar:process.env.NEXT_PUBLIC_SELAR_URL||'https://selar.com/m/meridian_ng', live:true,  price:'₦18,000',  accent:'#C8972A' },
@@ -110,7 +109,7 @@ export default function DashboardClient({ email, name, plan, key_, access }: Pro
         transition: 'transform .3s cubic-bezier(.4,0,.2,1)',
         transform: sidebarOpen ? 'translateX(0)' : 'translateX(-100%)',
         boxShadow: '4px 0 32px rgba(0,0,0,0.18)',
-        // Desktop always visible
+      
         ...({} as Record<string,string>)
       }} className="sb-main">
 
@@ -274,7 +273,7 @@ export default function DashboardClient({ email, name, plan, key_, access }: Pro
 
           {/* ── ACTIVATE BANNER ── */}
           {!hasKey && (
-            <div style={{ background:'white', borderRadius:10, border:'1px solid rgba(10,61,34,0.1)', borderLeft:'4px solid var(--gold)', borderRadius2:'0 10px 10px 0', padding:'22px 26px', marginBottom:28 }}>
+            <div style={{ background: 'white', borderRadius: 10, border: '1px solid rgba(10,61,34,0.1)', borderLeft: '4px solid var(--gold)', padding: '22px 26px', marginBottom: 28 }}>
               <div style={{ display:'flex', alignItems:'flex-start', gap:14, flexWrap:'wrap' }}>
                 <div style={{ width:40, height:40, borderRadius:'50%', background:'rgba(200,151,42,0.1)', display:'flex', alignItems:'center', justifyContent:'center', color:'var(--gold)', flexShrink:0, marginTop:2 }}><IconKey /></div>
                 <div style={{ flex:1, minWidth:200 }}>
@@ -441,7 +440,7 @@ export default function DashboardClient({ email, name, plan, key_, access }: Pro
   )
 }
 
-// ── Small sidebar components ──
+
 function SBLabel({ children, style }: { children: React.ReactNode, style?: React.CSSProperties }) {
   return <div style={{ fontFamily:'var(--font-mono)', fontSize:9, letterSpacing:'0.2em', textTransform:'uppercase', color:'rgba(249,246,239,0.28)', padding:'8px 12px 6px', ...style }}>{children}</div>
 }
