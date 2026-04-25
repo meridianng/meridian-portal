@@ -2,14 +2,18 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
 
-// Product mapping: which GAS plan unlocks which products
+// Plan → products mapping
+// Covers all naming variations GAS might send
 function getProductsForPlan(plan: string): string[] {
   switch (plan) {
-    case 'v2_tool':   return ['terminal']
-    case 'v2_course': return ['course']
-    case 'v2_combo':  return ['terminal', 'course']
-    case 'full':      return ['terminal', 'course', 'dictionary', 'bizbooks']
-    default:          return []
+    case 'v2_tool':            return ['terminal']
+    case 'v2_course':          return ['course']
+    case 'v2_dictionary':      return ['dictionary']
+    case 'v2_tradaq':          return ['tradaq']
+    case 'v2_meridian access': return ['terminal', 'course', 'dictionary', 'tradaq']
+    case 'v2_combo':           return ['terminal', 'course', 'dictionary', 'tradaq']
+    case 'full':               return ['terminal', 'course', 'dictionary', 'tradaq']
+    default:                   return []
   }
 }
 
@@ -18,94 +22,71 @@ export async function POST(request: NextRequest) {
     const { key } = await request.json()
 
     if (!key || typeof key !== 'string' || key.trim().length < 10) {
-      return NextResponse.json(
-        { error: 'Please enter a valid key.' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Please enter a valid key.' }, { status: 400 })
     }
 
     const cleanKey = key.trim()
 
-    // ── Step 1: Verify key against Google Apps Script ──────
+    // ── 1. Verify key against GAS ─────────────────────────────
     const gasUrl = process.env.GAS_URL
     if (!gasUrl) {
-      console.error('GAS_URL not configured')
       return NextResponse.json(
-        { error: 'Server configuration error. Please email hello@meridianng.com.' },
+        { error: 'Server configuration error. Email hello@meridianng.com.' },
         { status: 500 }
       )
     }
 
-    let gasData: { email: string; license: { valid: boolean; plan?: string; hasTool?: boolean; hasCourse?: boolean; reason?: string } }
+    let gasData: {
+      email: string
+      license: { valid: boolean; plan?: string; reason?: string }
+    }
 
     try {
-      const gasResponse = await fetch(gasUrl, {
+      const gasRes = await fetch(gasUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({
-          action: 'getUserInfo',
-          token: cleanKey,
-          params: {},
-        }),
-        // 10 second timeout
-        signal: AbortSignal.timeout(10000),
+        body: JSON.stringify({ action: 'getUserInfo', token: cleanKey, params: {} }),
+        signal: AbortSignal.timeout(12000),
       })
-
-      if (!gasResponse.ok) {
-        throw new Error(`GAS returned ${gasResponse.status}`)
-      }
-
-      gasData = await gasResponse.json()
-    } catch (fetchErr) {
-      console.error('GAS fetch error:', fetchErr)
+      if (!gasRes.ok) throw new Error(`GAS ${gasRes.status}`)
+      gasData = await gasRes.json()
+    } catch (err) {
+      console.error('GAS fetch error:', err)
       return NextResponse.json(
         { error: 'Could not verify your key right now. Please try again in a moment.' },
         { status: 503 }
       )
     }
 
-    // Check if key is valid
     if (!gasData.license?.valid) {
-      const reason = gasData.license?.reason
-      let message = 'This key was not found. Double-check your purchase email.'
-      if (reason === 'not_found')    message = 'Key not found. Check your purchase email for the correct key.'
-      if (reason === 'no_email')     message = 'Invalid key format. Try copy-pasting directly from your email.'
-      return NextResponse.json({ error: message }, { status: 401 })
+      return NextResponse.json(
+        { error: 'Key not found. Check your purchase email or contact hello@meridianng.com.' },
+        { status: 401 }
+      )
     }
 
     const plan     = gasData.license.plan || 'v2_tool'
     const products = getProductsForPlan(plan)
 
-       // ── Step 2: Get current user from Supabase session ────
+    // ── 2. Get the currently signed-in user ───────────────────
     const cookieStore = cookies()
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
       {
         cookies: {
-          get(name: string) {
-            return cookieStore.get(name)?.value
-          },
-          set(name: string, value: string, options: any) {
+          getAll() { return cookieStore.getAll() },
+          setAll(cookiesToSet) {
             try {
-              cookieStore.set({ name, value, ...options })
-            } catch (error) {
-              // This can be ignored in Route Handlers
-            }
-          },
-          remove(name: string, options: any) {
-            try {
-              cookieStore.set({ name, value: '', ...options })
-            } catch (error) {
-              // This can be ignored in Route Handlers
-            }
+              cookiesToSet.forEach(({ name, value, options }) =>
+                cookieStore.set(name, value, options))
+            } catch {}
           },
         },
       }
     )
 
     const { data: { user }, error: userError } = await supabase.auth.getUser()
-
     if (userError || !user) {
       return NextResponse.json(
         { error: 'Your session expired. Please sign in again.' },
@@ -113,29 +94,30 @@ export async function POST(request: NextRequest) {
       )
     }
 
-
-    // ── Step 3: Check if key is already used by someone else ──
+    // ── 3. Check if key is already used by a DIFFERENT account ─
+    // (Same account re-activating is fine — idempotent)
     const { data: existingProfile } = await supabase
       .from('profiles')
-      .select('id, meridian_key')
+      .select('id')
       .eq('meridian_key', cleanKey)
       .maybeSingle()
 
     if (existingProfile && existingProfile.id !== user.id) {
       return NextResponse.json(
-        { error: 'This key is already linked to a different account. Contact hello@meridianng.com if this is wrong.' },
+        {
+          error:
+            'This key has already been activated on another account. ' +
+            'If you bought this as a gift, the recipient must use their own account. ' +
+            'Contact hello@meridianng.com if you need help.',
+        },
         { status: 409 }
       )
     }
 
-    // ── Step 4: Update user profile ───────────────────────
+    // ── 4. Update profile with key + plan ─────────────────────
     const { error: profileError } = await supabase
       .from('profiles')
-      .update({
-        meridian_key: cleanKey,
-        plan:         plan,
-        updated_at:   new Date().toISOString(),
-      })
+      .update({ meridian_key: cleanKey, plan, updated_at: new Date().toISOString() })
       .eq('id', user.id)
 
     if (profileError) {
@@ -146,36 +128,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // ── Step 5: Upsert product access rows ────────────────
+    // ── 5. Grant product access rows ──────────────────────────
     if (products.length > 0) {
       const rows = products.map(product => ({
-        user_id: user.id,
-        product: product,
+        user_id:    user.id,
+        product,
         granted_at: new Date().toISOString(),
       }))
-
-      const { error: accessError } = await supabase
+      await supabase
         .from('product_access')
         .upsert(rows, { onConflict: 'user_id,product', ignoreDuplicates: true })
-
-      if (accessError) {
-        console.error('Product access error:', accessError)
-        // Non-fatal — profile was saved, we can retry access later
-      }
     }
 
-    // ── Success ───────────────────────────────────────────
-    return NextResponse.json({
-      success:  true,
-      plan:     plan,
-      products: products,
-      email:    gasData.email || user.email,
-    })
-
+    return NextResponse.json({ success: true, plan, products })
   } catch (err) {
     console.error('Activate route error:', err)
     return NextResponse.json(
-      { error: 'Something went wrong. Please try again or email hello@meridianng.com.' },
+      { error: 'Something went wrong. Email hello@meridianng.com.' },
       { status: 500 }
     )
   }
