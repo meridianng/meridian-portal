@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import DashboardClient from './DashboardClient'
 import type { Profile, ProductId } from '@/lib/types'
 
+
 export default async function DashboardPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
