@@ -1662,7 +1662,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
       <li><a className={page === 'products' ? 'active' : ''} onClick={() => showPage('products')}>Products</a></li>
       <li><a className={page === 'contact'  ? 'active' : ''} onClick={() => showPage('contact')}>Contact</a></li>
     </ul>
-  )
+  );
 
   return (
     <>
