@@ -2,174 +2,117 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
-
-const PLAN_LABELS: Record<string, string> = {
-  v2_tool:   'Equity Terminal',
-  v2_course: 'Stock School',
-  v2_combo:  'Equity Terminal + Stock School',
-  full:      'Full Meridian Access',
-}
+import { MeridianLogo } from '@/components/MeridianLogo'
 
 export default function ActivatePage() {
-  const router = useRouter()
+  const [keyInput,  setKeyInput]  = useState('')
+  const [loading,   setLoading]   = useState(false)
+  const [msg,       setMsg]       = useState('')
+  const [msgOk,     setMsgOk]     = useState(false)
 
-  const [key, setKey]         = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError]     = useState('')
-  const [success, setSuccess] = useState<{
-    plan: string
-    products: string[]
-  } | null>(null)
-
-  async function handleActivate(e: React.FormEvent) {
-    e.preventDefault()
-    if (!key.trim()) return
-    setError('')
-    setLoading(true)
-
+  async function handleActivate() {
+    const k = keyInput.trim()
+    if (!k) { setMsg('Paste your access key first.'); setMsgOk(false); return }
+    setLoading(true); setMsg(''); 
     try {
-      const res = await fetch('/api/activate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ key: key.trim() }),
-      })
-
+      const res  = await fetch('/api/activate', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: k }) })
       const data = await res.json()
-
-      if (!res.ok) {
-        setError(data.error || 'Something went wrong. Try again.')
-        setLoading(false)
-        return
+      if (data.success) {
+        setMsg(`Your products are now unlocked — ${(data.products || []).join(', ') || 'access granted'}. Redirecting to your dashboard.`)
+        setMsgOk(true)
+        setTimeout(() => { window.location.href = '/dashboard' }, 1800)
+      } else {
+        setMsg(data.error || 'Key not recognised. Double-check your purchase email or contact hello@meridianng.com.')
+        setMsgOk(false)
       }
-
-      setSuccess({ plan: data.plan, products: data.products })
-    } catch {
-      setError('Connection error. Check your internet and try again.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  if (success) {
-    const planLabel = PLAN_LABELS[success.plan] || success.plan
-    return (
-      <div className="activate-page">
-        <div className="dash-body" style={{ maxWidth: 660, margin: '0 auto' }}>
-          <div className="activate-card" style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: 44, color: 'var(--green)', marginBottom: 20 }}>◎</div>
-            <h1 className="activate-heading" style={{ textAlign: 'center', marginBottom: 12 }}>
-              You&apos;re in.
-            </h1>
-            <p style={{ fontSize: 15, color: 'var(--text-2)', lineHeight: 1.7, marginBottom: 28 }}>
-              Your key is linked. You now have access to{' '}
-              <strong style={{ color: 'var(--text-1)' }}>{planLabel}</strong>.
-              Everything is ready on your dashboard.
-            </p>
-            <div className="success-box" style={{ marginBottom: 24, textAlign: 'left' }}>
-              <div className="success-box-title">Products unlocked</div>
-              <div className="success-box-text">
-                {success.products.map(p => (
-                  <div key={p} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
-                    <span style={{ color: 'var(--green)' }}>✓</span>
-                    <span style={{ textTransform: 'capitalize' }}>
-                      {p === 'terminal' ? 'Equity Terminal'
-                       : p === 'course' ? 'Stock School'
-                       : p === 'dictionary' ? 'MoneySpeak'
-                       : p === 'bizbooks' ? 'BizBooks'
-                       : p}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button
-              className="btn btn-primary"
-              onClick={() => router.push('/dashboard')}
-            >
-              Go to my dashboard →
-            </button>
-          </div>
-        </div>
-      </div>
-    )
+    } catch { setMsg('Connection error. Please try again in a moment.'); setMsgOk(false) }
+    finally  { setLoading(false) }
   }
 
   return (
-    <div className="activate-page">
-      <div className="dash-body" style={{ maxWidth: 660, margin: '0 auto' }}>
+    <div style={{ minHeight: '100vh', background: '#F8F4EC', display: 'flex', flexDirection: 'column', position: 'relative', zIndex: 1 }}>
 
-        {/* Back link */}
-        <Link href="/dashboard" className="activate-back">
-          ← Back to dashboard
+      {/* Grain */}
+      <div style={{ position: 'fixed', inset: 0, backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")`, pointerEvents: 'none', zIndex: 0, opacity: .4 }} />
+
+      {/* Nav */}
+      <nav style={{ padding: '0 5vw', height: 68, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgba(248,244,236,0.94)', backdropFilter: 'blur(16px)', borderBottom: '1px solid rgba(10,59,31,0.1)', position: 'sticky', top: 0, zIndex: 100 }}>
+        <Link href="/" style={{ textDecoration: 'none' }}>
+          <MeridianLogo variant="full" theme="light" width={180} />
         </Link>
+        <Link href="/dashboard" style={{ fontFamily: 'var(--font)', fontSize: 14, fontWeight: 600, color: '#0A3D22', textDecoration: 'none', padding: '9px 18px', border: '1.5px solid rgba(10,61,34,0.2)', borderRadius: 4 }}>
+          Dashboard →
+        </Link>
+      </nav>
 
-        <div className="activate-card">
+      {/* Main */}
+      <main style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '60px 5vw 80px', position: 'relative', zIndex: 1 }}>
+        <div style={{ width: '100%', maxWidth: 560 }}>
+
+          {/* Eyebrow */}
+          <div style={{ fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.2em', textTransform: 'uppercase', color: '#C8972A', marginBottom: 18, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span style={{ display: 'block', width: 28, height: 1, background: '#C8972A', flexShrink: 0 }} />
+            Your Meridian account
+          </div>
+
           {/* Heading */}
-          <h1 className="activate-heading">Activate your access.</h1>
-          <p className="activate-sub">
-            Drop your Meridian key here.{' '}
-            <strong>You got it in your purchase confirmation email</strong> — subject line:
-            &ldquo;Your Meridian access is ready.&rdquo;
+          <h1 style={{ fontFamily: 'var(--font-serif)', fontSize: 'clamp(38px,5vw,58px)', fontWeight: 700, color: '#0A3D22', lineHeight: 1.04, letterSpacing: '-0.02em', marginBottom: 12 }}>
+            Activate<br />your key.
+          </h1>
+          <p style={{ fontSize: 17, color: '#6B6B6B', lineHeight: 1.75, marginBottom: 40 }}>
+            When you bought a Meridian product on Selar, a key was sent to your email immediately after payment. Paste that key below and your products unlock right away — no waiting.
           </p>
 
-          <form onSubmit={handleActivate}>
-            <div className="form-group">
-              <label className="form-label" htmlFor="key">
-                Your Meridian key
-              </label>
-              <input
-                id="key"
-                type="text"
-                className="form-input key-input"
-                placeholder="e.g. ABcDef-12345-XyZqRs-..."
-                value={key}
-                onChange={e => setKey(e.target.value)}
-                required
-                autoFocus
-                autoComplete="off"
-                spellCheck={false}
-              />
-              <div className="form-error">
-                {error}
-              </div>
-            </div>
-
-            {/* Help text */}
-            <div style={{
-              padding: '12px 14px',
-              background: 'rgba(58,84,112,0.15)',
-              border: '1px solid var(--border)',
-              borderRadius: 'var(--r-sm)',
-              marginBottom: 20,
-              fontSize: 13,
-              color: 'var(--text-3)',
-              lineHeight: 1.65,
-            }}>
-              <strong style={{ color: 'var(--text-2)', display: 'block', marginBottom: 4, fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.12em', textTransform: 'uppercase' }}>
-                Where is my key?
-              </strong>
-              Check the email you used to buy on Selar.
-              The key was in the subject line &ldquo;Your Meridian access is ready.&rdquo;
-              It looks like: <span style={{ fontFamily: 'var(--font-mono)', color: 'var(--gold)', fontSize: 12 }}>ABcDef-12Rsx-7hJqWp-...</span>
-              <br /><br />
-              Can&apos;t find it? Email{' '}
-              <a href="mailto:hello@meridianng.com" style={{ color: 'var(--text-2)' }}>
-                hello@meridianng.com
-              </a>{' '}
-              and we will sort it out quickly.
+          {/* Card */}
+          <div style={{ background: 'white', borderRadius: 10, border: '1px solid rgba(10,61,34,0.1)', padding: '40px', boxShadow: '0 4px 24px rgba(10,61,34,0.07)', marginBottom: 24 }}>
+            <label style={{ display: 'block', fontFamily: 'var(--font-mono)', fontSize: 10, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#6B6B6B', marginBottom: 10 }}>
+              Your access key
+            </label>
+            <input
+              type="text"
+              value={keyInput}
+              onChange={e => setKeyInput(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && handleActivate()}
+              placeholder="e.g. ABCDE-FGHIJ-KLMNO-PQRST"
+              autoFocus
+              style={{ width: '100%', padding: '14px 16px', background: '#F8F4EC', border: '1.5px solid rgba(10,61,34,0.15)', borderRadius: 6, fontFamily: 'var(--font-mono)', fontSize: 15, color: '#1A1A1A', outline: 'none', letterSpacing: '0.06em', marginBottom: 6 }}
+            />
+            <div style={{ fontSize: 12, color: '#A8A8A8', marginBottom: 24, lineHeight: 1.6 }}>
+              Your key looks like this: <span style={{ fontFamily: 'var(--font-mono)', color: '#C8972A', fontSize: 11 }}>XXXXX-XXXXX-XXXXXX-XXXXX</span>. It was emailed to you right after you paid on Selar. Check your inbox and spam folder.
             </div>
 
             <button
-              type="submit"
-              className={`btn btn-primary${loading ? ' btn-loading' : ''}`}
-              disabled={loading || !key.trim()}
+              onClick={handleActivate}
+              disabled={loading}
+              style={{ width: '100%', padding: '16px', background: '#0A3D22', color: '#F8F4EC', border: 'none', borderRadius: 6, fontFamily: 'var(--font)', fontSize: 16, fontWeight: 600, cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.7 : 1, letterSpacing: '0.01em', transition: 'all .22s' }}
             >
-              {loading ? '' : 'Unlock my products →'}
+              {loading ? 'Verifying your key…' : 'Unlock my products →'}
             </button>
-          </form>
+
+            {msg && (
+              <div style={{ marginTop: 16, padding: '12px 16px', borderRadius: 6, fontSize: 14, lineHeight: 1.6, background: msgOk ? 'rgba(26,122,71,0.07)' : 'rgba(192,57,43,0.06)', border: `1px solid ${msgOk ? 'rgba(26,122,71,0.2)' : 'rgba(192,57,43,0.18)'}`, color: msgOk ? '#1A7A47' : '#C0392B' }}>
+                {msg}
+              </div>
+            )}
+          </div>
+
+          {/* Help section */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            <div style={{ padding: '16px 20px', background: '#EDE8DE', borderRadius: 8, border: '1px solid rgba(10,61,34,0.08)' }}>
+              <div style={{ fontWeight: 600, color: '#0A3D22', fontSize: 15, marginBottom: 4 }}>Did not receive your key?</div>
+              <div style={{ fontSize: 14, color: '#6B6B6B', lineHeight: 1.65 }}>
+                Check your spam folder first. If it is not there, email <a href="mailto:hello@meridianng.com" style={{ color: '#0A3D22', fontWeight: 600 }}>hello@meridianng.com</a> with your Selar payment reference number. We will sort it within the hour.
+              </div>
+            </div>
+            <div style={{ padding: '16px 20px', background: '#EDE8DE', borderRadius: 8, border: '1px solid rgba(10,61,34,0.08)' }}>
+              <div style={{ fontWeight: 600, color: '#0A3D22', fontSize: 15, marginBottom: 4 }}>Have not bought a product yet?</div>
+              <div style={{ fontSize: 14, color: '#6B6B6B', lineHeight: 1.65 }}>
+                <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" style={{ color: '#0A3D22', fontWeight: 600 }}>Visit our Selar store →</a> MoneySpeak starts at ₦4,500. One-time payment, lifetime access.
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   )
 }
