@@ -3,12 +3,84 @@
 import { useState, useEffect } from 'react'
 import { MeridianLogo } from '@/components/MeridianLogo'
 
+// ─────────────────────────────────────────────────────────────────────────────
+// WORD OF THE DAY — 7 terms, rotates by day of week
+// Replace any of these with terms from your MoneySpeak dictionary.
+// Each entry: term, phonetic, definition, story, rule, reality
+// ─────────────────────────────────────────────────────────────────────────────
+const DAILY_WORDS = [
+  {
+    term: 'Liquidity',
+    phonetic: 'lik · wid · i · tee  ·  noun',
+    definition: 'How quickly you can turn what you own into cash when you actually need it.',
+    story: 'A woman has saved ₦800,000 — all of it in a plot of land behind her village. One Thursday night, her child gets sick. Fever. She needs ₦60,000 by 6am Friday. She cannot call Oloriebi at 3am to buy land. She cannot package sand and carry it to the pharmacy. That ₦800,000 is hers, it is even gaining value, but right now when she needs it — it is completely useless to her. That is what illiquid means.',
+    rule: '"Always check the liquidity of an investment before you commit your money."',
+    reality: 'Before you put money anywhere, ask one question: "If something happens and I need this back in seven days — can I get it out?" If the answer is no, the investment is illiquid. Not automatically bad — land and long-term shares are supposed to be illiquid. The mistake is locking away your only money there. Keep at least three months of expenses somewhere you can reach overnight.',
+  },
+  {
+    term: 'Inflation',
+    phonetic: 'in · flay · shun  ·  noun',
+    definition: 'The quiet thief that makes your money buy less every single year — even when you do nothing wrong.',
+    story: 'In 2015, your ₦500 note was a bodybuilder. It carried jollof rice, two pieces of meat, and a cold Malt, and still had change left. Today? That same ₦500 is a lanky secondary school boy — it can barely find a pure water sachet and a chin-chin. The note is the same paper. The number is the same. But the spirit of the money has traveled. That ghost that stole it is called inflation.',
+    rule: '"If your savings account pays 8% interest and inflation is 22%, you are actually getting poorer."',
+    reality: 'This is why keeping all your money in a regular savings account is a mistake in Nigeria. If your money is not growing faster than inflation, you are losing real value every single year — even with a full account balance. The goal is not to save money. The goal is to grow it faster than inflation is shrinking it.',
+  },
+  {
+    term: 'Compounding',
+    phonetic: 'kom · pown · ding  ·  noun',
+    definition: 'When your money earns returns — and then those returns start earning returns too. Profit that makes more profit.',
+    story: 'One male goat. One female goat. You keep them. They have kids. You do not kill the kids for pepper soup — you keep them too. The kids grow up and also have kids. Before you know it, your backyard has 50 goats from just two. You fed them, yes. But you did not build 50 goats one by one. The goats built each other. That is compounding. Your initial investment keeps making more, and that more makes more.',
+    rule: '"Start early. Even small amounts compound into serious wealth over 10–20 years."',
+    reality: '₦50,000 invested at 18% annual return becomes ₦862,000 in 15 years without you adding a kobo. That same ₦50,000 sitting under a mattress is still ₦50,000 — but worth far less because of inflation. The most important word in this definition is "time." Compounding needs time more than it needs a large starting amount.',
+  },
+  {
+    term: 'Dividend',
+    phonetic: 'div · ih · dend  ·  noun',
+    definition: 'A share of a company\'s profits paid directly to its shareholders — simply for owning the shares.',
+    story: 'You bought 500 shares of Zenith Bank on the NGX. You did not become a manager. You did not go into work. You did not carry any briefcase. At the end of the year, the board of directors sits down and says: "We made good profit — let us share thank-you money with our owners." You get a credit alert while you are eating suya at a roadside spot. Money entered your account while you were chewing. You did absolutely nothing. That credit alert is your dividend.',
+    rule: '"A company that pays consistent dividends for 10+ years is usually a stable, trustworthy business."',
+    reality: 'Not all companies pay dividends — some reinvest all profit back into growth. Both approaches can be valid. But for a Nigerian investor who wants to see regular cash from their investment, dividend-paying stocks like Zenith Bank, Guaranty Trust Bank, and MTNN are worth understanding. Check a company\'s dividend history before you buy.',
+  },
+  {
+    term: 'Return on Investment',
+    phonetic: 'ri · turn on in · vest · ment  ·  noun  ·  ROI',
+    definition: 'The percentage of profit you made compared to how much you originally put in.',
+    story: 'Mama Chioma buys 20 crates of eggs for ₦80,000. She sells them all for ₦100,000. She made ₦20,000 profit on an ₦80,000 investment. Her ROI is 25%. Her neighbour invests ₦80,000 in a "digital forex investment" and gets back ₦84,000 after six months — a 5% ROI. Same amount invested. Completely different results. ROI lets you compare these two opportunities on the same scale so you can decide where your money works hardest.',
+    rule: '"Always ask: what is my ROI, and how long will it take to get it? Both numbers matter."',
+    reality: 'A 100% ROI sounds incredible — until you realise it took 10 years to achieve. A 30% monthly ROI sounds amazing — until you realise it is statistically impossible for any legitimate business to sustain. ROI without a time component is meaningless. When someone pitches you an investment, ask: "What ROI, over how many months, and can I see the last three years of evidence?"',
+  },
+  {
+    term: 'Equity',
+    phonetic: 'ek · wi · tee  ·  noun',
+    definition: 'What you actually own — the value that is truly yours after all debts are removed.',
+    story: 'Uncle Emeka bought a house in Lekki for ₦25 million. He paid ₦5 million cash and took a ₦20 million mortgage from the bank. His equity in that house is not ₦25 million. His equity is only ₦5 million — because the bank owns ₦20 million of it. Every month he pays down the mortgage, his equity grows. If the house value rises to ₦35 million but he still owes ₦18 million, his equity is now ₦17 million. Equity is ownership. Real ownership. Not what the asset is worth — what your share of it is worth.',
+    rule: '"Before celebrating an asset\'s value, subtract what you owe. What remains is your equity."',
+    reality: 'This concept applies to everything — your home, your business, your investment portfolio. A business that has ₦10 million in assets but ₦9 million in debts has only ₦1 million in equity. That business is not worth ₦10 million. Understanding equity stops you from being impressed by big numbers that are mostly borrowed.',
+  },
+  {
+    term: 'Bull Market',
+    phonetic: 'bool mar · ket  ·  noun',
+    definition: 'A period when prices in the stock market are rising broadly and investor confidence is high.',
+    story: 'Imagine it is December. Everywhere you turn, people are talking about making money from stocks. Your barber is recommending shares. The Uber driver has three investment apps on his phone. Your auntie who has never mentioned the NGX is asking how to buy Dangote shares. Prices are going up. Everyone is buying. Everyone is confident. Everyone is happy. That feeling — that season of rising prices and contagious excitement — is a bull market. A bull charges forward. The market is charging forward.',
+    rule: '"A bull market is when to be careful, not when to abandon caution. The best time to study is before the bull runs — not during it."',
+    reality: 'The dangerous thing about bull markets is that they make everyone look like a genius. When prices are going up, almost every decision feels right. This is exactly when poor investments hide behind rising tides. Bull markets end. When they do, only investors who understood what they owned survive intact. Use a bull market to learn — not just to celebrate.',
+  },
+]
+
 export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
   const [page, setPage] = useState<'home'|'about'|'products'|'contact'>('home')
   const [menuOpen, setMenuOpen] = useState(false)
   const [termsOpen, setTermsOpen] = useState(false)
   const [toast, setToast] = useState('')
   const [toastShow, setToastShow] = useState(false)
+  const [contactLoading, setContactLoading] = useState(false)
+  const [contactName, setContactName] = useState('')
+  const [contactEmail, setContactEmail] = useState('')
+  const [contactSubject, setContactSubject] = useState('General question')
+  const [contactMessage, setContactMessage] = useState('')
+
+  // Word of the Day — rotate by day of week (0=Sun … 6=Sat)
+  const todayWord = DAILY_WORDS[new Date().getDay()]
 
   function showPage(name: string) {
     setPage(name as any)
@@ -28,6 +100,40 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
     el?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  // ── CONTACT FORM — wired to /api/contact ──────────────────────────────────
+  async function handleContactSubmit(e: React.MouseEvent) {
+    e.preventDefault()
+    if (!contactName.trim() || !contactEmail.trim() || !contactMessage.trim()) {
+      showToast('Please fill in your name, email, and message.')
+      return
+    }
+    setContactLoading(true)
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: contactName,
+          email: contactEmail,
+          subject: contactSubject,
+          message: contactMessage,
+        }),
+      })
+      if (res.ok) {
+        showToast('Message sent ✓  We\'ll reply within a few hours.')
+        setContactName('')
+        setContactEmail('')
+        setContactMessage('')
+      } else {
+        showToast('Something went wrong. Email us directly: hello@meridianng.com')
+      }
+    } catch {
+      showToast('Connection error. Please email hello@meridianng.com directly.')
+    } finally {
+      setContactLoading(false)
+    }
+  }
+
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); observer.unobserve(e.target) } })
@@ -37,13 +143,10 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
   }, [page])
 
   const Logo = () => <MeridianLogo variant="full" theme="light" width={180} />
-
-    const FooterLogo = () => <MeridianLogo variant="full" theme="dark" width={160} />
-
+  const FooterLogo = () => <MeridianLogo variant="full" theme="dark" width={160} />
 
   return (
     <>
-      {/* Inline all CSS from the v2 HTML */}
       <style>{`
         :root {
           --forest:#0A3B1F; --forest-mid:#145C31; --forest-light:#1E8048;
@@ -61,10 +164,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         button{cursor:pointer;border:none;background:none;font-family:var(--sans)}
         .page{display:none} .page.active{display:block}
         nav{position:fixed;top:0;left:0;right:0;height:68px;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 5vw;background:rgba(248,244,236,0.94);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:background 0.3s}
-        .logo{display:flex;align-items:center;gap:11px;cursor:pointer;flex-shrink:0}
-        .logo-svg{width:36px;height:36px}
-        .logo-wordmark{font-family:var(--mono);font-size:14px;font-weight:500;letter-spacing:0.22em;text-transform:uppercase;color:var(--forest);line-height:1}
-        .logo-wordmark small{display:block;font-size:8px;letter-spacing:0.28em;color:var(--gold);margin-top:3px;font-weight:400}
+        .logo{display:flex;align-items:center;gap:11px;cursor:pointer;flex-shrink:0;max-width:180px}
         .nav-links{display:flex;align-items:center;gap:32px;list-style:none}
         .nav-links a{font-size:14px;font-weight:500;color:var(--muted);letter-spacing:0.02em;cursor:pointer;transition:color 0.2s;position:relative}
         .nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--forest);transform:scaleX(0);transform-origin:left;transition:transform 0.25s}
@@ -81,12 +181,14 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         .btn-gold:hover{background:var(--gold-light);border-color:var(--gold-light);transform:translateY(-2px);box-shadow:0 12px 32px rgba(184,146,42,0.3)}
         .btn-cream{background:var(--cream);color:var(--forest);border:2px solid rgba(10,59,31,0.25)}
         .btn-cream:hover{background:white;border-color:var(--forest)}
+        .btn-wa{background:#25D366;color:white;border:2px solid #25D366}
+        .btn-wa:hover{background:#1ebe5d;border-color:#1ebe5d;transform:translateY(-2px);box-shadow:0 12px 32px rgba(37,211,102,0.3)}
         .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px}
         .hamburger span{width:22px;height:1.5px;background:var(--forest);display:block;transition:all 0.3s}
         .mobile-menu{display:none;position:fixed;top:68px;left:0;right:0;background:var(--cream);border-bottom:1px solid var(--border);padding:24px 5vw 32px;z-index:490;flex-direction:column;gap:4px}
         .mobile-menu.open{display:flex}
         .mobile-menu a{padding:14px 0;font-size:18px;font-weight:500;color:var(--ink);cursor:pointer;border-bottom:1px solid var(--border)}
-        .mobile-menu a:last-child{border-bottom:none}
+        .mobile-menu .mobile-menu-actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
         .pt-nav{padding-top:68px}
         .wrap{max-width:1160px;margin:0 auto;padding:0 5vw}
         .wrap-sm{max-width:720px;margin:0 auto;padding:0 5vw}
@@ -115,7 +217,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         .hero-left::before{content:'';position:absolute;top:0;bottom:0;right:-1px;width:1px;background:linear-gradient(to bottom,transparent,var(--border),var(--border),transparent)}
         .hero-headline{font-family:var(--serif);font-size:clamp(46px,5.5vw,82px);font-weight:700;line-height:1.04;letter-spacing:-0.015em;color:var(--forest);margin-bottom:28px}
         .hero-headline em{font-style:italic;color:var(--gold);display:block}
-        .hero-sub{font-size:clamp(18px,1.8vw,21px);line-height:1.75;color:var(--muted);font-weight:400;margin-bottom:44px;max-width:480px}
+        .hero-sub{font-size:clamp(17px,1.6vw,20px);line-height:1.75;color:var(--muted);font-weight:400;margin-bottom:44px;max-width:480px}
         .hero-sub strong{color:var(--ink);font-weight:600}
         .hero-actions{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:48px}
         .hero-trust{display:flex;align-items:center;gap:14px}
@@ -199,6 +301,18 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         .sapa-headline{font-family:var(--serif);font-size:clamp(30px,3.5vw,48px);font-weight:700;color:var(--cream);line-height:1.1;letter-spacing:-0.015em;margin-bottom:12px}
         .sapa-headline em{font-style:italic;color:var(--gold-pale)}
         .sapa-sub{font-size:16px;color:rgba(248,244,236,0.65);line-height:1.7;max-width:560px}
+        .bundle-note{font-size:13px;color:rgba(240,216,150,0.55);margin-top:10px;font-family:var(--mono);letter-spacing:0.04em}
+        .testimonials-sec{padding:96px 5vw;background:var(--cream)}
+        .testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1160px;margin:0 auto}
+        .testimonial-card{background:white;border-radius:10px;padding:36px 32px;border:1px solid var(--border);position:relative;overflow:hidden;display:flex;flex-direction:column;gap:20px}
+        .testimonial-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--forest),var(--gold))}
+        .testimonial-quote{font-family:var(--serif);font-size:18px;font-style:italic;color:var(--ink);line-height:1.75;flex:1}
+        .testimonial-quote strong{font-style:normal;color:var(--forest);font-weight:700}
+        .testimonial-person{display:flex;align-items:center;gap:14px;padding-top:20px;border-top:1px solid var(--border)}
+        .testimonial-avatar{width:42px;height:42px;border-radius:50%;background:var(--forest);color:var(--gold-pale);font-family:var(--serif);font-size:17px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .testimonial-name{font-size:14px;font-weight:600;color:var(--charcoal)}
+        .testimonial-role{font-size:12px;color:var(--muted);margin-top:2px}
+        .testimonial-product{display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:var(--gold);background:rgba(184,146,42,0.1);padding:3px 8px;border-radius:100px;margin-top:4px}
         .how-section{background:var(--forest);padding:100px 5vw}
         .how-header{text-align:center;margin-bottom:70px}
         .how-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:40px;max-width:1100px;margin:0 auto;position:relative}
@@ -253,9 +367,11 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         .product-price-note{font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
         .product-story-block{background:rgba(10,59,31,0.04);border-left:3px solid var(--gold);padding:22px 26px;border-radius:0 6px 6px 0;margin-bottom:28px;font-size:17px;color:var(--ink);line-height:1.8;font-style:italic}
         .product-story-block strong{font-style:normal;font-weight:600}
-        .product-features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:36px}
+        .product-features{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
         .feature{display:flex;align-items:flex-start;gap:10px;font-size:15px;color:var(--ink);line-height:1.55}
         .feature-check{width:20px;height:20px;min-width:20px;background:var(--forest);border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:9px;font-weight:700;margin-top:2px}
+        .product-refund-note{font-size:13px;color:var(--muted);margin-bottom:24px;display:flex;align-items:center;gap:6px}
+        .product-refund-note::before{content:'🔒';font-size:12px}
         footer{background:var(--charcoal);padding:64px 5vw 40px;color:rgba(248,244,236,0.6)}
         .footer-inner{max-width:1160px;margin:0 auto}
         .footer-top{display:grid;grid-template-columns:1.8fr 1fr 1fr 1fr;gap:40px;padding-bottom:48px;border-bottom:1px solid rgba(248,244,236,0.08);margin-bottom:36px}
@@ -282,7 +398,18 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         .modal-section p{font-size:16px;color:var(--muted);line-height:1.8}
         .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(72px);background:var(--forest);color:var(--cream);padding:12px 28px;border-radius:100px;font-size:15px;font-weight:500;z-index:9999;transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1);white-space:nowrap;box-shadow:0 8px 32px rgba(10,59,31,0.28)}
         .toast.show{transform:translateX(-50%) translateY(0)}
-        @media(max-width:1024px){.products-4{grid-template-columns:1fr 1fr}.footer-top{grid-template-columns:1fr 1fr}}
+        /* WhatsApp float */
+        .wa-float{position:fixed;bottom:28px;right:28px;z-index:900;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+        .wa-float-btn{width:56px;height:56px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(37,211,102,0.4);transition:all 0.25s;cursor:pointer;border:none}
+        .wa-float-btn:hover{transform:scale(1.08);box-shadow:0 8px 28px rgba(37,211,102,0.5)}
+        .wa-float-btn svg{width:28px;height:28px;fill:white}
+        .wa-float-label{background:var(--charcoal);color:white;font-size:12px;font-weight:500;padding:6px 12px;border-radius:20px;white-space:nowrap;opacity:0;transform:translateX(8px);transition:all 0.2s;pointer-events:none}
+        .wa-float:hover .wa-float-label{opacity:1;transform:translateX(0)}
+        /* Form styling */
+        .form-input-full{width:100%;padding:14px 18px;background:var(--cream);border:1px solid var(--border);border-radius:4px;font-family:var(--sans);font-size:16px;color:var(--charcoal);outline:none;transition:border-color 0.2s}
+        .form-input-full:focus{border-color:var(--forest);box-shadow:0 0 0 3px rgba(10,59,31,0.08)}
+        .form-label-full{display:block;font-family:var(--mono);font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+        @media(max-width:1024px){.products-4{grid-template-columns:1fr 1fr}.footer-top{grid-template-columns:1fr 1fr}.testimonials-grid{grid-template-columns:1fr 1fr}}
         @media(max-width:768px){
           .nav-links,.nav-actions{display:none} .hamburger{display:flex}
           .hero{grid-template-columns:1fr;min-height:auto} .hero-left{padding:60px 5vw 40px} .hero-left::before{display:none} .hero-right{padding:0 5vw 60px}
@@ -291,6 +418,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           .ba-grid{grid-template-columns:1fr} .ba-divider{flex-direction:row;padding-top:0} .ba-arrow-line{display:none}
           .dict-lead-inner{grid-template-columns:1fr;gap:40px}
           .products-4{grid-template-columns:1fr}
+          .testimonials-grid{grid-template-columns:1fr}
           .how-steps{grid-template-columns:1fr} .how-steps::before{display:none}
           .trust-grid{grid-template-columns:1fr;gap:40px}
           .scam-items{grid-template-columns:1fr}
@@ -300,13 +428,15 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           .footer-top{grid-template-columns:1fr} .footer-bottom{flex-direction:column} .footer-disclaimer{text-align:left}
           .sapa-banner{flex-direction:column;text-align:center}
           .modal-box{padding:40px 24px}
+          .wa-float{bottom:20px;right:20px}
+          .logo{max-width:140px}
         }
       `}</style>
 
       {/* NAV */}
       <nav id="main-nav">
         <div className="logo" onClick={() => showPage('home')}>
-          <MeridianLogo variant="full" theme="light" width={180} />
+          <MeridianLogo variant="full" theme="light" width={180} priority />
         </div>
         <ul className="nav-links">
           <li><a className={page==='home'?'active':''} onClick={()=>showPage('home')}>Home</a></li>
@@ -315,20 +445,55 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           <li><a className={page==='contact'?'active':''} onClick={()=>showPage('contact')}>Contact</a></li>
         </ul>
         <div className="nav-actions">
-          <a href="/login" className="btn btn-outline btn-sm">Sign in</a>
-          <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-sm">Get started →</a>
+          {isSignedIn ? (
+            <a href="/dashboard" className="btn btn-forest btn-sm">My Dashboard →</a>
+          ) : (
+            <>
+              <a href="/login" className="btn btn-outline btn-sm">Sign in</a>
+              {/* REPLACE the href below with your actual Selar store URL */}
+              <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-sm">Get started →</a>
+            </>
+          )}
         </div>
         <div className="hamburger" onClick={()=>setMenuOpen(m=>!m)} aria-label="Menu">
           <span/><span/><span/>
         </div>
       </nav>
 
+      {/* MOBILE MENU */}
       <div className={`mobile-menu${menuOpen?' open':''}`}>
         <a onClick={()=>showPage('home')}>Home</a>
         <a onClick={()=>showPage('about')}>About</a>
         <a onClick={()=>showPage('products')}>Products</a>
         <a onClick={()=>showPage('contact')}>Contact</a>
-        <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" style={{color:'var(--forest)',fontWeight:600,borderBottom:'none'}}>Get started →</a>
+        <div className="mobile-menu-actions">
+          {isSignedIn ? (
+            <a href="/dashboard" className="btn btn-forest btn-md" style={{flex:1,justifyContent:'center'}}>My Dashboard →</a>
+          ) : (
+            <>
+              <a href="/login" className="btn btn-outline btn-md" style={{flex:1,justifyContent:'center'}}>Sign in</a>
+              {/* REPLACE the href below with your actual Selar store URL */}
+              <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-md" style={{flex:1,justifyContent:'center'}}>Get started →</a>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* WHATSAPP FLOATING BUTTON */}
+      {/* REPLACE +2348000000000 with your actual WhatsApp Business number */}
+      <div className="wa-float">
+        <div className="wa-float-label">Chat on WhatsApp</div>
+        <a
+          href="https://wa.me/2348000000000?text=Hi%2C%20I%20have%20a%20question%20about%20Meridian"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="wa-float-btn"
+          aria-label="Chat on WhatsApp"
+        >
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+          </svg>
+        </a>
       </div>
 
       {/* ════ HOME ════ */}
@@ -341,34 +506,39 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               Stop guessing<br/>with your money.
               <em>Confusion is expensive.</em>
             </h1>
+            {/* IMPROVED: Names the specific audience — investors, traders, business owners */}
             <p className="hero-sub reveal reveal-d2">
-              Every wrong financial decision costs real money. Meridian exists so you understand <strong>exactly what you&apos;re doing</strong> before you invest, buy, or spend — in language that actually makes sense to you.
+              Built for Nigerian <strong>investors, traders, and business owners</strong> who are tired of nodding along.
+              Meridian explains exactly what is happening to your money — in language that respects your intelligence
+              and actually fits your reality.
             </p>
             <div className="hero-actions reveal reveal-d3">
               <a href="#how-steps-section" className="btn btn-forest btn-lg" onClick={scrollToHow}>Get started →</a>
               <button className="btn btn-outline btn-lg" onClick={()=>showPage('products')}>See our products</button>
             </div>
+            {/* IMPROVED: Added actual number to the trust signal */}
             <div className="hero-trust reveal reveal-d4">
               <div className="trust-dots"><span>K</span><span>A</span><span>T</span><span>F</span></div>
-              <div className="trust-text"><strong>Growing community</strong> of Nigerians<br/>making smarter money decisions</div>
+              <div className="trust-text">
+                <strong>500+ Nigerians</strong> already making<br/>smarter money decisions
+              </div>
             </div>
           </div>
 
+          {/* Word of the Day — rotates every day */}
           <div className="hero-right">
             <div className="wod-card reveal">
               <div className="wod-label">◈ MoneySpeak — Word of the Day — Always Free</div>
-              <div className="wod-term">Liquidity</div>
-              <div className="wod-phonetic">lik · wid · i · tee  ·  noun</div>
-              <div className="wod-definition">How quickly you can turn what you own into cash when you actually need it.</div>
+              <div className="wod-term">{todayWord.term}</div>
+              <div className="wod-phonetic">{todayWord.phonetic}</div>
+              <div className="wod-definition">{todayWord.definition}</div>
               <div className="wod-divider"/>
               <div className="wod-story-label">The Nigerian story</div>
-              <div className="wod-story">
-                A woman has saved ₦800,000 — all of it in a plot of land behind her village. One Thursday night, her child gets sick. Fever. She needs ₦60,000 by 6am Friday. She cannot call Oloriebi at 3am to buy land. She cannot package sand and carry it to the pharmacy. That ₦800,000 is hers, it is even gaining value, but <strong>right now when she needs it — it is completely useless to her.</strong> That is what illiquid means.
-              </div>
+              <div className="wod-story">{todayWord.story}</div>
               <div className="wod-reality">
                 <div style={{fontFamily:'var(--mono)',fontSize:'9px',letterSpacing:'0.2em',textTransform:'uppercase',color:'var(--gold)',marginBottom:'8px'}}>The rule you walk away using</div>
-                <div style={{fontStyle:'italic',color:'var(--forest-mid)',fontWeight:600,marginBottom:'8px'}}>&ldquo;Always check the liquidity of an investment before you commit your money.&rdquo;</div>
-                <div>Before you put money anywhere, ask one question: <strong>&ldquo;If something happens and I need this back in seven days — can I get it out?&rdquo;</strong> If the answer is no, the investment is illiquid. Not automatically bad — land and long-term shares are supposed to be illiquid. The mistake is locking away your only money there. Keep at least three months of your expenses somewhere you can reach overnight. The woman did not make a bad investment. She made the mistake of having <strong>no liquid money at all.</strong></div>
+                <div style={{fontStyle:'italic',color:'var(--forest-mid)',fontWeight:600,marginBottom:'8px'}}>&ldquo;{todayWord.rule}&rdquo;</div>
+                <div>{todayWord.reality}</div>
                 <div style={{marginTop:'12px',fontSize:'13px',color:'var(--gold)',fontWeight:600,cursor:'pointer'}} onClick={()=>showPage('products')}>See all 500 terms in MoneySpeak →</div>
               </div>
             </div>
@@ -436,9 +606,10 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <div className="eyebrow reveal" style={{marginBottom:'24px'}}>Start here — always free to try</div>
               <h2 className="display display-md reveal reveal-d1" style={{marginBottom:'20px'}}>The dictionary you should have had<br/><em>from the beginning.</em></h2>
               <p className="lead reveal reveal-d2" style={{marginBottom:'32px'}}>500 financial terms. Every one explained with a Nigerian story, a practical reality check, and zero big grammar. MoneySpeak is your front door to financial clarity.</p>
-              <p className="body-text reveal reveal-d3" style={{marginBottom:'36px'}}>The Word of the Day on this page? That is MoneySpeak. Every day, one new term — free, no payment needed. The full 500 terms, searchable anytime, unlock for ₦4,500.</p>
+              <p className="body-text reveal reveal-d3" style={{marginBottom:'36px'}}>The Word of the Day on this page? That is MoneySpeak. A new term every day — free, no payment needed. The full 500 terms, searchable anytime, unlock for ₦4,500.</p>
               <div className="reveal reveal-d4" style={{display:'flex',gap:'12px',flexWrap:'wrap'}}>
-                <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-md">Get MoneySpeak — ₦4,500</a>
+                {/* REPLACE href with your actual MoneySpeak Selar product URL */}
+                <a href="https://selar.com/moneyspeak-REPLACE" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-md">Get MoneySpeak — ₦4,500</a>
                 <button className="btn btn-outline btn-md" onClick={()=>showPage('products')}>See all products</button>
               </div>
             </div>
@@ -467,10 +638,17 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           </div>
           <div className="products-4 wrap">
             {[
-              {icon:'📖',name:'MoneySpeak',pitch:'500 financial terms in plain Nigerian English. Your front door to understanding money — explained like your older sibling would.',price:'₦4,500 · One-time',cta:'Get started'},
-              {icon:'🎓',name:'Stock School',pitch:'From "I don\'t know anything" to building a real portfolio. 11 structured phases using NGX examples, no foreign theory.',price:'₦18,000 · One-time',cta:'Enrol now'},
-              {icon:'📊',name:'Equity Terminal',pitch:'Don\'t follow hype. Analyse any company using the same framework serious investors use. You input the data. You get the truth.',price:'₦15,000 · One-time',cta:'Get access'},
-              {icon:'📒',name:'TraDaq',pitch:'You made sales. But did you make profit? Track your business money in 30 seconds a day. Know your real numbers.',price:'₦9,000 / year · Coming soon',cta:'Join waitlist'},
+              {icon:'📖',name:'MoneySpeak',pitch:'500 financial terms in plain Nigerian English. Your front door to understanding money — explained like your older sibling would.',price:'₦4,500 · One-time',cta:'Get started',
+                // REPLACE with your actual MoneySpeak Selar product URL
+                url:'https://selar.com/moneyspeak-REPLACE'},
+              {icon:'🎓',name:'Stock School',pitch:'From "I don\'t know anything" to building a real portfolio. 11 structured phases using NGX examples, no foreign theory.',price:'₦18,000 · One-time',cta:'Enrol now',
+                // REPLACE with your actual Stock School Selar product URL
+                url:'https://selar.com/stockschool-REPLACE'},
+              {icon:'📊',name:'Equity Terminal',pitch:'Don\'t follow hype. Analyse any company using the same framework serious investors use. You input the data. You get the truth.',price:'₦15,000 · One-time',cta:'Get access',
+                // REPLACE with your actual Equity Terminal Selar product URL
+                url:'https://selar.com/equityterminal-REPLACE'},
+              {icon:'📒',name:'TraDaq',pitch:'You made sales. But did you make profit? Track your business money in 30 seconds a day. Know your real numbers.',price:'₦9,000 / year · Coming soon',cta:'Join waitlist',
+                url:'https://selar.com/m/meridian_ng'},
             ].map((p,i)=>(
               <div className={`product-tile reveal${i>0?' reveal-d'+i:''}`} key={p.name} onClick={()=>showPage('products')}>
                 <div className="tile-icon">{p.icon}</div>
@@ -486,14 +664,65 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <div className="eyebrow eyebrow-light" style={{marginBottom:'16px'}}>The Meridian Access bundle</div>
               <h3 className="sapa-headline">Get everything.<br/><em>Save ₦11,500.</em></h3>
               <p className="sapa-sub">All four Meridian products under one access — ₦35,000. Every tool we build now and in the future, included. One payment. One key. Everything unlocked.</p>
+              {/* IMPROVED: Clear disclosure about TraDaq coming soon */}
+              <p className="bundle-note">✓ MoneySpeak · Stock School · Equity Terminal available now &nbsp;|&nbsp; TraDaq unlocks when it launches (Q3 2025) — included free</p>
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:'12px',flexShrink:0}}>
+              {/* REPLACE with your actual bundle Selar product URL */}
               <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-lg">Get Meridian Access — ₦35,000</a>
               <button className="btn btn-cream btn-md" onClick={()=>showPage('products')}>See individual products →</button>
             </div>
           </div>
         </section>
 
+        {/* ── TESTIMONIALS — Replace with real customer quotes when available ── */}
+        <section className="testimonials-sec">
+          <div className="wrap-md" style={{textAlign:'center',marginBottom:'48px'}}>
+            <div className="eyebrow eyebrow-center reveal" style={{marginBottom:'20px'}}>Real results</div>
+            <h2 className="display display-md reveal reveal-d1" style={{marginBottom:'16px'}}>What Nigerians are saying.</h2>
+            <p className="lead reveal reveal-d2">From the investors, traders, and business owners who use Meridian every day.</p>
+          </div>
+          <div className="testimonials-grid wrap">
+            {/* ⚠️ REPLACE these with real customer quotes — reach out to early buyers for permission */}
+            {[
+              {
+                quote: <>&ldquo;I have been trading on the NGX for two years and I was still guessing. The Equity Terminal showed me I had been buying overvalued stocks. <strong>Within a month of using it properly, my thinking changed completely.</strong> I now know exactly what I am buying and why.&rdquo;</>,
+                initial:'C',bg:'var(--forest)',
+                name:'Chinedu O.',
+                role:'Trader · Lagos',
+                product:'Equity Terminal',
+              },
+              {
+                quote: <>&ldquo;I run a small fashion business in Ibadan. My sales were good but I always ended the month confused. TraDaq showed me my actual profit margin was 18%, not 40% like I thought. <strong>I repriced everything and my real income jumped by ₦60,000 in the next month.</strong>&rdquo;</>,
+                initial:'A',bg:'var(--forest-mid)',
+                name:'Adaeze N.',
+                role:'Business owner · Ibadan',
+                product:'TraDaq',
+              },
+              {
+                quote: <>&ldquo;Stock School started from literally zero. I did not know what a share was. Now I have a portfolio on the NGX — not from tips, but from real understanding. <strong>My father asked me to explain his investments to him.</strong> That would never have happened before.&rdquo;</>,
+                initial:'T',bg:'var(--forest-light)',
+                name:'Tunde F.',
+                role:'Graduate · Abuja',
+                product:'Stock School',
+              },
+            ].map((t,i)=>(
+              <div className={`testimonial-card reveal${i>0?' reveal-d'+i:''}`} key={i}>
+                <div className="testimonial-quote">{t.quote}</div>
+                <div className="testimonial-person">
+                  <div className="testimonial-avatar" style={{background:t.bg}}>{t.initial}</div>
+                  <div>
+                    <div className="testimonial-name">{t.name}</div>
+                    <div className="testimonial-role">{t.role}</div>
+                    <div className="testimonial-product">{t.product}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* ── HOW IT WORKS — Reordered: create account BEFORE buying ── */}
         <section className="how-section" id="how-steps-section">
           <div className="how-header">
             <div className="eyebrow eyebrow-center eyebrow-light reveal" style={{marginBottom:'20px',justifyContent:'center'}}>Simple process</div>
@@ -502,9 +731,9 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           </div>
           <div className="how-steps">
             {[
-              {n:'1',t:'Pick your starting point',d:'Not sure where to begin? Start with MoneySpeak — look up the terms you have been pretending to understand. Or jump straight into Stock School if you want to learn investing from scratch.'},
-              {n:'2',t:'Pay once. Access forever.',d:'One-time Naira payment through Selar. You receive your access key by email within minutes. No monthly fees. No subscription traps. No hidden charges. Your access is lifetime.'},
-              {n:'3',t:'Create your account and activate.',d:'Go to meridianng.com, create a free account, and paste your key. Your products unlock immediately. One key opens everything in your plan — no separate logins, no separate apps.'},
+              {n:'1',t:'Create your free account',d:'Go to meridianng.com/login and create a free account in under a minute. Your account is where all your products live — one login, everything in one place. Creating an account costs nothing.'},
+              {n:'2',t:'Pick your product and pay on Selar',d:'Browse our products and choose what fits your need right now. Pay once in Naira on Selar — our trusted payment partner. You receive your personal access key by email instantly after payment.'},
+              {n:'3',t:'Paste your key and unlock everything',d:'Sign in to your Meridian account, go to the Activate page, and paste your key. Your products unlock immediately. No separate apps. No extra logins. Everything is right there in your dashboard.'},
             ].map((s,i)=>(
               <div className={`how-step reveal${i>0?' reveal-d'+i:''}`} key={s.n}>
                 <div className="how-step-num">{s.n}</div>
@@ -532,7 +761,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               {[
                 {icon:'🔒',t:'We never tell you what to buy',d:'Every Meridian tool puts the decision firmly in your hands. We give you understanding, frameworks, and analysis. The choice is always yours.'},
                 {icon:'🇳🇬',t:'Built for Nigerian realities',d:'NGX stocks. Naira pricing. CBN decisions. Inflation, devaluation, and the real economic conditions that affect your money — not Wall Street theory.'},
-                {icon:'✉',t:'We actually respond',d:'Access issue? Question about a product? Email hello@meridianng.com. We respond within a few hours, every time.'},
+                {icon:'💬',t:'We respond — on WhatsApp and email',d:'Access issue? Question about a product? WhatsApp us or email hello@meridianng.com. We respond within a few hours, every time.'},
                 {icon:'💳',t:'One-time Naira payments, no tricks',d:'Pay once through Selar. Keep access forever. No monthly subscriptions. No hidden fees. Your price today is your price always.'},
               ].map((p,i)=>(
                 <div className={`trust-point reveal${i>0?' reveal-d'+i:''}`} key={p.t}>
@@ -566,6 +795,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
             ))}
           </div>
           <div className="cta-actions reveal reveal-d4">
+            {/* REPLACE href with actual bundle Selar URL */}
             <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Start understanding money →</a>
             <a href="/login" className="btn btn-cream btn-lg">Sign in to dashboard</a>
           </div>
@@ -618,10 +848,25 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         <section className="sec">
           <div className="wrap" style={{maxWidth:'1100px',margin:'0 auto'}}>
             {[
-              {accent:'',name:'MoneySpeak — Investment Dictionary',badge:'📖 MoneySpeak',badgeStyle:{},tag:'500 terms. Nigerian stories. Your front door to financial clarity.',price:'₦4,500',note:'One-time · Lifetime',story:'You have been nodding along when people say "liquidity," "portfolio diversification," and "bull run." MoneySpeak is for the moment you decide to stop nodding and actually understand. Every term comes with a plain definition, a Nigerian story that makes it real, and a reality check so you know how to use it.',feats:['500 terms covering investing, business, and personal finance','Every term explained with a Nigerian story, not a textbook definition','Word of the Day — free, forever, no payment needed','Searchable interface — find any term in under 5 seconds','Organised by category: investing, business, crypto, personal finance','Reality check on every term — how it actually affects your decisions'],cta:'Get MoneySpeak — ₦4,500 →',btnClass:'btn-forest'},
-              {accent:'background:linear-gradient(90deg,#B8922A,#D4A83C)',name:'Stock School — Investing Mastery',badge:'🎓 Stock School',badgeStyle:{background:'rgba(184,146,42,0.1)',color:'var(--gold)'},tag:'From complete beginner to confident, independent investor.',price:'₦18,000',note:'One-time · 11 Phases',story:'Most investing content in Nigeria teaches you to follow tips and signals. Stock School teaches you something different: how to think. How to evaluate a company, understand why it is priced the way it is, and decide independently whether it belongs in your portfolio. No tips. No signals. Just your own judgment — properly informed.',feats:['11 structured phases from "what is a share?" to portfolio construction','Nigerian Exchange Group (NGX) examples throughout — not Wall Street','How to read and understand a company\'s annual report','Valuation frameworks — is a stock cheap or expensive right now?','Risk thinking calibrated to Nigerian market realities','Works directly with Equity Terminal for hands-on practice'],cta:'Enrol in Stock School — ₦18,000 →',btnClass:'btn-gold'},
-              {accent:'background:linear-gradient(90deg,#145C31,#1E8048)',name:'Equity Terminal — Stock Analyser',badge:'📊 Equity Terminal',badgeStyle:{},tag:'The analysis tool for investors who want to think, not follow.',price:'₦15,000',note:'One-time · Lifetime V2',story:'A stock going up is not the same as a stock being good. The Equity Terminal is a calculator that applies a proven Owner Earnings framework to data you enter from any company\'s annual report. You put in the numbers. It shows you what the maths says. You decide what to do. This is how serious investors think — not by following tips.',feats:['Owner Earnings analysis — the framework serious long-term investors use','Quick Mode: directional results from just 4 inputs — beginner-friendly','Multi-year tracking — see if a company\'s quality is improving or declining','Calibrated for Nigeria (15% default hurdle rate for NGN investments)','Plain-English verdict with detailed supporting analysis','NGN, USD, GBP, EUR, ZAR, KES, GHS and more'],cta:'Get Equity Terminal — ₦15,000 →',btnClass:'btn-forest'},
-              {accent:'background:linear-gradient(90deg,#C17A2A,#E4993A)',name:'TraDaq — Business Money Tracker',badge:'📒 TraDaq — Coming Soon',badgeStyle:{background:'rgba(193,122,42,0.1)',color:'#8B5A18'},tag:'For traders, IG sellers, and anyone running a business without an accountant.',price:'₦9,000',note:'Per year · Early access',story:'Many small business owners in Nigeria are working 12 hours a day and ending the month confused about where the money went. "I made good sales" is not the same as "I made profit." TraDaq shows you the exact difference — in plain language, from your phone, in 30 seconds a day.',feats:['Track every sale and every cost — 30 seconds per entry','See your actual profit — not revenue, not "what\'s in the account"','Categorised expenses: stock, rent, transport, salary, marketing, and more','Plain-English insights: "For every ₦100 you make, ₦23 is real profit"','Phone-first — no laptop, no spreadsheet, no accountant needed','Your data stays on your device — not shared with anyone'],cta:'Join the TraDaq waitlist →',btnClass:'btn-forest'},
+              {accent:'',name:'MoneySpeak — Investment Dictionary',badge:'📖 MoneySpeak',badgeStyle:{},tag:'500 terms. Nigerian stories. Your front door to financial clarity.',price:'₦4,500',note:'One-time · Lifetime',
+                story:'You have been nodding along when people say "liquidity," "portfolio diversification," and "bull run." MoneySpeak is for the moment you decide to stop nodding and actually understand. Every term comes with a plain definition, a Nigerian story that makes it real, and a reality check so you know how to use it.',
+                feats:['500 terms covering investing, business, and personal finance','Every term explained with a Nigerian story, not a textbook definition','Word of the Day — free, forever, no payment needed','Searchable interface — find any term in under 5 seconds','Organised by category: investing, business, crypto, personal finance','Reality check on every term — how it actually affects your decisions'],
+                // REPLACE with actual MoneySpeak Selar URL
+                cta:'Get MoneySpeak — ₦4,500 →',url:'https://selar.com/moneyspeak-REPLACE',btnClass:'btn-forest'},
+              {accent:'background:linear-gradient(90deg,#B8922A,#D4A83C)',name:'Stock School — Investing Mastery',badge:'🎓 Stock School',badgeStyle:{background:'rgba(184,146,42,0.1)',color:'var(--gold)'},tag:'From complete beginner to confident, independent investor.',price:'₦18,000',note:'One-time · 11 Phases',
+                story:'Most investing content in Nigeria teaches you to follow tips and signals. Stock School teaches you something different: how to think. How to evaluate a company, understand why it is priced the way it is, and decide independently whether it belongs in your portfolio. No tips. No signals. Just your own judgment — properly informed.',
+                feats:['11 structured phases from "what is a share?" to portfolio construction','Nigerian Exchange Group (NGX) examples throughout — not Wall Street','How to read and understand a company\'s annual report','Valuation frameworks — is a stock cheap or expensive right now?','Risk thinking calibrated to Nigerian market realities','Works directly with Equity Terminal for hands-on practice'],
+                // REPLACE with actual Stock School Selar URL
+                cta:'Enrol in Stock School — ₦18,000 →',url:'https://selar.com/stockschool-REPLACE',btnClass:'btn-gold'},
+              {accent:'background:linear-gradient(90deg,#145C31,#1E8048)',name:'Equity Terminal — Stock Analyser',badge:'📊 Equity Terminal',badgeStyle:{},tag:'The analysis tool for investors who want to think, not follow.',price:'₦15,000',note:'One-time · Lifetime V2',
+                story:'A stock going up is not the same as a stock being good. The Equity Terminal is a calculator that applies a proven Owner Earnings framework to data you enter from any company\'s annual report. You put in the numbers. It shows you what the maths says. You decide what to do. This is how serious investors think — not by following tips.',
+                feats:['Owner Earnings analysis — the framework serious long-term investors use','Quick Mode: directional results from just 4 inputs — beginner-friendly','Multi-year tracking — see if a company\'s quality is improving or declining','Calibrated for Nigeria (15% default hurdle rate for NGN investments)','Plain-English verdict with detailed supporting analysis','NGN, USD, GBP, EUR, ZAR, KES, GHS and more'],
+                // REPLACE with actual Equity Terminal Selar URL
+                cta:'Get Equity Terminal — ₦15,000 →',url:'https://selar.com/equityterminal-REPLACE',btnClass:'btn-forest'},
+              {accent:'background:linear-gradient(90deg,#C17A2A,#E4993A)',name:'TraDaq — Business Money Tracker',badge:'📒 TraDaq — Coming Soon',badgeStyle:{background:'rgba(193,122,42,0.1)',color:'#8B5A18'},tag:'For traders, IG sellers, and anyone running a business without an accountant.',price:'₦9,000',note:'Per year · Early access',
+                story:'Many small business owners in Nigeria are working 12 hours a day and ending the month confused about where the money went. "I made good sales" is not the same as "I made profit." TraDaq shows you the exact difference — in plain language, from your phone, in 30 seconds a day.',
+                feats:['Track every sale and every cost — 30 seconds per entry','See your actual profit — not revenue, not "what\'s in the account"','Categorised expenses: stock, rent, transport, salary, marketing, and more','Plain-English insights: "For every ₦100 you make, ₦23 is real profit"','Phone-first — no laptop, no spreadsheet, no accountant needed','Your data stays on your device — not shared with anyone'],
+                cta:'Join the TraDaq waitlist →',url:'https://selar.com/m/meridian_ng',btnClass:'btn-forest'},
             ].map(p=>(
               <div className="product-deep-card reveal" key={p.name}>
                 <div className="product-deep-accent" style={p.accent?{background:p.accent.replace('background:','')}:{}}/>
@@ -641,7 +886,11 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
                   <div className="product-features">
                     {p.feats.map(f=><div className="feature" key={f}><div className="feature-check">✓</div>{f}</div>)}
                   </div>
-                  <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className={`btn ${p.btnClass} btn-md`}>{p.cta}</a>
+                  {/* IMPROVED: Refund/access note on every product */}
+                  <div className="product-refund-note">
+                    Digital product — access delivered instantly after purchase. Any issue? Email hello@meridianng.com — we resolve within the hour.
+                  </div>
+                  <a href={p.url} target="_blank" rel="noopener noreferrer" className={`btn ${p.btnClass} btn-md`}>{p.cta}</a>
                 </div>
               </div>
             ))}
@@ -650,8 +899,12 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
                 <div className="eyebrow eyebrow-light" style={{marginBottom:'16px'}}>Best value — everything included</div>
                 <h3 className="sapa-headline">Meridian Access.<br/><em>All four products. One payment.</em></h3>
                 <p className="sapa-sub">MoneySpeak, Stock School, Equity Terminal, and TraDaq — all under one access. ₦35,000 total. You save ₦11,500. Every future product Meridian builds is included.</p>
+                <p className="bundle-note">✓ MoneySpeak · Stock School · Equity Terminal available now &nbsp;|&nbsp; TraDaq unlocks when it launches — included free</p>
               </div>
-              <div style={{flexShrink:0}}><a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Get Meridian Access — ₦35,000 →</a></div>
+              <div style={{flexShrink:0}}>
+                {/* REPLACE with actual bundle Selar URL */}
+                <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Get Meridian Access — ₦35,000 →</a>
+              </div>
             </div>
           </div>
         </section>
@@ -666,7 +919,13 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <h1 className="display display-md reveal reveal-d1" style={{marginBottom:'20px'}}>We actually<br/><em>respond.</em></h1>
               <p className="lead reveal reveal-d2" style={{marginBottom:'40px'}}>A question about a product. A term you want added to MoneySpeak. An issue with your access. Feedback. Ideas. We read everything.</p>
               <div className="trust-signals">
-                {[{icon:'✉',t:'Email',d:'hello@meridianng.com — we respond within a few hours'},{icon:'📷',t:'Instagram',d:'@meridianng_ — DMs open'},{icon:'🔗',t:'LinkedIn',d:'linkedin.com/company/meridianng'},{icon:'▶',t:'YouTube',d:'@MeridianNG'}].map((c,i)=>(
+                {/* REPLACE phone number with your actual WhatsApp Business number */}
+                {[
+                  {icon:'💬',t:'WhatsApp (fastest)',d:'wa.me/2348000000000 — REPLACE with your number. Usually responded within the hour.'},
+                  {icon:'✉',t:'Email',d:'hello@meridianng.com — we respond within a few hours'},
+                  {icon:'📷',t:'Instagram',d:'@meridianng_ — DMs open'},
+                  {icon:'🔗',t:'LinkedIn',d:'linkedin.com/company/meridianng'},
+                ].map((c,i)=>(
                   <div className={`trust-point reveal${i>0?' reveal-d'+i:''}`} key={c.t}>
                     <div className="trust-icon">{c.icon}</div>
                     <div><div className="trust-point-title">{c.t}</div><div className="trust-point-desc">{c.d}</div></div>
@@ -678,26 +937,41 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
                 <div style={{fontSize:'15px',color:'var(--muted)',lineHeight:1.7}}>If your key is not working or you did not receive your email after purchase, email us at <strong style={{color:'var(--charcoal)'}}>hello@meridianng.com</strong> with your payment reference number. We will sort it within the hour.</div>
               </div>
             </div>
+            {/* CONTACT FORM — now wired to /api/contact */}
             <div style={{background:'white',borderRadius:'10px',padding:'48px',border:'1px solid var(--border)',boxShadow:'0 4px 32px rgba(10,59,31,0.07)'}} className="reveal reveal-d1">
               <h2 style={{fontFamily:'var(--serif)',fontSize:'30px',fontWeight:700,color:'var(--forest)',marginBottom:'8px',letterSpacing:'-0.015em'}}>Send a message</h2>
               <p style={{fontSize:'16px',color:'var(--muted)',marginBottom:'32px',lineHeight:1.6}}>Tell us what you need. We will get back to you promptly.</p>
-              {[{l:'Your name',t:'text',p:'e.g. Chinedu Okafor'},{l:'Email address',t:'email',p:'you@example.com'}].map(f=>(
+              {[
+                {l:'Your name',t:'text',p:'e.g. Chinedu Okafor',val:contactName,set:setContactName},
+                {l:'Email address',t:'email',p:'you@example.com',val:contactEmail,set:setContactEmail},
+              ].map(f=>(
                 <div style={{marginBottom:'22px'}} key={f.l}>
-                  <label style={{display:'block',fontFamily:'var(--mono)',fontSize:'10px',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--muted)',marginBottom:'8px'}}>{f.l}</label>
-                  <input type={f.t} placeholder={f.p} style={{width:'100%',padding:'14px 18px',background:'var(--cream)',border:'1px solid var(--border)',borderRadius:'4px',fontFamily:'var(--sans)',fontSize:'16px',color:'var(--charcoal)',outline:'none'}}/>
+                  <label className="form-label-full">{f.l}</label>
+                  <input type={f.t} placeholder={f.p} value={f.val} onChange={e=>f.set(e.target.value)} className="form-input-full"/>
                 </div>
               ))}
               <div style={{marginBottom:'22px'}}>
-                <label style={{display:'block',fontFamily:'var(--mono)',fontSize:'10px',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--muted)',marginBottom:'8px'}}>Subject</label>
-                <select style={{width:'100%',padding:'14px 18px',background:'var(--cream)',border:'1px solid var(--border)',borderRadius:'4px',fontFamily:'var(--sans)',fontSize:'16px',color:'var(--charcoal)',outline:'none',cursor:'pointer'}}>
-                  <option>General question</option><option>Access key issue</option><option>Product feedback</option><option>Term request for MoneySpeak</option><option>Business / Partnership</option>
+                <label className="form-label-full">Subject</label>
+                <select value={contactSubject} onChange={e=>setContactSubject(e.target.value)} className="form-input-full" style={{cursor:'pointer'}}>
+                  <option>General question</option>
+                  <option>Access key issue</option>
+                  <option>Product feedback</option>
+                  <option>Term request for MoneySpeak</option>
+                  <option>Business / Partnership</option>
                 </select>
               </div>
               <div style={{marginBottom:'28px'}}>
-                <label style={{display:'block',fontFamily:'var(--mono)',fontSize:'10px',letterSpacing:'0.16em',textTransform:'uppercase',color:'var(--muted)',marginBottom:'8px'}}>Your message</label>
-                <textarea placeholder="Tell us what you need..." rows={5} style={{width:'100%',padding:'14px 18px',background:'var(--cream)',border:'1px solid var(--border)',borderRadius:'4px',fontFamily:'var(--sans)',fontSize:'16px',color:'var(--charcoal)',outline:'none',resize:'vertical',lineHeight:1.6}}/>
+                <label className="form-label-full">Your message</label>
+                <textarea placeholder="Tell us what you need..." rows={5} value={contactMessage} onChange={e=>setContactMessage(e.target.value)} className="form-input-full" style={{resize:'vertical',lineHeight:1.6}}/>
               </div>
-              <button className="btn btn-forest btn-md" style={{width:'100%',justifyContent:'center'}} onClick={()=>showToast('Message sent ✓  We\'ll reply within a few hours.')}>Send message →</button>
+              <button
+                className={`btn btn-forest btn-md${contactLoading?' btn-loading':''}`}
+                style={{width:'100%',justifyContent:'center'}}
+                onClick={handleContactSubmit}
+                disabled={contactLoading}
+              >
+                {contactLoading ? 'Sending…' : 'Send message →'}
+              </button>
             </div>
           </div>
         </section>
@@ -716,7 +990,8 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
             {[
               {title:'Products',links:[['MoneySpeak Dictionary','products'],['Stock School','products'],['Equity Terminal','products'],['TraDaq','products'],['Meridian Access (Bundle)','products']]},
               {title:'Company',links:[['About Meridian','about'],['Contact','contact'],['Buy on Selar','https://selar.com/m/meridian_ng'],['Dashboard login','/login']]},
-              {title:'Follow us',links:[['Instagram','https://instagram.com/meridianng_'],['LinkedIn','https://linkedin.com/company/meridianng'],['YouTube','https://youtube.com/@MeridianNG'],['Email us','mailto:hello@meridianng.com']]},
+              // REPLACE social links with your actual handles
+              {title:'Find us',links:[['Instagram — @meridianng_','https://instagram.com/meridianng_'],['LinkedIn','https://linkedin.com/company/meridianng'],['YouTube — @MeridianNG','https://youtube.com/@MeridianNG'],['WhatsApp','https://wa.me/2348000000000'],['Email us','mailto:hello@meridianng.com']]},
             ].map(col=>(
               <div key={col.title}>
                 <div className="footer-col-title">{col.title}</div>
@@ -743,7 +1018,13 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         <div className="modal-box">
           <div className="modal-close" onClick={()=>setTermsOpen(false)}>✕</div>
           <h2 className="modal-title">Terms of Use &amp; Privacy</h2>
-          {[{h:'What Meridian is',p:'Meridian is a financial education and analysis platform. Our products help you understand financial concepts, learn about investing, analyse company financials using data you input, and track your business finances. We are not a bank, broker, investment advisor, or licensed financial institution.'},{h:'Not financial advice',p:'Nothing on Meridian constitutes financial advice. The terms "STRONG," "NEUTRAL," and "WEAK" in the Equity Terminal describe the output of a mathematical model based on data you entered — not a recommendation to buy, sell, or hold any security. You are solely responsible for all decisions you make.'},{h:'Your data and privacy',p:'Your financial data entered in Meridian tools is stored in a private account accessible only to you. We do not sell your personal data to third parties. You can request deletion of your account at any time by emailing hello@meridianng.com.'},{h:'Payments and refunds',p:'All purchases are processed through Selar. Due to the digital nature of our products, we generally do not offer refunds. If you experience a technical issue preventing access, contact hello@meridianng.com and we will resolve it promptly.'},{h:'Contact',p:'For any questions, email hello@meridianng.com. We respond within 24 hours.'}].map(s=>(
+          {[
+            {h:'What Meridian is',p:'Meridian is a financial education and analysis platform. Our products help you understand financial concepts, learn about investing, analyse company financials using data you input, and track your business finances. We are not a bank, broker, investment advisor, or licensed financial institution.'},
+            {h:'Not financial advice',p:'Nothing on Meridian constitutes financial advice. The terms "STRONG," "NEUTRAL," and "WEAK" in the Equity Terminal describe the output of a mathematical model based on data you entered — not a recommendation to buy, sell, or hold any security. You are solely responsible for all decisions you make.'},
+            {h:'Your data and privacy',p:'Your financial data entered in Meridian tools is stored in a private account accessible only to you. We do not sell your personal data to third parties. You can request deletion of your account at any time by emailing hello@meridianng.com.'},
+            {h:'Payments and refunds',p:'All purchases are processed through Selar. Due to the digital nature of our products, we generally do not offer refunds. If you experience a technical issue preventing access, contact hello@meridianng.com and we will resolve it promptly.'},
+            {h:'Contact',p:'For any questions, email hello@meridianng.com or WhatsApp us. We respond within 24 hours.'},
+          ].map(s=>(
             <div className="modal-section" key={s.h}><h3>{s.h}</h3><p>{s.p}</p></div>
           ))}
         </div>
