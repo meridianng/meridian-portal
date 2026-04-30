@@ -484,7 +484,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
       <div className="wa-float">
         <div className="wa-float-label">Chat on WhatsApp</div>
         <a
-          href="https://wa.me/2348000000000?text=Hi%2C%20I%20have%20a%20question%20about%20Meridian"
+          href="https://wa.me/2348148818179?text=Hi%2C%20I%20have%20a%20question%20about%20Meridian"
           target="_blank"
           rel="noopener noreferrer"
           className="wa-float-btn"
