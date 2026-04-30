@@ -480,7 +480,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
       </div>
 
       {/* WHATSAPP FLOATING BUTTON */}
-      {/* REPLACE +2348000000000 with your actual WhatsApp Business number */}
+      {/* REPLACE +2348148818179 with your actual WhatsApp Business number */}
       <div className="wa-float">
         <div className="wa-float-label">Chat on WhatsApp</div>
         <a
@@ -609,7 +609,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <p className="body-text reveal reveal-d3" style={{marginBottom:'36px'}}>The Word of the Day on this page? That is MoneySpeak. A new term every day — free, no payment needed. The full 500 terms, searchable anytime, unlock for ₦4,500.</p>
               <div className="reveal reveal-d4" style={{display:'flex',gap:'12px',flexWrap:'wrap'}}>
                 {/* REPLACE href with your actual MoneySpeak Selar product URL */}
-                <a href="https://selar.com/moneyspeak-REPLACE" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-md">Get MoneySpeak — ₦4,500</a>
+                <a href="https://selar.com/meridian-moneyspeak" target="_blank" rel="noopener noreferrer" className="btn btn-forest btn-md">Get MoneySpeak — ₦4,500</a>
                 <button className="btn btn-outline btn-md" onClick={()=>showPage('products')}>See all products</button>
               </div>
             </div>
@@ -640,13 +640,13 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
             {[
               {icon:'📖',name:'MoneySpeak',pitch:'500 financial terms in plain Nigerian English. Your front door to understanding money — explained like your older sibling would.',price:'₦4,500 · One-time',cta:'Get started',
                 // REPLACE with your actual MoneySpeak Selar product URL
-                url:'https://selar.com/moneyspeak-REPLACE'},
+                url:'https://selar.com/meridian-moneyspeak'},
               {icon:'🎓',name:'Stock School',pitch:'From "I don\'t know anything" to building a real portfolio. 11 structured phases using NGX examples, no foreign theory.',price:'₦18,000 · One-time',cta:'Enrol now',
                 // REPLACE with your actual Stock School Selar product URL
-                url:'https://selar.com/stockschool-REPLACE'},
+                url:'https://selar.com/meridian-stockschool'},
               {icon:'📊',name:'Equity Terminal',pitch:'Don\'t follow hype. Analyse any company using the same framework serious investors use. You input the data. You get the truth.',price:'₦15,000 · One-time',cta:'Get access',
                 // REPLACE with your actual Equity Terminal Selar product URL
-                url:'https://selar.com/equityterminal-REPLACE'},
+                url:'https://selar.com/meridian-equityterminal'},
               {icon:'📒',name:'TraDaq',pitch:'You made sales. But did you make profit? Track your business money in 30 seconds a day. Know your real numbers.',price:'₦9,000 / year · Coming soon',cta:'Join waitlist',
                 url:'https://selar.com/m/meridian_ng'},
             ].map((p,i)=>(
@@ -669,7 +669,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
             </div>
             <div style={{display:'flex',flexDirection:'column',gap:'12px',flexShrink:0}}>
               {/* REPLACE with your actual bundle Selar product URL */}
-              <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-lg">Get Meridian Access — ₦35,000</a>
+              <a href="https://selar.com/meridian-accessbundle" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-lg">Get Meridian Access — ₦35,000</a>
               <button className="btn btn-cream btn-md" onClick={()=>showPage('products')}>See individual products →</button>
             </div>
           </div>
@@ -796,7 +796,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           </div>
           <div className="cta-actions reveal reveal-d4">
             {/* REPLACE href with actual bundle Selar URL */}
-            <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Start understanding money →</a>
+            <a href="https://selar.com/meridian-accessbundle" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Start understanding money →</a>
             <a href="/login" className="btn btn-cream btn-lg">Sign in to dashboard</a>
           </div>
           <div className="cta-footnote reveal">One-time Naira payments via Selar · Instant access after purchase · No subscriptions</div>
@@ -852,17 +852,17 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
                 story:'You have been nodding along when people say "liquidity," "portfolio diversification," and "bull run." MoneySpeak is for the moment you decide to stop nodding and actually understand. Every term comes with a plain definition, a Nigerian story that makes it real, and a reality check so you know how to use it.',
                 feats:['500 terms covering investing, business, and personal finance','Every term explained with a Nigerian story, not a textbook definition','Word of the Day — free, forever, no payment needed','Searchable interface — find any term in under 5 seconds','Organised by category: investing, business, crypto, personal finance','Reality check on every term — how it actually affects your decisions'],
                 // REPLACE with actual MoneySpeak Selar URL
-                cta:'Get MoneySpeak — ₦4,500 →',url:'https://selar.com/moneyspeak-REPLACE',btnClass:'btn-forest'},
+                cta:'Get MoneySpeak — ₦4,500 →',url:'https://selar.com/meridian-moneyspeak',btnClass:'btn-forest'},
               {accent:'background:linear-gradient(90deg,#B8922A,#D4A83C)',name:'Stock School — Investing Mastery',badge:'🎓 Stock School',badgeStyle:{background:'rgba(184,146,42,0.1)',color:'var(--gold)'},tag:'From complete beginner to confident, independent investor.',price:'₦18,000',note:'One-time · 11 Phases',
                 story:'Most investing content in Nigeria teaches you to follow tips and signals. Stock School teaches you something different: how to think. How to evaluate a company, understand why it is priced the way it is, and decide independently whether it belongs in your portfolio. No tips. No signals. Just your own judgment — properly informed.',
                 feats:['11 structured phases from "what is a share?" to portfolio construction','Nigerian Exchange Group (NGX) examples throughout — not Wall Street','How to read and understand a company\'s annual report','Valuation frameworks — is a stock cheap or expensive right now?','Risk thinking calibrated to Nigerian market realities','Works directly with Equity Terminal for hands-on practice'],
                 // REPLACE with actual Stock School Selar URL
-                cta:'Enrol in Stock School — ₦18,000 →',url:'https://selar.com/stockschool-REPLACE',btnClass:'btn-gold'},
+                cta:'Enrol in Stock School — ₦18,000 →',url:'https://selar.com/meridian-stockschool',btnClass:'btn-gold'},
               {accent:'background:linear-gradient(90deg,#145C31,#1E8048)',name:'Equity Terminal — Stock Analyser',badge:'📊 Equity Terminal',badgeStyle:{},tag:'The analysis tool for investors who want to think, not follow.',price:'₦15,000',note:'One-time · Lifetime V2',
                 story:'A stock going up is not the same as a stock being good. The Equity Terminal is a calculator that applies a proven Owner Earnings framework to data you enter from any company\'s annual report. You put in the numbers. It shows you what the maths says. You decide what to do. This is how serious investors think — not by following tips.',
                 feats:['Owner Earnings analysis — the framework serious long-term investors use','Quick Mode: directional results from just 4 inputs — beginner-friendly','Multi-year tracking — see if a company\'s quality is improving or declining','Calibrated for Nigeria (15% default hurdle rate for NGN investments)','Plain-English verdict with detailed supporting analysis','NGN, USD, GBP, EUR, ZAR, KES, GHS and more'],
                 // REPLACE with actual Equity Terminal Selar URL
-                cta:'Get Equity Terminal — ₦15,000 →',url:'https://selar.com/equityterminal-REPLACE',btnClass:'btn-forest'},
+                cta:'Get Equity Terminal — ₦15,000 →',url:'https://selar.com/meridian-equityterminal',btnClass:'btn-forest'},
               {accent:'background:linear-gradient(90deg,#C17A2A,#E4993A)',name:'TraDaq — Business Money Tracker',badge:'📒 TraDaq — Coming Soon',badgeStyle:{background:'rgba(193,122,42,0.1)',color:'#8B5A18'},tag:'For traders, IG sellers, and anyone running a business without an accountant.',price:'₦9,000',note:'Per year · Early access',
                 story:'Many small business owners in Nigeria are working 12 hours a day and ending the month confused about where the money went. "I made good sales" is not the same as "I made profit." TraDaq shows you the exact difference — in plain language, from your phone, in 30 seconds a day.',
                 feats:['Track every sale and every cost — 30 seconds per entry','See your actual profit — not revenue, not "what\'s in the account"','Categorised expenses: stock, rent, transport, salary, marketing, and more','Plain-English insights: "For every ₦100 you make, ₦23 is real profit"','Phone-first — no laptop, no spreadsheet, no accountant needed','Your data stays on your device — not shared with anyone'],
@@ -903,7 +903,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               </div>
               <div style={{flexShrink:0}}>
                 {/* REPLACE with actual bundle Selar URL */}
-                <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Get Meridian Access — ₦35,000 →</a>
+                <a href="https://selar.com/meridian-accessbundle" target="_blank" rel="noopener noreferrer" className="btn btn-gold btn-xl">Get Meridian Access — ₦35,000 →</a>
               </div>
             </div>
           </div>
@@ -921,7 +921,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <div className="trust-signals">
                 {/* REPLACE phone number with your actual WhatsApp Business number */}
                 {[
-                  {icon:'💬',t:'WhatsApp (fastest)',d:'wa.me/2348000000000 — REPLACE with your number. Usually responded within the hour.'},
+                  {icon:'💬',t:'WhatsApp (fastest)',d:'wa.me/2348148818179 — REPLACE with your number. Usually responded within the hour.'},
                   {icon:'✉',t:'Email',d:'hello@meridianng.com — we respond within a few hours'},
                   {icon:'📷',t:'Instagram',d:'@meridianng_ — DMs open'},
                   {icon:'🔗',t:'LinkedIn',d:'linkedin.com/company/meridianng'},
@@ -991,7 +991,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               {title:'Products',links:[['MoneySpeak Dictionary','products'],['Stock School','products'],['Equity Terminal','products'],['TraDaq','products'],['Meridian Access (Bundle)','products']]},
               {title:'Company',links:[['About Meridian','about'],['Contact','contact'],['Buy on Selar','https://selar.com/m/meridian_ng'],['Dashboard login','/login']]},
               // REPLACE social links with your actual handles
-              {title:'Find us',links:[['Instagram — @meridianng_','https://instagram.com/meridianng_'],['LinkedIn','https://linkedin.com/company/meridianng'],['YouTube — @MeridianNG','https://youtube.com/@MeridianNG'],['WhatsApp','https://wa.me/2348000000000'],['Email us','mailto:hello@meridianng.com']]},
+              {title:'Find us',links:[['Instagram — @meridianng_','https://instagram.com/meridianng_'],['LinkedIn','https://linkedin.com/company/meridianng'],['YouTube — @MeridianNG','https://youtube.com/@MeridianNG'],['WhatsApp','https://wa.me/2348148818179'],['Email us','mailto:hello@meridianng.com']]},
             ].map(col=>(
               <div key={col.title}>
                 <div className="footer-col-title">{col.title}</div>
