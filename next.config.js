@@ -1,6 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Allows the portal to embed the GAS-hosted tools in iframes if needed
+
+  // ── Image domains ────────────────────────────────────────────
+  // Add any external image hostnames you use here.
+  // Your Supabase storage URL follows the pattern: xxxx.supabase.co
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: '*.supabase.co',   // covers all Supabase storage URLs
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
+      // Add more if you use external image sources, e.g. Unsplash, Cloudinary
+    ],
+  },
+
+  // ── Security headers ─────────────────────────────────────────
   async headers() {
     return [
       {
