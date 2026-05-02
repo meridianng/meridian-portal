@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { MeridianLogo } from '@/components/MeridianLogo'
 import { createClient } from '@/lib/supabase/client'
 
-// ─── SVG Icons ────────────────────────────────────────────────────────────────
+
 const IBook   =()=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
 const IGrad   =()=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
 const IChart  =()=><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
@@ -520,7 +520,7 @@ export default function DashboardClient({ email, name, plan, key_, access }: Pro
 
         {/* ── DASHBOARD FOOTER ── */}
         <footer style={{ marginTop:48, padding:'28px 32px', borderTop:'1px solid rgba(10,61,34,0.08)', background:'rgba(248,244,236,0.6)', display:'flex', alignItems:'center', justifyContent:'space-between', gap:20, flexWrap:'wrap' }}>
-          <div style={{ display:'flex', align:'center', gap:24, flexWrap:'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
             <div style={{ fontFamily:'monospace', fontSize:10, letterSpacing:'0.12em', color:'#A8A8A8' }}>© 2025 Meridian</div>
             {[['hello@meridianng.com','mailto:hello@meridianng.com'],['@meridianng_','https://instagram.com/meridianng_'],['selar.com/m/meridian_ng','https://selar.com/m/meridian_ng']].map(([label,href])=>(
               <a key={label} href={href} target={href.startsWith('http')?'_blank':undefined} rel="noopener noreferrer"
