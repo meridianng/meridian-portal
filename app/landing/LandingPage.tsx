@@ -97,7 +97,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
       <span style={{ display:'block', width:'28px', height:'1px', background: light ? 'rgba(240,216,150,0.4)' : 'var(--gold)', flexShrink:0 }}/>
       {children}
     </div>
-  )
+  );
 
   return (
     <>
