@@ -101,11 +101,8 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
   );
 };
 
-  return (
-    <>
-    </>
-  );
-}
+return (
+  <>
 
       {/* ── NAV ── */}
       <nav className={`mn${navHidden?' hidden':''}`}>
