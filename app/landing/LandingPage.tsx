@@ -131,17 +131,22 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
       </nav>
 
       {/* ── MOBILE MENU ── */}
-      <div className={`mmenu${menuOpen?' open':''}`}>
-        <a onClick={()=>showPage('home')}>Home</a>
-        <a onClick={()=>showPage('about')}>About</a>
-        <a onClick={()=>showPage('products')}>Products</a>
-        <a onClick={()=>showPage('contact')}>Contact</a>
+      <div className={`mmenu${menuOpen ? ' open' : ''}`}>
+        <a onClick={() => showPage('home')}>Home</a>
+        <a onClick={() => showPage('about')}>About</a>
+        <a onClick={() => showPage('products')}>Products</a>
+        <a onClick={() => showPage('contact')}>Contact</a>
         <div className="mm-actions">
-          {isSignedIn
-            ? <a href="/dashboard" className="btn btn-f">My Dashboard →</a>
-            : <><a href="/login" className="btn btn-o">Sign in</a>
-               <a href="#how-steps" className="btn btn-f" onClick={scrollToHow}>Get started →</a></>
-          }
+          {isSignedIn ? (
+            <a href="/dashboard" className="btn btn-f">My Dashboard →</a>
+          ) : (
+            <>
+              <a href="/login" className="btn btn-o">Sign in</a>
+              <a href="#how-steps" className="btn btn-f" onClick={scrollToHow}>
+                Get started →
+              </a>
+            </>
+          )}
         </div>
       </div>
 
