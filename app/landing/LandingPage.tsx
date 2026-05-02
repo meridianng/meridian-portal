@@ -30,6 +30,17 @@ const DAILY_WORDS = [
   { term:'Bull Market',  ph:'bool mar · ket  ·  noun',           def:'A period when prices in the stock market are rising broadly and investor confidence is high.',                                                                                                                                   story:"December vibes in the stock market. Everywhere you turn, people are talking about making money from stocks. Your barber is recommending shares. The Uber driver has three investment apps. Even your auntie who never mentioned the NGX is asking how to buy Dangote shares. Prices are going up. Everyone is happy. That is a bull market.",                                                                         rule:'"A bull market is when to be careful, not when to abandon caution."',                              reality:'The dangerous thing about bull markets is that they make everyone look like a genius. When prices go up, almost every decision feels right. This is exactly when poor investments hide behind rising tides. Bull markets end. Only investors who understood what they owned survive intact.' },
 ]
 
+
+const Eyebrow = ({ children, center, light }: { children: React.ReactNode, center?: boolean, light?: boolean }) => {
+  return (
+    <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', fontFamily:'var(--mono)', fontSize:'11px', letterSpacing:'.2em', textTransform:'uppercase', color: light ? 'rgba(240,216,150,0.65)' : 'var(--gold)', justifyContent: center ? 'center' : undefined }}>
+      <span style={{ display:'block', width:'28px', height:'1px', background: light ? 'rgba(240,216,150,0.4)' : 'var(--gold)', flexShrink:0 }}/>
+      {children}
+    </div>
+  );
+};
+
+
 export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
   const [page,           setPage]           = useState<'home'|'about'|'products'|'contact'>('home')
   const [menuOpen,       setMenuOpen]       = useState(false)
@@ -92,14 +103,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
   }
 
   
-  const Eyebrow = ({ children, center, light }: { children: React.ReactNode, center?: boolean, light?: boolean }) => {
-  return (
-    <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', fontFamily:'var(--mono)', fontSize:'11px', letterSpacing:'.2em', textTransform:'uppercase', color: light ? 'rgba(240,216,150,0.65)' : 'var(--gold)', justifyContent: center ? 'center' : undefined }}>
-      <span style={{ display:'block', width:'28px', height:'1px', background: light ? 'rgba(240,216,150,0.4)' : 'var(--gold)', flexShrink:0 }}/>
-      {children}
-    </div>
-  );
-};
+
 
 return (
   <>
