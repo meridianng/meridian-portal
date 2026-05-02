@@ -92,16 +92,17 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
   }
 
   
-  const Eyebrow = ({ children, center, light }: { children: React.ReactNode, center?: boolean, light?: boolean }) => (
+  const Eyebrow = ({ children, center, light }: { children: React.ReactNode, center?: boolean, light?: boolean }) => {
+  return (
     <div style={{ display:'inline-flex', alignItems:'center', gap:'10px', fontFamily:'var(--mono)', fontSize:'11px', letterSpacing:'.2em', textTransform:'uppercase', color: light ? 'rgba(240,216,150,0.65)' : 'var(--gold)', justifyContent: center ? 'center' : undefined }}>
       <span style={{ display:'block', width:'28px', height:'1px', background: light ? 'rgba(240,216,150,0.4)' : 'var(--gold)', flexShrink:0 }}/>
       {children}
     </div>
   );
+}
 
-  return (
-    <>
-
+return (
+  <>
       {/* ── NAV ── */}
       <nav className={`mn${navHidden?' hidden':''}`}>
         <div className="logo-wrap" onClick={()=>showPage('home')}>
