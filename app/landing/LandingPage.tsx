@@ -148,31 +148,16 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
       {/* ── WHATSAPP FLOAT ── REPLACE 2348000000000 with real number */}
       <div className="wa-float">
         <div className="wa-lbl">Chat on WhatsApp</div>
-        <a href="https://wa.me/2348000000000?text=Hi%2C%20I%20have%20a%20question%20about%20Meridian" target="_blank" rel="noopener noreferrer" className="wa-btn" aria-label="WhatsApp">
+        <a href="https://wa.me/2348148818179?text=Hi%2C%20I%20have%20a%20question%20about%20Meridian" target="_blank" rel="noopener noreferrer" className="wa-btn" aria-label="WhatsApp">
           <IWA/>
         </a>
       </div>
 
-      {/* ══════════════════════════ HOME ══════════════════════════ */}
+   
       <div className={`page pt${page==='home'?' active':''}`}>
 
         {/* ── HERO ── */}
-        {/*
-          ╔══════════════════════════════════════════════════════════════╗
-          ║  PICTURE SUGGESTION #1                                       ║
-          ║  Where: Hero section — position:absolute behind hero-left    ║
-          ║  Type:  Young Nigerian professional (25-35yr) at laptop or   ║
-          ║         phone, warm natural light, slightly blurred Lagos    ║
-          ║         or co-working space background                       ║
-          ║  Tone:  Confident, focused, modern — not stock-photo fake    ║
-          ║  Source: Pexels.com → "Nigerian professional laptop Lagos"   ║
-          ║          Unsplash.com → "African business woman phone"       ║
-          ║  How: <Image src="/images/hero-photo.jpg" fill              ║
-          ║         className="object-cover opacity-[0.08]"             ║
-          ║         alt="" priority/>                                     ║
-          ║  (low opacity so it doesn't fight the text)                  ║
-          ╚══════════════════════════════════════════════════════════════╝
-        */}
+        
         <section className="hero">
           <div className="hero-l">
             <div className="reveal" style={{marginBottom:'24px'}}>
@@ -298,17 +283,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         </section>
 
         {/* ── PRODUCTS SHOWCASE ── */}
-        {/*
-          ╔══════════════════════════════════════════════════════════════╗
-          ║  PICTURE SUGGESTION #2                                       ║
-          ║  Where: Inside each product visual panel (prod-row-vis)      ║
-          ║  Type:  Product screenshots or mockups on a phone frame      ║
-          ║  Source: Screenshot your actual product and add phone frame   ║
-          ║          Use: mockuphone.com to wrap screenshots in frames    ║
-          ║  How: Replace the demo HTML with an <Image> component        ║
-          ║  Note: The demo HTML is better if you don't have screenshots ║
-          ╚══════════════════════════════════════════════════════════════╝
-        */}
+       
         <section className="prod-sec">
           <div className="prod-hdr">
             <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>Four tools. One purpose.</Eyebrow></div>
@@ -451,17 +426,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         </section>
 
         {/* ── TESTIMONIALS ── */}
-        {/*
-          ╔═══════════════════════════════════════════════════════════╗
-          ║  PICTURE SUGGESTION #3                                    ║
-          ║  Where: Replace the initial-letter avatars below          ║
-          ║  Type:  Real customer photos, circular crop               ║
-          ║  Source: Ask your early buyers via WhatsApp for a photo   ║
-          ║  How: <Image src="/images/customer-chinedu.jpg"           ║
-          ║         width={42} height={42}                            ║
-          ║         className="rounded-full object-cover" alt=""/>    ║
-          ╚═══════════════════════════════════════════════════════════╝
-        */}
+       
         <section className="testi">
           <div className="wrap-md" style={{textAlign:'center',marginBottom:'48px'}}>
             <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>Real results</Eyebrow></div>
