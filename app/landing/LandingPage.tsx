@@ -1243,4 +1243,3 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
     </>
   )
 }
-          
