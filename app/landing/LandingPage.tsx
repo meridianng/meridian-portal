@@ -103,8 +103,6 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
 
 return (
   <>
-
-      {/* ── NAV ── */}
       <nav className={`mn${navHidden?' hidden':''}`}>
         <div className="logo-wrap" onClick={()=>showPage('home')}>
           <MeridianLogo variant="full" theme="light" width={148} priority/>
@@ -791,5 +789,5 @@ return (
 
       <div className={`toast${toastShow?' show':''}`}>{toast}</div>
     </>
-  )
+  );
 }
