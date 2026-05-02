@@ -99,10 +99,14 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
       {children}
     </div>
   );
+};
+
+  return (
+    <>
+    </>
+  );
 }
 
-return (
-  <>
       {/* ── NAV ── */}
       <nav className={`mn${navHidden?' hidden':''}`}>
         <div className="logo-wrap" onClick={()=>showPage('home')}>
