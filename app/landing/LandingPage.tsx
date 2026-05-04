@@ -161,6 +161,10 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               Stop guessing<br/>with your money.
               <em>Confusion is expensive.</em>
             </h1>
+            <p className="hero-product-line reveal d1">
+  A financial dictionary. A structured investing course. A stock analysis tool. A business profit tracker.&nbsp;
+  <em>All built for Nigeria.</em>
+</p>
             <p className="hero-sub reveal d2">
               Built for Nigerian <strong>investors, traders, and business owners</strong> who are tired of nodding along.
               Meridian explains what is happening to your money — in language that respects your intelligence and actually fits your reality.
@@ -177,6 +181,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
 
           <div className="hero-r">
             <div className="wod reveal">
+              <div className="wod-free-tag">Free sample — no account needed</div>
               <div className="wod-lbl">◈ MoneySpeak · Word of the Day · Always Free</div>
               <div className="wod-term">{todayWord.term}</div>
               <div className="wod-ph">{todayWord.ph}</div>
@@ -297,7 +302,71 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
             </div>
           </div>
         </section>
+{/* ── WHY NOT FREE ── */}
+        <section className="wnf-sec">
+          <div className="wnf-inner wrap">
+            <div className="reveal" style={{marginBottom:'24px',display:'flex',justifyContent:'center'}}>
+              <Eyebrow center>The free alternative problem</Eyebrow>
+            </div>
+            <h2 className="wnf-hl reveal d1">
+              Free is expensive<br/>when the information <em>is wrong.</em>
+            </h2>
+            <p className="wnf-sub reveal d2">
+              We are not competing with Google. We are competing with the consequences of using Google for this.
+            </p>
 
+            <div className="wnf-grid reveal d2">
+              <div className="wnf-card wnf-bad">
+                <div className="wnf-card-label">What you get for free</div>
+                <div className="wnf-item">
+                  <div className="wnf-item-src">ChatGPT / AI tools</div>
+                  <div className="wnf-item-prob">Ask it to analyse Dangote Cement and it will give you a confident price target, a ROIC figure, and a 12-month recommendation. Every number is fabricated. It has no access to current NGX prices, no access to the actual annual report, and no understanding of Nigerian market conditions. It is designed to sound correct — not to be correct.</div>
+                </div>
+                <div className="wnf-item">
+                  <div className="wnf-item-src">YouTube finance channels</div>
+                  <div className="wnf-item-prob">American man explaining American stocks using American examples. You learn what a dividend is in the context of Apple Inc. Then you open the NGX website and understand nothing because none of the context fits.</div>
+                </div>
+                <div className="wnf-item">
+                  <div className="wnf-item-src">Instagram finance gurus</div>
+                  <div className="wnf-item-prob">&ldquo;Buy this stock, it will 3x.&rdquo; No framework. No reasoning. No way to verify. Just confidence and a screenshot of gains. You have no idea if this person is selling from the position they are telling you to buy.</div>
+                </div>
+                <div className="wnf-item">
+                  <div className="wnf-item-src">WhatsApp investment groups</div>
+                  <div className="wnf-item-prob">The loudest voice wins. Hot tips with no analysis. No one is held accountable when the tip goes wrong. Everyone moves on to the next tip. Your money does not recover.</div>
+                </div>
+              </div>
+
+              <div className="wnf-card wnf-good">
+                <div className="wnf-card-label">What Meridian does differently</div>
+                <div className="wnf-item">
+                  <div className="wnf-item-src">Nigerian context, built in</div>
+                  <div className="wnf-item-prob">Every explanation uses examples from the NGX, the CBN, and the actual economic conditions that affect your money. Not Wall Street. Not London. Lagos. Kano. Aba. The numbers are in Naira. The companies are ones you recognise.</div>
+                </div>
+                <div className="wnf-item">
+                  <div className="wnf-item-src">You enter the data. You get the verdict.</div>
+                  <div className="wnf-item-prob">The Equity Terminal calculates from numbers you take directly from the annual report. No AI is inventing figures. No influencer is giving you their opinion. You input what is real. The framework shows you what it means. You make the call.</div>
+                </div>
+                <div className="wnf-item">
+                  <div className="wnf-item-src">Framework, not recommendations</div>
+                  <div className="wnf-item-prob">We never tell you what to buy. We teach you how to evaluate anything — so that five years from now, when a new hot stock appears in your WhatsApp group, you already know how to check if it is actually worth your money.</div>
+                </div>
+                <div className="wnf-item">
+                  <div className="wnf-item-src">Pays for itself once</div>
+                  <div className="wnf-item-prob">One bad investment based on bad information costs more than all four Meridian products combined. You are not paying for content. You are paying for the framework that prevents expensive mistakes.</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="wnf-bottom reveal d3">
+              <p className="wnf-bottom-text">
+                The real cost of free finance information is not the price. It is the decision you make based on it.
+              </p>
+              <div className="wnf-bottom-acts">
+                <button className="btn btn-f btn-lg" onClick={() => showPage('products')}>See what we built →</button>
+              </div>
+            </div>
+          </div>
+        </section>
         <section className="prod-sec">
           <div className="prod-hdr">
             <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>Four tools. One purpose.</Eyebrow></div>
@@ -341,6 +410,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
                 <div className="prod-price-line">₦4,500 · One-time payment · Lifetime access</div>
                 <div className="prod-row-footer">
                   <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-f btn-md">Get MoneySpeak →</a>
+                   <button className="btn btn-o btn-sm" onClick={() => setProductModal('moneyspeak')}>What&apos;s inside →</button>
                   <span style={{fontSize:'12px',color:'var(--muted)'}}>Instant access after payment</span>
                 </div>
               </div>
@@ -382,6 +452,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
                 <div className="prod-price-line">₦18,000 · One-time · Lifetime access to all 11 phases</div>
                 <div className="prod-row-footer">
                   <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-f btn-md">Enrol in Stock School →</a>
+                <button className="btn btn-o btn-sm" onClick={() => setProductModal('stockschool')}>See all 11 phases →</button>
                 </div>
               </div>
               <div className="prod-row-vis">
@@ -425,6 +496,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
                 <div className="prod-price-line">₦15,000 · One-time · Lifetime V2 access</div>
                 <div className="prod-row-footer">
                   <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-f btn-md">Get Equity Terminal →</a>
+                 <button className="btn btn-o btn-sm" onClick={() => setProductModal('terminal')}>See a sample analysis →</button>
                 </div>
               </div>
               <div className="prod-row-vis">
@@ -472,6 +544,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
                 <div className="prod-price-line">₦9,000 / year · Coming soon — early access pricing</div>
                 <div className="prod-row-footer">
                   <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-o btn-md">Join waitlist →</a>
+                <button className="btn btn-o btn-sm" onClick={() => setProductModal('tradaq')}>What is TraDaq? →</button>
                 </div>
               </div>
               <div className="prod-row-vis">
@@ -881,6 +954,211 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         </div>
       </footer>
 
+{/* ── PRODUCT OVERVIEW MODALS ── */}
+      {productModal && (
+        <div className="prod-modal-bg" onClick={() => setProductModal(null)}>
+          <div className="prod-modal-box" onClick={e => e.stopPropagation()}>
+            <button className="prod-modal-close" onClick={() => setProductModal(null)}>✕</button>
+
+            {/* ── MONEYSPEAK MODAL ── */}
+            {productModal === 'moneyspeak' && (
+              <div className="prod-modal-inner">
+                <div className="prod-modal-eyebrow">MoneySpeak · Financial Dictionary</div>
+                <h2 className="prod-modal-hl">The financial vocabulary<br/><em>nobody taught you.</em></h2>
+                <p className="prod-modal-sub">
+                  You have sat in a meeting, a family gathering, or a WhatsApp group and nodded along to a word you did not understand. That ends today. MoneySpeak explains 500 financial terms the way your most knowledgeable friend would — with a Nigerian story, a reality check, and a rule you can actually use.
+                </p>
+
+                <div className="prod-modal-for">
+                  <div className="prod-modal-for-title">This is for you if:</div>
+                  <div className="prod-modal-for-item">You hear terms like &ldquo;liquidity,&rdquo; &ldquo;yield,&rdquo; or &ldquo;equity&rdquo; and nod without knowing what they mean</div>
+                  <div className="prod-modal-for-item">You want to understand what is actually happening to your money when the CBN raises rates</div>
+                  <div className="prod-modal-for-item">You are tired of being the person in the room who cannot follow the conversation</div>
+                </div>
+
+                <div className="prod-modal-sample-title">What an entry looks like:</div>
+                <div className="prod-modal-sample">
+                  <div className="prod-modal-sample-term">Compounding</div>
+                  <div className="prod-modal-sample-ph">kom · pown · ding · noun</div>
+                  <div className="prod-modal-sample-def">When your money earns returns — and then those returns start earning returns too.</div>
+                  <div className="prod-modal-sample-story"><strong>The Nigerian story:</strong> One male goat. One female goat. You keep them. They have kids. You do not kill the kids for pepper soup. The kids grow up and also have kids. Before you know it, your backyard has 50 goats from just two. You did not build 50 goats one by one. The goats built each other.</div>
+                </div>
+
+                <div className="prod-modal-feats">
+                  {['500 terms covering investing, business, crypto, and personal finance','Every term explained with a Nigerian story — not a textbook definition','Word of the Day is always free — no payment needed to access it','Search any term in under five seconds','Reality check on every entry: how it actually affects your money decisions','Works as a reference you return to — not content you consume once and forget'].map(f => (
+                    <div className="prod-modal-feat" key={f}>
+                      <span className="prod-modal-feat-ck">✓</span>{f}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="prod-modal-outcome">
+                  After MoneySpeak, you will never nod along again. You will be the person who actually understands what is being discussed — and more importantly, what it means for your money.
+                </div>
+
+                <div className="prod-modal-footer">
+                  <div className="prod-modal-price">₦4,500 <span>· One-time · Lifetime access</span></div>
+                  <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-f btn-lg prod-modal-cta">
+                    I am done nodding along — get MoneySpeak →
+                  </a>
+                  <div className="prod-modal-guarantee">One-time Naira payment via Selar · Instant access after purchase · No subscriptions ever</div>
+                </div>
+              </div>
+            )}
+
+            {/* ── STOCK SCHOOL MODAL ── */}
+            {productModal === 'stockschool' && (
+              <div className="prod-modal-inner">
+                <div className="prod-modal-eyebrow">Stock School · Investing Course</div>
+                <h2 className="prod-modal-hl">From &ldquo;what is a share?&rdquo;<br/><em>to building a real portfolio.</em></h2>
+                <p className="prod-modal-sub">
+                  Most investing content in Nigeria teaches you to follow tips. Stock School teaches you something different — how to think. Eleven structured phases, built entirely around the Nigerian Exchange Group, starting from absolute zero. No assumed knowledge. No big grammar. No Wall Street examples that mean nothing here.
+                </p>
+
+                <div className="prod-modal-for">
+                  <div className="prod-modal-for-title">This is for you if:</div>
+                  <div className="prod-modal-for-item">You have heard &ldquo;buy Dangote shares&rdquo; three times this year and still do not know how to check if the price is actually fair</div>
+                  <div className="prod-modal-for-item">You want to invest but you are scared of making an expensive mistake because nobody taught you the fundamentals</div>
+                  <div className="prod-modal-for-item">You are tired of relying on other people&apos;s opinions about what to do with your own money</div>
+                </div>
+
+                <div className="prod-modal-phases-title">The 11 phases:</div>
+                <div className="prod-modal-phases">
+                  {[
+                    {n:'01', t:'What is a share? What is the stock market?',       out:'You will explain exactly how share ownership works — and why it matters'},
+                    {n:'02', t:'How to read a company\'s annual report',            out:'You will open any NGX annual report and find the numbers that matter in under 10 minutes'},
+                    {n:'03', t:'How to find stocks on the NGX',                    out:'You will navigate the exchange, find listed companies, and understand what you are looking at'},
+                    {n:'04', t:'How to evaluate if a stock is cheap or expensive', out:'You will never buy a stock just because it is going up again'},
+                    {n:'05', t:'Understanding risk — and your tolerance',           out:'You will know exactly how much risk you are actually taking on, not how much you think you are'},
+                    {n:'06', t:'Building a real portfolio strategy',               out:'You will have a written investment framework that belongs to you'},
+                    {n:'07', t:'Thinking like a long-term investor',               out:'You will stop checking prices daily and start thinking in years'},
+                    {n:'08', t:'Using the Equity Terminal with real data',         out:'You will analyse your first company yourself, from annual report to verdict'},
+                    {n:'09', t:'Reading management quality and track record',      out:'You will know what good capital allocation looks like and what to avoid'},
+                    {n:'10', t:'How dividends work and how to evaluate them',      out:'You will build a simple dividend watchlist on the NGX'},
+                    {n:'11', t:'Your first real portfolio — building and reviewing',out:'You will finish with an actual portfolio, built on your own analysis'},
+                  ].map(p => (
+                    <div className="prod-modal-phase" key={p.n}>
+                      <div className="prod-modal-phase-n">{p.n}</div>
+                      <div>
+                        <div className="prod-modal-phase-t">{p.t}</div>
+                        <div className="prod-modal-phase-out">After this: {p.out}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="prod-modal-outcome">
+                  By the end of Stock School, your father will be asking you to explain his investments to him.
+                </div>
+
+                <div className="prod-modal-footer">
+                  <div className="prod-modal-price">₦18,000 <span>· One-time · Lifetime access to all 11 phases</span></div>
+                  <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-f btn-lg prod-modal-cta">
+                    I am ready to actually understand this — enrol in Stock School →
+                  </a>
+                  <div className="prod-modal-guarantee">One-time Naira payment via Selar · Instant access after purchase · Works directly with the Equity Terminal</div>
+                </div>
+              </div>
+            )}
+
+            {/* ── EQUITY TERMINAL MODAL ── */}
+            {productModal === 'terminal' && (
+              <div className="prod-modal-inner">
+                <div className="prod-modal-eyebrow">Equity Terminal · Stock Analysis Tool</div>
+                <h2 className="prod-modal-hl">Stop buying based on feelings.<br/><em>Check the actual numbers.</em></h2>
+                <p className="prod-modal-sub">
+                  A stock going up is not the same as a stock being good. The Equity Terminal applies the Owner Earnings framework — the same methodology serious long-term investors use — to data you enter directly from any company&apos;s annual report. You put in the numbers. It shows you what the mathematics says. You decide what to do. No opinion in the chain.
+                </p>
+
+                <div className="prod-modal-for">
+                  <div className="prod-modal-for-title">This is for you if:</div>
+                  <div className="prod-modal-for-item">You are already investing but you are not confident you are evaluating companies properly</div>
+                  <div className="prod-modal-for-item">You want to check a stock yourself before acting on any tip or recommendation</div>
+                  <div className="prod-modal-for-item">You have asked an AI to analyse a stock and later realised the numbers it gave you were invented</div>
+                </div>
+
+                <div className="prod-modal-sample-title">Example output — Dangote Cement FY 2024:</div>
+                <div className="prod-modal-demo">
+                  <div className="prod-modal-demo-grid">
+                    {[{l:'Revenue',v:'₦1.02T'},{l:'Net Income',v:'₦146B'},{l:'Share Price',v:'₦612'},{l:'Shares Outstanding',v:'17.04B'}].map(f=>(
+                      <div className="prod-modal-demo-field" key={f.l}>
+                        <div className="prod-modal-demo-lbl">{f.l}</div>
+                        <div className="prod-modal-demo-val">{f.v}</div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="prod-modal-demo-result">
+                    <div className="prod-modal-demo-score">74 / 100</div>
+                    <div className="prod-modal-demo-verdict">STRONG</div>
+                    <div className="prod-modal-demo-detail">ROIC 22.4% · Implied Growth 3.1% · Conservative debt</div>
+                  </div>
+                  <div className="prod-modal-demo-note">Sample output based on user-entered data · Not financial advice</div>
+                </div>
+
+                <div className="prod-modal-feats">
+                  {['Owner Earnings analysis — the real cash the business generates for owners, not the number the accountants report','Quick Mode: directional results from just 4 inputs — beginner-friendly','Multi-year tracking so you can see if a company\'s quality is improving or declining over time','NGN, USD, GBP, EUR, ZAR, KES, GHS and more — built for African markets','Plain-English verdict with the reasoning explained, not just a number','Works on any listed company anywhere in the world'].map(f => (
+                    <div className="prod-modal-feat" key={f}>
+                      <span className="prod-modal-feat-ck">✓</span>{f}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="prod-modal-outcome">
+                  After the Equity Terminal, you will never look at a stock price the same way again. You will want to know what is behind the number — and now you will have the tool to find out.
+                </div>
+
+                <div className="prod-modal-footer">
+                  <div className="prod-modal-price">₦15,000 <span>· One-time · Lifetime V2 access</span></div>
+                  <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-f btn-lg prod-modal-cta">
+                    I want to check companies myself — get the Equity Terminal →
+                  </a>
+                  <div className="prod-modal-guarantee">One-time Naira payment via Selar · Instant access after purchase · Pairs perfectly with Stock School</div>
+                </div>
+              </div>
+            )}
+
+            {/* ── TRADAQ MODAL ── */}
+            {productModal === 'tradaq' && (
+              <div className="prod-modal-inner">
+                <div className="prod-modal-eyebrow">TraDaq · Business Money Tracker · Coming Soon</div>
+                <h2 className="prod-modal-hl">You made ₦400k in sales.<br/><em>But what was your actual profit?</em></h2>
+                <p className="prod-modal-sub">
+                  Many small business owners in Nigeria are working 12 hours a day and ending the month confused about where the money went. Revenue is not profit. Sales are not income. TraDaq shows you the exact difference — in plain language, in 30 seconds a day, on your phone.
+                </p>
+
+                <div className="prod-modal-for">
+                  <div className="prod-modal-for-title">This is for you if:</div>
+                  <div className="prod-modal-for-item">You run a market stall, an online shop, or a small business and you cannot confidently say what your profit margin is</div>
+                  <div className="prod-modal-for-item">Your account looks full but you feel broke — and you do not know why</div>
+                  <div className="prod-modal-for-item">You are repricing your products by feeling, not by knowing your actual costs</div>
+                </div>
+
+                <div className="prod-modal-feats">
+                  {['Track money in and money out — 30 seconds per entry, no spreadsheet needed','See your actual profit — not revenue, not what is in the account, your real profit','Plain-English insights: "For every ₦100 your business makes, ₦23 is real profit"','Categorised expenses so you can see exactly where your money goes','Phone-first — no laptop, no accountant, no complicated software','Coming soon — everyone on the waitlist gets early access pricing'].map(f => (
+                    <div className="prod-modal-feat" key={f}>
+                      <span className="prod-modal-feat-ck">✓</span>{f}
+                    </div>
+                  ))}
+                </div>
+
+                <div className="prod-modal-outcome">
+                  TraDaq will not change how hard you work. It will show you whether the work is actually paying off — and what to fix when it is not.
+                </div>
+
+                <div className="prod-modal-footer">
+                  <div className="prod-modal-price">₦9,000 <span>· Per year · Early access pricing</span></div>
+                  <a href="https://selar.com/m/meridian_ng" target="_blank" rel="noopener noreferrer" className="btn btn-o btn-lg prod-modal-cta">
+                    Put me on the waitlist — I want early access →
+                  </a>
+                  <div className="prod-modal-guarantee">Join free · No payment now · You will be contacted directly when TraDaq launches</div>
+                </div>
+              </div>
+            )}
+
+          </div>
+        </div>
+      )}
+      
       {/* ══════════════════════════ TERMS MODAL ══════════════════════════ */}
       <div className={`modal-bg${termsOpen ? ' open' : ''}`} onClick={e => { if (e.target === e.currentTarget) setTermsOpen(false) }}>
         <div className="modal-box">
