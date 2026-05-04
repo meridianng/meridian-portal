@@ -41,6 +41,7 @@ const Eyebrow = ({ children, center, light }: { children: React.ReactNode, cente
 
 export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
   const [page,           setPage]           = useState<'home'|'about'|'products'|'contact'>('home')
+  const [productModal, setProductModal] = useState<'moneyspeak'|'stockschool'|'terminal'|'tradaq'|null>(null)
   const [menuOpen,       setMenuOpen]       = useState(false)
   const [termsOpen,      setTermsOpen]      = useState(false)
   const [navHidden,      setNavHidden]      = useState(false)
