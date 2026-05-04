@@ -612,39 +612,45 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         </section>
 
         <section className="pricing">
-          <div style={{textAlign:'center',maxWidth:'600px',margin:'0 auto 56px'}}>
-            <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>Transparent pricing</Eyebrow></div>
-            <h2 className="disp disp-md reveal d1" style={{marginBottom:'16px'}}>Pay once.<br/><em>Learn forever.</em></h2>
-            <p className="lead reveal d2">No subscriptions. No monthly fees. Pay once in Naira, keep access forever.</p>
-          </div>
-          <div className="pricing-grid wrap">
-            {[
-              {Icon:IBook,   n:'MoneySpeak',     pitch:'500 financial terms in plain Nigerian English. The dictionary you should have had from day one.',  amt:'₦4,500',  type:'One-time', feats:['All 500 terms, fully explained','Word of the Day, free forever','Searchable anytime','Lifetime access'],           cta:'Get access', url:'https://selar.com/m/meridian_ng', feat:false, dis:false},
-              {Icon:IGrad,   n:'Stock School',   pitch:'The complete journey from zero investing knowledge to analysing stocks with confidence.',            amt:'₦18,000', type:'One-time', feats:['All 11 phases unlocked','NGX-specific examples','Practical frameworks','Lifetime access'],               cta:'Enrol now',  url:'https://selar.com/m/meridian_ng', feat:true,  dis:false},
-              {Icon:IChart,  n:'Equity Terminal',pitch:"Analyse any company's financials using the same framework serious investors use.",                  amt:'₦15,000', type:'One-time', feats:['Full analysis engine','Portfolio tracking','Multi-year comparison','Lifetime V2 access'],             cta:'Get access', url:'https://selar.com/m/meridian_ng', feat:false, dis:false},
-              {Icon:ILedger, n:'TraDaq',         pitch:'Simple business money tracking for market traders, IG sellers, and small business owners.',         amt:'₦9,000',  type:'Per year', feats:['Track income & expenses','Real profit calculation','Plain-English insights','Coming soon'],             cta:'Waitlist',   url:'https://selar.com/m/meridian_ng', feat:false, dis:true},
-            ].map((p, i) => (
-              <div key={p.n} className={`price-card reveal${i > 0 ? ' d' + i : ''}${p.feat ? ' feat' : ''}`}>
-                {p.feat && <div className="feat-badge">Most popular</div>}
-                <div className="price-icon"><p.Icon s={20}/></div>
-                <div className="price-name">{p.n}</div>
-                <div className="price-pitch">{p.pitch}</div>
-                <div className="price-amt">{p.amt}</div>
-                <div className="price-type">{p.type}</div>
-                <ul className="price-feats">
-                  {p.feats.map(f => (
-                    <li key={f} className="price-feat"><span className="price-feat-ck"><ICheck s={12}/></span>{f}</li>
-                  ))}
-                </ul>
-                {p.dis
-                  ? <button className="btn-gh" style={{width:'100%',justifyContent:'center',opacity:.55,cursor:'default'}}>{p.cta}</button>
-                  : p.feat
-                    ? <a href={p.url} target="_blank" rel="noopener noreferrer" className="btn btn-g" style={{width:'100%',justifyContent:'center'}}>{p.cta} →</a>
-                    : <a href={p.url} target="_blank" rel="noopener noreferrer" className="btn-gh" style={{width:'100%'}}>{p.cta} →</a>
-                }
-              </div>
-            ))}
-          </div>
+  <div style={{textAlign:'center',maxWidth:'600px',margin:'0 auto 56px'}}>
+    <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>Transparent pricing</Eyebrow></div>
+    <h2 className="disp disp-md reveal d1" style={{marginBottom:'16px'}}>Pay once.<br/><em>Learn forever.</em></h2>
+    <p className="lead reveal d2">No subscriptions. No monthly fees. Pay once in Naira, keep access forever.</p>
+  </div>
+  <div className="pricing-grid wrap">
+    {[
+      {Icon:IBook,   n:'MoneySpeak',     modalKey:'moneyspeak',  pitch:'500 financial terms in plain Nigerian English. The dictionary you should have had from day one.',  amt:'₦4,500',  type:'One-time', feats:['All 500 terms, fully explained','Word of the Day, free forever','Searchable anytime','Lifetime access'],           cta:'Get access', url:'https://selar.com/m/meridian_ng', feat:false, dis:false},
+      {Icon:IGrad,   n:'Stock School',   modalKey:'stockschool', pitch:'The complete journey from zero investing knowledge to analysing stocks with confidence.',            amt:'₦18,000', type:'One-time', feats:['All 11 phases unlocked','NGX-specific examples','Practical frameworks','Lifetime access'],               cta:'Enrol now',  url:'https://selar.com/m/meridian_ng', feat:true,  dis:false},
+      {Icon:IChart,  n:'Equity Terminal',modalKey:'terminal',    pitch:"Analyse any company's financials using the same framework serious investors use.",                  amt:'₦15,000', type:'One-time', feats:['Full analysis engine','Portfolio tracking','Multi-year comparison','Lifetime V2 access'],             cta:'Get access', url:'https://selar.com/m/meridian_ng', feat:false, dis:false},
+      {Icon:ILedger, n:'TraDaq',         modalKey:'tradaq',      pitch:'Simple business money tracking for market traders, IG sellers, and small business owners.',         amt:'₦9,000',  type:'Per year', feats:['Track income & expenses','Real profit calculation','Plain-English insights','Coming soon'],             cta:'Waitlist',   url:'https://selar.com/m/meridian_ng', feat:false, dis:true},
+    ].map((p, i) => (
+      <div key={p.n} className={`price-card reveal${i > 0 ? ' d' + i : ''}${p.feat ? ' feat' : ''}`}>
+        {p.feat && <div className="feat-badge">Most popular</div>}
+        <div className="price-icon"><p.Icon s={20}/></div>
+        <div className="price-name">{p.n}</div>
+        <div className="price-pitch">{p.pitch}</div>
+        <div className="price-amt">{p.amt}</div>
+        <div className="price-type">{p.type}</div>
+        <ul className="price-feats">
+          {p.feats.map(f => (
+            <li key={f} className="price-feat"><span className="price-feat-ck"><ICheck s={12}/></span>{f}</li>
+          ))}
+        </ul>
+        {p.dis
+          ? <button className="btn-gh" style={{width:'100%',justifyContent:'center',opacity:.55,cursor:'default'}}>{p.cta}</button>
+          : p.feat
+            ? <a href={p.url} target="_blank" rel="noopener noreferrer" className="btn btn-g" style={{width:'100%',justifyContent:'center'}}>{p.cta} →</a>
+            : <a href={p.url} target="_blank" rel="noopener noreferrer" className="btn-gh" style={{width:'100%'}}>{p.cta} →</a>
+        }
+        <button
+          className="prod-overview-link"
+          onClick={() => setProductModal(p.modalKey as 'moneyspeak'|'stockschool'|'terminal'|'tradaq')}
+        >
+          What&apos;s inside? ↗
+        </button>
+      </div>
+    ))}
+  </div>
 
           <div className="bundle-outer">
             <div className="bundle reveal">
