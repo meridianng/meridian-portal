@@ -16,7 +16,27 @@ function getProductsForPlan(plan: string): string[] {
     default:                   return []
   }
 }
-
+function mergePlans(existing: string, incoming: string): string {
+  const BUNDLE = 'v2_meridian access'
+  
+  // Bundle beats everything
+  if (existing === BUNDLE || incoming === BUNDLE) return BUNDLE
+  
+  // Same plan — no change
+  if (existing === incoming) return incoming
+  
+  // Accumulate individual products to see if they now have the bundle
+  const PRODUCTS = ['v2_tool', 'v2_course', 'v2_dictionary', 'v2_tradaq']
+  const allOwned = new Set([...getProductsForPlan(existing), ...getProductsForPlan(incoming)])
+  const coreProducts = ['terminal', 'course', 'dictionary']
+  const hasAll = coreProducts.every(p => allOwned.has(p))
+  
+  if (hasAll) return BUNDLE
+  
+  // Otherwise return a combined label — or just return incoming
+  // (product_access is the real gate, plan is cosmetic)
+  return incoming
+}
 export async function POST(request: NextRequest) {
   try {
     const { key } = await request.json()
@@ -114,19 +134,34 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // ── 4. Update profile with key + plan ─────────────────────
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({ meridian_key: cleanKey, plan, updated_at: new Date().toISOString() })
-      .eq('id', user.id)
+    // ── 4. Update profile — additive plan merge ───────────────────
+const { data: currentProfile } = await supabase
+  .from('profiles')
+  .select('plan, meridian_key')
+  .eq('id', user.id)
+  .single()
 
-    if (profileError) {
-      console.error('Profile update error:', profileError)
-      return NextResponse.json(
-        { error: 'Failed to save your key. Please try again.' },
-        { status: 500 }
-      )
-    }
+const existingPlan = currentProfile?.plan || ''
+const mergedPlan   = mergePlans(existingPlan, plan)
+
+const keyToStore = currentProfile?.meridian_key || cleanKey
+
+const { error: profileError } = await supabase
+  .from('profiles')
+  .update({ 
+    meridian_key: keyToStore,
+    plan: mergedPlan,
+    updated_at: new Date().toISOString() 
+  })
+  .eq('id', user.id)
+
+if (profileError) {
+  console.error('Profile update error:', profileError)
+  return NextResponse.json(
+    { error: 'Failed to save your key. Please try again.' },
+    { status: 500 }
+  )
+}
 
     // ── 5. Grant product access rows ──────────────────────────
     if (products.length > 0) {
