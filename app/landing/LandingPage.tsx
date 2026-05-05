@@ -125,6 +125,13 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         </div>
       </nav>
 
+      {menuOpen && (
+        <div
+          style={{position:'fixed',inset:0,zIndex:489,background:'transparent'}}
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
       <div className={`mmenu${menuOpen ? ' open' : ''}`}>
         <a onClick={() => showPage('home')}>Home</a>
         <a onClick={() => showPage('about')}>About</a>
@@ -173,17 +180,24 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <a href="#how-steps" className="btn btn-f btn-lg" onClick={scrollToHow}>Get started →</a>
               <button className="btn btn-o btn-lg" onClick={() => showPage('products')}>See our products</button>
             </div>
-            {/* Mobile-only WOD teaser — full card is hidden on mobile */}
-            <div className="wod-mobile-teaser" onClick={() => showPage('products')}>
-              <svg viewBox="0 0 64 64" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
-                <path d="M 10 52 A 22 22 0 0 1 54 52" stroke="#C4912A" strokeWidth="5.5" strokeLinecap="round"/>
-                <line x1="32" y1="50" x2="32" y2="22" stroke="#C4912A" strokeWidth="4.5" strokeLinecap="round"/>
-                <circle cx="32" cy="14" r="8.5" fill="#C4912A"/>
-              </svg>
-              <div className="wod-mobile-teaser-text">
-                Today&rsquo;s free word: <span>{todayWord.term}</span> — tap to see the full story →
+            {/* Mobile-only WOD teaser — shows term + def inline, expand on tap */}
+            <details className="wod-mobile-teaser">
+              <summary>
+                <svg viewBox="0 0 64 64" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
+                  <path d="M 10 52 A 22 22 0 0 1 54 52" stroke="#C4912A" strokeWidth="5.5" strokeLinecap="round"/>
+                  <line x1="32" y1="50" x2="32" y2="22" stroke="#C4912A" strokeWidth="4.5" strokeLinecap="round"/>
+                  <circle cx="32" cy="14" r="8.5" fill="#C4912A"/>
+                </svg>
+                <span className="wod-mobile-teaser-text">
+                  Free word today: <strong>{todayWord.term}</strong> — tap to read
+                </span>
+              </summary>
+              <div className="wod-mobile-body">
+                <div className="wod-mobile-def">{todayWord.def}</div>
+                <div className="wod-mobile-story">{todayWord.story}</div>
+                <div style={{fontSize:13,color:'var(--gold)',fontWeight:600,marginTop:10,cursor:'pointer'}} onClick={() => showPage('products')}>See all 500 words in MoneySpeak →</div>
               </div>
-            </div>
+            </details>
             <div className="hero-trust reveal d4">
               <div className="trust-dots"><span>K</span><span>A</span><span>T</span><span>F</span></div>
               <div className="trust-txt"><strong>500+ Nigerians</strong> already making<br/>smarter money decisions</div>
@@ -277,40 +291,40 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
 
         <section className="ba">
           <div className="ba-hdr">
-            <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>What changes</Eyebrow></div>
-            <h2 className="disp disp-md reveal d1" style={{marginBottom:'16px'}}>Before Meridian.<br/>After Meridian.</h2>
-            <p className="lead reveal d2">This is not about becoming a finance expert. It is about never being fooled again.</p>
+            <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>What actually changes</Eyebrow></div>
+            <h2 className="disp disp-md reveal d1" style={{marginBottom:'16px'}}>The difference is not<br/><em>what you know.</em></h2>
+            <p className="lead reveal d2">It is what you do when the pressure is on and someone is waiting for your answer.</p>
           </div>
-          <div className="ba-grid wrap-md">
-            <div className="ba-col bef">
-              <div className="ba-lbl">Before Meridian</div>
-              {[
-                '"I hear people talk about stocks but I just avoid it. Too complicated."',
-                '"I made good sales but my account is empty. I don\'t understand."',
-                '"My uncle is telling me to invest ₦500k. I can\'t ask questions — he\'ll think I\'m dumb."',
-                '"Someone is promising 30% monthly returns. It sounds too good, but everyone is doing it."',
-                '"I want to grow my money but I don\'t know where to start without getting scammed."',
-              ].map((t, i) => (
-                <div className={`ba-item reveal${i > 0 ? ' d' + i : ''}`} key={i}>{t}</div>
-              ))}
-            </div>
-            <div className="ba-mid">
-              <div className="ba-line"/>
-              <div className="ba-arrow"><IArrow s={18}/></div>
-              <div className="ba-line"/>
-            </div>
-            <div className="ba-col aft">
-              <div className="ba-lbl">After Meridian</div>
-              {[
-                '"I now understand what to look for in a company before I invest. I use the Equity Terminal."',
-                '"TraDaq showed me my actual profit is ₦45k, not the ₦400k I was celebrating. I fixed my pricing."',
-                '"I asked my uncle what the ROIC was. He looked at me differently."',
-                '"I can explain exactly why 30% monthly return is impossible for a legitimate business. I didn\'t invest."',
-                '"I started with MoneySpeak. Now I\'m building a real portfolio on the NGX."',
-              ].map((t, i) => (
-                <div className={`ba-item reveal${i > 0 ? ' d' + i : ''}`} key={i}>{t}</div>
-              ))}
-            </div>
+          <div className="ba-stories wrap-md">
+            {[
+              {
+                before: {name:'Emeka, 34', tag:'Before Meridian', txt:'His colleague drops a stock tip in the WhatsApp group — "Buychem is about to move, buy now." Emeka wants to ask why but does not want to look foolish. He sends ₦80,000. Three months later, still waiting.'},
+                after:  {txt:'Emeka now opens the annual report, runs the numbers in the Equity Terminal, and has one answer in five minutes. He bought. Not because someone said so — because the numbers said so. He also told his colleague why the other tip was a bad idea.'}
+              },
+              {
+                before: {name:'Chioma, 41', tag:'Before Meridian', txt:'She has sold fabric in Onitsha market for 11 years. Every December she counts her sales and feels rich. Every January she wonders where the money went. She never knew if she was actually making profit or just moving money.'},
+                after:  {txt:'TraDaq showed her real margin is 22%. Not the 45% she assumed. She found three expense categories she had never tracked. She raised prices on two products and dropped one entirely. January no longer scares her.'}
+              },
+              {
+                before: {name:'Tunde, 27', tag:'Before Meridian', txt:'Fresh graduate. Reads business news every morning. Knows all the big companies on the NGX by name. Could not explain what a P/E ratio actually means or why it matters. Just nodded when it came up.'},
+                after:  {txt:'Finished Stock School Phase 3. Called his father to explain why the shares his father has held for six years are actually underperforming on a real return basis. His father switched brokers. They now review one company together every Sunday.'}
+              },
+            ].map((s, i) => (
+              <div className={`ba-story reveal${i > 0 ? ' d' + i : ''}`} key={i}>
+                <div className="ba-story-before">
+                  <div className="ba-story-person">{s.before.name}</div>
+                  <div className="ba-story-tag">{s.before.tag}</div>
+                  <div className="ba-story-txt">{s.before.txt}</div>
+                </div>
+                <div className="ba-story-divider">
+                  <div className="ba-story-arrow">→</div>
+                </div>
+                <div className="ba-story-after">
+                  <div className="ba-story-tag" style={{color:'var(--forest)'}}>After Meridian</div>
+                  <div className="ba-story-txt" style={{color:'var(--forest-mid)',fontWeight:500}}>{s.after.txt}</div>
+                </div>
+              </div>
+            ))}
           </div>
         </section>
 {/* ── WHY NOT FREE ── */}
@@ -320,51 +334,26 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <Eyebrow center>The free alternative problem</Eyebrow>
             </div>
             <h2 className="wnf-hl reveal d1">
-              Free is expensive<br/>when the information <em>is wrong.</em>
+              Your brother said just use AI.<br/><em>Here is what happened next.</em>
             </h2>
             <p className="wnf-sub reveal d2">
-              We are not competing with Google. We are competing with the consequences of using Google for this.
+              He asked ChatGPT to analyse Dangote Cement. It gave him a price target, a recommendation, and a full breakdown — all confident, all wrong. It had no access to current NGX prices. It fabricated every number. He did not know that. He bought anyway.
             </p>
 
-            <div className="wnf-grid reveal d2">
-              <div className="wnf-card wnf-bad">
-                <div className="wnf-card-label">What you get for free</div>
-                <div className="wnf-item">
-                  <div className="wnf-item-src">ChatGPT / AI tools</div>
-                  <div className="wnf-item-prob">Ask it to analyse Dangote Cement and it will give you a confident price target, a ROIC figure, and a 12-month recommendation. Every number is fabricated. It has no access to current NGX prices, no access to the actual annual report, and no understanding of Nigerian market conditions. It is designed to sound correct — not to be correct.</div>
-                </div>
-                <div className="wnf-item">
-                  <div className="wnf-item-src">YouTube finance channels</div>
-                  <div className="wnf-item-prob">American man explaining American stocks using American examples. You learn what a dividend is in the context of Apple Inc. Then you open the NGX website and understand nothing because none of the context fits.</div>
-                </div>
-                <div className="wnf-item">
-                  <div className="wnf-item-src">Instagram finance gurus</div>
-                  <div className="wnf-item-prob">&ldquo;Buy this stock, it will 3x.&rdquo; No framework. No reasoning. No way to verify. Just confidence and a screenshot of gains. You have no idea if this person is selling from the position they are telling you to buy.</div>
-                </div>
-                <div className="wnf-item">
-                  <div className="wnf-item-src">WhatsApp investment groups</div>
-                  <div className="wnf-item-prob">The loudest voice wins. Hot tips with no analysis. No one is held accountable when the tip goes wrong. Everyone moves on to the next tip. Your money does not recover.</div>
-                </div>
+            <div className="wnf-compare reveal d2">
+              <div className="wnf-side wnf-bad">
+                <div className="wnf-side-label">What free gives you</div>
+                <div className="wnf-point"><span className="wnf-x">✕</span><span><strong>ChatGPT:</strong> Sounds right. Makes up the numbers. You cannot tell the difference.</span></div>
+                <div className="wnf-point"><span className="wnf-x">✕</span><span><strong>YouTube finance:</strong> American man. American stocks. American context. Not one Naira mentioned.</span></div>
+                <div className="wnf-point"><span className="wnf-x">✕</span><span><strong>Instagram gurus:</strong> Buy this. It will 3x. No reasoning. No accountability when it does not.</span></div>
+                <div className="wnf-point"><span className="wnf-x">✕</span><span><strong>WhatsApp groups:</strong> Everyone is confident. Nobody is responsible. Your money absorbs the mistake.</span></div>
               </div>
-
-              <div className="wnf-card wnf-good">
-                <div className="wnf-card-label">What Meridian does differently</div>
-                <div className="wnf-item">
-                  <div className="wnf-item-src">Nigerian context, built in</div>
-                  <div className="wnf-item-prob">Every explanation uses examples from the NGX, the CBN, and the actual economic conditions that affect your money. Not Wall Street. Not London. Lagos. Kano. Aba. The numbers are in Naira. The companies are ones you recognise.</div>
-                </div>
-                <div className="wnf-item">
-                  <div className="wnf-item-src">You enter the data. You get the verdict.</div>
-                  <div className="wnf-item-prob">The Equity Terminal calculates from numbers you take directly from the annual report. No AI is inventing figures. No influencer is giving you their opinion. You input what is real. The framework shows you what it means. You make the call.</div>
-                </div>
-                <div className="wnf-item">
-                  <div className="wnf-item-src">Framework, not recommendations</div>
-                  <div className="wnf-item-prob">We never tell you what to buy. We teach you how to evaluate anything — so that five years from now, when a new hot stock appears in your WhatsApp group, you already know how to check if it is actually worth your money.</div>
-                </div>
-                <div className="wnf-item">
-                  <div className="wnf-item-src">Pays for itself once</div>
-                  <div className="wnf-item-prob">One bad investment based on bad information costs more than all four Meridian products combined. You are not paying for content. You are paying for the framework that prevents expensive mistakes.</div>
-                </div>
+              <div className="wnf-side wnf-good">
+                <div className="wnf-side-label">What Meridian gives you</div>
+                <div className="wnf-point"><span className="wnf-tick">✓</span><span><strong>Real NGX context.</strong> The CBN, the Naira, the companies you actually recognise.</span></div>
+                <div className="wnf-point"><span className="wnf-tick">✓</span><span><strong>You enter the data.</strong> No AI is inventing figures. The numbers come from the annual report you read yourself.</span></div>
+                <div className="wnf-point"><span className="wnf-tick">✓</span><span><strong>Framework, not tips.</strong> Five years from now you can analyse anything — not just what we show you today.</span></div>
+                <div className="wnf-point"><span className="wnf-tick">✓</span><span><strong>Pays for itself once.</strong> One bad investment based on bad information costs more than all four products combined.</span></div>
               </div>
             </div>
 
@@ -585,7 +574,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               {q:<>&ldquo;TraDaq showed me my actual profit margin was 18%, not 40% like I thought. <strong>I repriced everything and my real income jumped by ₦60,000 in the next month.</strong>&rdquo;</>,                          i:'A', bg:'var(--forest-mid)', n:'Adaeze N.',  r:'Business owner · Ibadan', p:'TraDaq'},
               {q:<>&ldquo;Stock School started from literally zero. I did not know what a share was. Now I have a real portfolio. <strong>My father asked me to explain his investments to him.</strong>&rdquo;</>,                      i:'T', bg:'var(--forest-lt)',  n:'Tunde F.',   r:'Graduate · Abuja',        p:'Stock School'},
             ].map((t, i) => (
-              <div className={`testi-card reveal${i > 0 ? ' d' + i : ''}`} key={i}>
+              <div className={`testi-card reveal${i > 0 ? ' d' + i : ''} testi-card-${i}`} key={i}>
                 <div className="testi-quote">{t.q}</div>
                 <div className="testi-person">
                   <div className="testi-av" style={{background:t.bg}}>{t.i}</div>
@@ -598,6 +587,9 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               </div>
             ))}
           </div>
+          <div className="testi-more-wrap">
+            <button className="btn btn-o btn-md" onClick={() => showPage('about')}>Read more stories →</button>
+          </div>
         </section>
 
         <section className="how" id="how-steps">
@@ -609,9 +601,9 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           <div className="how-track">
             <div className="ball-wrap"><div className="ball"/></div>
             {[
-              {n:'1', cls:'s1', t:'Create your free account',         d:'Go to meridianng.com/login and create a free account in under a minute. Your account is where all your products live — one login, everything in one place. Creating an account costs nothing.'},
-              {n:'2', cls:'s2', t:'Pick your product and pay on Selar', d:'Browse our products and choose what fits your need right now. Pay once in Naira on Selar — our trusted payment partner. You receive your personal access key by email instantly after payment.'},
-              {n:'3', cls:'s3', t:'Paste your key and unlock everything', d:'Sign in to your Meridian account, go to the Activate page, and paste your key. Your products unlock immediately. No separate apps. No extra logins. Everything is right there in your dashboard.'},
+              {n:'1', cls:'s1', t:'Create a free account',    d:'Go to meridianng.com and sign up. Free. Takes one minute. No card required. This is where everything you buy will live.'},
+              {n:'2', cls:'s2', t:'Pick one product and pay', d:'Choose what solves your biggest money problem today. Pay once in Naira on Selar. Your personal access key arrives in your email before you finish reading the confirmation.'},
+              {n:'3', cls:'s3', t:'Paste your key, start now', d:'Go to your dashboard, click Activate Key, paste it. Everything unlocks immediately. No waiting. No app download. Open it on your phone right now.'},
             ].map((s, i) => (
               <div className={`how-step reveal${i > 0 ? ' d' + i : ''}`} key={s.n}>
                 <div className={`step-num ${s.cls}`}>{s.n}</div>
@@ -620,13 +612,19 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               </div>
             ))}
           </div>
+          <div style={{textAlign:'center',marginTop:'48px'}}>
+            <a href="/login" className="btn btn-f btn-lg reveal d3" style={{display:'inline-flex'}}>
+              Create your free account →
+            </a>
+            <p style={{marginTop:'14px',fontSize:'14px',color:'rgba(248,244,236,0.55)',fontFamily:'var(--mono)',letterSpacing:'0.04em'}}>Free to create · Pay only when you choose a product</p>
+          </div>
         </section>
 
         <section className="pricing">
-  <div style={{textAlign:'center',maxWidth:'600px',margin:'0 auto 56px'}}>
-    <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>Transparent pricing</Eyebrow></div>
-    <h2 className="disp disp-md reveal d1" style={{marginBottom:'16px'}}>Pay once.<br/><em>Learn forever.</em></h2>
-    <p className="lead reveal d2">No subscriptions. No monthly fees. Pay once in Naira, keep access forever.</p>
+  <div style={{textAlign:'center',maxWidth:'640px',margin:'0 auto 56px'}}>
+    <div className="reveal" style={{marginBottom:'20px'}}><Eyebrow center>Pick your starting point</Eyebrow></div>
+    <h2 className="disp disp-md reveal d1" style={{marginBottom:'16px'}}>Start with one.<br/><em>Come back for the rest.</em></h2>
+    <p className="lead reveal d2">Every product works on its own. There is no wrong entry point — just the one that solves your most pressing money problem today. No monthly charges. Pay once in Naira, keep it forever.</p>
   </div>
   <div className="pricing-grid wrap">
     {[
