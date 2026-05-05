@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { MeridianLogo } from '@/components/MeridianLogo'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -64,7 +65,7 @@ export default function SignupPage() {
     return (
       <div className="auth-page">
         <div className="auth-card" style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: 40, color: 'var(--gold)', marginBottom: 16 }}>◈</div>
+          <div style={{ marginBottom: 16, display:'flex', justifyContent:'center' }}><svg viewBox='0 0 64 64' width='40' height='40' fill='none' xmlns='http://www.w3.org/2000/svg'><path d='M 10 52 A 22 22 0 0 1 54 52' stroke='#C4912A' strokeWidth='5.5' strokeLinecap='round'/><line x1='32' y1='50' x2='32' y2='22' stroke='#C4912A' strokeWidth='4.5' strokeLinecap='round'/><circle cx='32' cy='14' r='8.5' fill='#C4912A'/></svg></div>
           <h2 className="auth-heading" style={{ textAlign: 'center' }}>Check your email.</h2>
           <p className="auth-sub" style={{ textAlign: 'center' }}>
             We sent a confirmation link to <strong style={{ color: 'var(--text-1)' }}>{email}</strong>.
@@ -83,7 +84,7 @@ export default function SignupPage() {
       <div className="auth-card">
         {/* Logo */}
         <div className="auth-logo">
-          <span className="auth-logo-mark">◈</span>
+          <MeridianLogo variant="mark" theme="light" width={32}/>
           <div className="auth-logo-text">
             <span className="auth-logo-name">MERIDIAN</span>
             <span className="auth-logo-sub">Finance in Plain English</span>
