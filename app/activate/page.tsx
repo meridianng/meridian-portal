@@ -124,7 +124,7 @@ export default function ActivatePage() {
                     onKeyDown={e=>e.key==='Enter'&&handleActivate()}
                     placeholder="e.g. ABCDE-FGHIJ-KLMNO-PQRST"
                     autoFocus
-                    style={{ width:'100%', padding:'14px 16px', background:'#F8F4EC', border:'1.5px solid rgba(10,61,34,0.15)', borderRadius:6, fontFamily:'monospace', fontSize:15, color:'#1A1A1A', outline:'none', letterSpacing:'0.06em', marginBottom:8, transition:'border-color .2s, box-shadow .2s' }}
+                    style={{ width:'100%', padding:'14px 16px', background:'#F8F4EC', border:'1.5px solid rgba(10,61,34,0.15)', borderRadius:6, fontFamily:'monospace', fontSize:16, color:'#1A1A1A', outline:'none', letterSpacing:'0.06em', marginBottom:8, transition:'border-color .2s, box-shadow .2s' }}
                     onFocus={e=>{ e.currentTarget.style.borderColor='#0A3B1F'; e.currentTarget.style.boxShadow='0 0 0 3px rgba(10,59,31,0.08)'; e.currentTarget.style.background='white' }}
                     onBlur={e=>{ e.currentTarget.style.borderColor='rgba(10,61,34,0.15)'; e.currentTarget.style.boxShadow='none'; e.currentTarget.style.background='#F8F4EC' }}
                   />
@@ -172,6 +172,7 @@ export default function ActivatePage() {
         {/* Mobile: stack panels vertically */}
         <style>{`
           @media(max-width:768px){
+            input,select,textarea{font-size:16px!important}
             main{grid-template-columns:1fr!important}
             main>div:first-child{padding:48px 24px!important}
             main>div:last-child{padding:40px 24px 60px!important}
