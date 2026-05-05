@@ -180,24 +180,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <a href="#how-steps" className="btn btn-f btn-lg" onClick={scrollToHow}>Get started →</a>
               <button className="btn btn-o btn-lg" onClick={() => showPage('products')}>See our products</button>
             </div>
-            {/* Mobile-only WOD teaser — shows term + def inline, expand on tap */}
-            <details className="wod-mobile-teaser">
-              <summary>
-                <svg viewBox="0 0 64 64" width="18" height="18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
-                  <path d="M 10 52 A 22 22 0 0 1 54 52" stroke="#C4912A" strokeWidth="5.5" strokeLinecap="round"/>
-                  <line x1="32" y1="50" x2="32" y2="22" stroke="#C4912A" strokeWidth="4.5" strokeLinecap="round"/>
-                  <circle cx="32" cy="14" r="8.5" fill="#C4912A"/>
-                </svg>
-                <span className="wod-mobile-teaser-text">
-                  Free word today: <strong>{todayWord.term}</strong> — tap to read
-                </span>
-              </summary>
-              <div className="wod-mobile-body">
-                <div className="wod-mobile-def">{todayWord.def}</div>
-                <div className="wod-mobile-story">{todayWord.story}</div>
-                <div style={{fontSize:13,color:'var(--gold)',fontWeight:600,marginTop:10,cursor:'pointer'}} onClick={() => showPage('products')}>See all 500 words in MoneySpeak →</div>
-              </div>
-            </details>
+
             <div className="hero-trust reveal d4">
               <div className="trust-dots"><span>K</span><span>A</span><span>T</span><span>F</span></div>
               <div className="trust-txt"><strong>500+ Nigerians</strong> already making<br/>smarter money decisions</div>
