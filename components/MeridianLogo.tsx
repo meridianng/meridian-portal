@@ -1,24 +1,21 @@
 'use client'
 
 /**
- * MERIDIAN LOGO — The Meridian Needle
+ * MERIDIAN LOGO — The Meridian Mark
  *
- * Concept: A vertical line with a gold circle at its tip — this IS a
- * meridian (a vertical reference line) with the zenith marker above it.
- * Below: MERIDIAN in tracked Cormorant serif.
- * Gold horizontal rule (the meridian line concept extended).
- * FINANCIAL INTELLIGENCE in DM Mono.
- *
- * No image files. No broken PNG references. Pure SVG — works at any size,
- * on any background, forever.
+ * The mark: a horizon arc at the base, a vertical meridian line rising
+ * from it, and a gold circle at the peak — the exact moment the sun
+ * reaches its highest point. Maximum light. Nothing hidden.
  *
  * Variants:
- *   full  — needle + MERIDIAN + rule + FINANCIAL INTELLIGENCE
- *   mark  — compact square symbol (icon, favicon, app contexts)
+ *   full  — mark + MERIDIAN wordmark + FINANCIAL INTELLIGENCE tagline
+ *   mark  — standalone mark only, works at any size
  *
  * Themes:
  *   light — forest green on transparent (cream/white backgrounds)
- *   dark  — cream/gold on transparent (forest/charcoal backgrounds)
+ *   dark  — cream on transparent (forest/charcoal backgrounds)
+ *
+ * Gold is always #C4912A regardless of theme.
  */
 
 type Variant = 'full' | 'mark'
@@ -29,80 +26,69 @@ interface Props {
   theme?:     Theme
   width?:     number
   className?: string
-  priority?:  boolean  // kept for API compatibility
+  priority?:  boolean
 }
 
 export function MeridianLogo({
   variant   = 'full',
   theme     = 'light',
-  width     = 160,
+  width     = 180,
   className = '',
 }: Props) {
-  const forest  = theme === 'light' ? '#0A3B1F' : '#F8F4EC'
-  const gold    = theme === 'light' ? '#B8922A' : '#D4A83C'
-  const goldDim = theme === 'light' ? 'rgba(184,146,42,0.5)' : 'rgba(212,168,60,0.5)'
+  const forest = theme === 'light' ? '#0A3B1F' : '#F8F4EC'
+  const gold   = '#C4912A'
 
-  // ── MARK VARIANT ──────────────────────────────────────────────────────────
-  // A compact 40×40 symbol: vertical needle with gold circle, over an M.
-  // Use for favicons, app icons, small avatar contexts.
+  // ── MARK ONLY ─────────────────────────────────────────────────────────────
   if (variant === 'mark') {
-    const sz  = width ?? 36
-    const bg  = theme === 'light' ? '#0A3B1F' : 'rgba(248,244,236,0.1)'
-    const fg  = theme === 'light' ? '#F8F4EC' : '#F8F4EC'
-    const gd  = theme === 'light' ? '#B8922A' : '#D4A83C'
-
+    const sz = width ?? 40
     return (
       <svg
-        width={sz} height={sz}
-        viewBox="0 0 40 40"
+        width={sz}
+        height={sz}
+        viewBox="0 0 64 64"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className={className}
-        role="img" aria-label="Meridian"
+        role="img"
+        aria-label="Meridian"
       >
-        {/* Background square */}
-        <rect width="40" height="40" rx="7" fill={bg}/>
-        {/* Meridian needle — vertical line */}
-        <line x1="20" y1="7" x2="20" y2="16" stroke={gd} strokeWidth="1.5" strokeLinecap="round"/>
-        {/* Zenith circle */}
-        <circle cx="20" cy="5.5" r="2.5" fill={gd}/>
-        {/* M letterform */}
-        <text
-          x="20" y="30"
-          textAnchor="middle"
-          fontFamily="'Cormorant','Cormorant Garamond',Georgia,serif"
-          fontSize="18"
-          fontWeight="700"
-          fill={fg}
-          letterSpacing="1"
-        >M</text>
-        {/* Gold meridian rule under M */}
-        <line x1="9" y1="33" x2="31" y2="33" stroke={gd} strokeWidth="1" strokeLinecap="round" opacity="0.7"/>
+        <path d="M 10 52 A 22 22 0 0 1 54 52" stroke={forest} strokeWidth="5.5" strokeLinecap="round" fill="none"/>
+        <line x1="32" y1="50" x2="32" y2="22" stroke={forest} strokeWidth="4.5" strokeLinecap="round"/>
+        <circle cx="32" cy="14" r="8.5" fill={gold}/>
       </svg>
     )
   }
 
   // ── FULL WORDMARK ──────────────────────────────────────────────────────────
-  // Designed at 200px width base; scales proportionally.
-  const W    = width ?? 200
-  const H    = Math.round(W * 0.34)   // ~68px at 200px width
-  const cx   = W / 2
+  const W       = width ?? 180
+  const H       = Math.round(W * 0.27)
+  const mSz     = Math.round(H * 0.88)
+  const mY      = Math.round((H - mSz) / 2)
+  const s       = mSz / 64
+  const tX      = mSz + Math.round(W * 0.064)
+  const sw1     = Math.max(2,   Math.round(5.5 * s * 10) / 10)
+  const sw2     = Math.max(1.5, Math.round(4.5 * s * 10) / 10)
+  const cR      = Math.max(3,   Math.round(8.5 * s * 10) / 10)
+  const wordSz  = Math.round(W * 0.148)
+  const tagSz   = Math.max(6,   Math.round(W * 0.048))
+  const wordY   = Math.round(H * 0.62)
+  const tagY    = Math.round(H * 0.93)
 
-  // Proportional sizes
-  const needleTop  = Math.round(H * 0.04)
-  const circleY    = Math.round(H * 0.04)
-  const circleR    = Math.max(2, Math.round(W * 0.015))
-  const needleBot  = Math.round(H * 0.22)
-  const textY      = Math.round(H * 0.62)
-  const ruleY      = Math.round(H * 0.72)
-  const subY       = Math.round(H * 0.92)
-  const fontSize   = Math.round(W * 0.165)
-  const subSize    = Math.max(5, Math.round(W * 0.038))
-  const tracking   = Math.round(W * 0.022)
+  // Arc scaled from 64x64 viewbox: M 10 52 A 22 22 0 0 1 54 52
+  const ax1 = Math.round((10 * s) * 10) / 10
+  const ay1 = Math.round((52 * s + mY) * 10) / 10
+  const ax2 = Math.round((54 * s) * 10) / 10
+  const ar  = Math.round((22 * s) * 10) / 10
+  const lx  = Math.round(32 * s)
+  const ly1 = Math.round(50 * s + mY)
+  const ly2 = Math.round(22 * s + mY)
+  const cx  = Math.round(32 * s)
+  const cy  = Math.round(14 * s + mY)
 
   return (
     <svg
-      width={W} height={H}
+      width={W}
+      height={H}
       viewBox={`0 0 ${W} ${H}`}
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
@@ -110,45 +96,16 @@ export function MeridianLogo({
       role="img"
       aria-label="Meridian — Financial Intelligence"
     >
-      {/* ── Meridian needle ── */}
-      <line
-        x1={cx} y1={needleTop + circleR * 2}
-        x2={cx} y2={needleBot}
-        stroke={gold} strokeWidth={Math.max(0.9, W * 0.007)} strokeLinecap="round"
-      />
-      {/* ── Zenith circle (the north point of the meridian) ── */}
-      <circle cx={cx} cy={circleY + circleR} r={circleR} fill={gold}/>
-
-      {/* ── MERIDIAN wordmark ── */}
-      <text
-        x={cx} y={textY}
-        textAnchor="middle"
-        fontFamily="'Cormorant','Cormorant Garamond','Playfair Display',Georgia,serif"
-        fontSize={fontSize}
-        fontWeight="700"
-        letterSpacing={tracking}
-        fill={forest}
-      >MERIDIAN</text>
-
-      {/* ── Gold meridian rule ── */}
-      <line
-        x1={Math.round(W * 0.03)} y1={ruleY}
-        x2={Math.round(W * 0.97)} y2={ruleY}
-        stroke={goldDim}
-        strokeWidth={Math.max(0.6, W * 0.005)}
-      />
-
-      {/* ── FINANCIAL INTELLIGENCE tagline ── */}
-      <text
-        x={cx} y={subY}
-        textAnchor="middle"
-        fontFamily="'DM Mono','Courier New',monospace"
-        fontSize={subSize}
-        letterSpacing={Math.round(W * 0.018)}
-        fill={gold}
-        fontWeight="400"
-        opacity="0.85"
-      >FINANCIAL INTELLIGENCE</text>
+      {/* Horizon arc */}
+      <path d={`M ${ax1} ${ay1} A ${ar} ${ar} 0 0 1 ${ax2} ${ay1}`} stroke={forest} strokeWidth={sw1} strokeLinecap="round" fill="none"/>
+      {/* Meridian line */}
+      <line x1={lx} y1={ly1} x2={lx} y2={ly2} stroke={forest} strokeWidth={sw2} strokeLinecap="round"/>
+      {/* Zenith */}
+      <circle cx={cx} cy={cy} r={cR} fill={gold}/>
+      {/* MERIDIAN */}
+      <text x={tX} y={wordY} fontFamily="'Lora',Georgia,serif" fontSize={wordSz} fontWeight="700" letterSpacing={Math.round(W * 0.008)} fill={forest}>MERIDIAN</text>
+      {/* FINANCIAL INTELLIGENCE */}
+      <text x={tX} y={tagY} fontFamily="'Plus Jakarta Sans',system-ui,sans-serif" fontSize={tagSz} fontWeight="500" letterSpacing={Math.round(W * 0.016)} fill={gold} opacity="0.9">FINANCIAL INTELLIGENCE</text>
     </svg>
   )
 }
