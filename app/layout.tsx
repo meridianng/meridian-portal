@@ -61,7 +61,7 @@ export const metadata: Metadata = {
   // ── Favicon ──────────────────────────────────────────────────
   // REPLACE with your actual favicon once you have it as /public/favicon.ico
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◈</text></svg>",
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64' fill='none'><path d='M 10 52 A 22 22 0 0 1 54 52' stroke='%230A3B1F' stroke-width='5.5' stroke-linecap='round'/><line x1='32' y1='50' x2='32' y2='22' stroke='%230A3B1F' stroke-width='4.5' stroke-linecap='round'/><circle cx='32' cy='14' r='8.5' fill='%23C4912A'/></svg>",
     apple: '/apple-touch-icon.png', // optional — create 180×180px version
   },
 }
@@ -78,7 +78,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Instrument+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&family=Cormorant:ital,wght@0,600;0,700;1,400&family=Instrument+Sans:wght@400;500;600&display=swap"
           rel="stylesheet"
         />
       </head>
