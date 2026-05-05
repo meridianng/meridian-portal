@@ -64,7 +64,7 @@ export default function LoginPage() {
     width:'100%', padding:'13px 16px',
     background:'#F8F4EC',
     border:`1.5px solid ${focused ? '#0A3B1F' : 'rgba(10,59,31,0.18)'}`,
-    borderRadius:6, fontFamily:'inherit', fontSize:15,
+    borderRadius:6, fontFamily:'inherit', fontSize:16,
     color:'#1A1A1A', outline:'none', letterSpacing:'0.01em',
     transition:'border-color .2s, box-shadow .2s',
     boxShadow: focused ? '0 0 0 3px rgba(10,59,31,0.08)' : 'none',
@@ -81,7 +81,7 @@ export default function LoginPage() {
         /* LEFT — green editorial panel */
         .auth-left{
           width:46%;flex-shrink:0;
-          background:#0A3B1F;
+          background:#0A3B1F;overflow:hidden;
           padding:52px 56px;
           display:flex;flex-direction:column;justify-content:space-between;
           position:relative;overflow:hidden;
@@ -92,7 +92,7 @@ export default function LoginPage() {
           position:absolute;
           bottom:-120px;right:-60px;
           font-family:'Cormorant',Georgia,serif;
-          font-size:680px;font-weight:900;
+          font-size:min(680px,160vw);font-weight:900;
           color:rgba(255,255,255,0.028);
           pointer-events:none;line-height:1;user-select:none;
           animation:m-breathe 7s ease-in-out infinite;
@@ -182,7 +182,7 @@ export default function LoginPage() {
         .form-input{
           display:block;width:100%;padding:13px 16px;
           background:#F8F4EC;border:1.5px solid rgba(10,59,31,0.18);
-          border-radius:6px;font-family:inherit;font-size:15px;
+          border-radius:6px;font-family:inherit;font-size:16px;
           color:#1A1A1A;outline:none;transition:all .2s;
         }
         .form-input:focus{
@@ -227,6 +227,7 @@ export default function LoginPage() {
 
         @media(max-width:820px){
           .auth-wrap{flex-direction:column}
+          input,select,textarea{font-size:16px!important}
           .auth-left{width:100%;padding:36px 24px 32px}
           .auth-wod{display:none}
           .auth-right{padding:48px 24px 60px}
@@ -258,7 +259,7 @@ export default function LoginPage() {
 
           {/* WOD — visible on laptop, hidden on mobile */}
           <div className="auth-wod">
-            <div className="auth-wod-lbl">◈ MoneySpeak · Word of the Day · Free</div>
+            <div className="auth-wod-lbl">MoneySpeak · Word of the Day · Free</div>
             <div className="auth-wod-term">{todayWord.term}</div>
             <div className="auth-wod-ph">{todayWord.ph}</div>
             <div className="auth-wod-def">{todayWord.def}</div>
