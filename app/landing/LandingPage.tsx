@@ -173,6 +173,17 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
               <a href="#how-steps" className="btn btn-f btn-lg" onClick={scrollToHow}>Get started →</a>
               <button className="btn btn-o btn-lg" onClick={() => showPage('products')}>See our products</button>
             </div>
+            {/* Mobile-only WOD teaser — full card is hidden on mobile */}
+            <div className="wod-mobile-teaser" onClick={() => showPage('products')}>
+              <svg viewBox="0 0 64 64" width="20" height="20" fill="none" xmlns="http://www.w3.org/2000/svg" style={{flexShrink:0}}>
+                <path d="M 10 52 A 22 22 0 0 1 54 52" stroke="#C4912A" strokeWidth="5.5" strokeLinecap="round"/>
+                <line x1="32" y1="50" x2="32" y2="22" stroke="#C4912A" strokeWidth="4.5" strokeLinecap="round"/>
+                <circle cx="32" cy="14" r="8.5" fill="#C4912A"/>
+              </svg>
+              <div className="wod-mobile-teaser-text">
+                Today&rsquo;s free word: <span>{todayWord.term}</span> — tap to see the full story →
+              </div>
+            </div>
             <div className="hero-trust reveal d4">
               <div className="trust-dots"><span>K</span><span>A</span><span>T</span><span>F</span></div>
               <div className="trust-txt"><strong>500+ Nigerians</strong> already making<br/>smarter money decisions</div>
@@ -182,7 +193,7 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           <div className="hero-r">
             <div className="wod reveal">
               <div className="wod-free-tag">Free sample — no account needed</div>
-              <div className="wod-lbl">◈ MoneySpeak · Word of the Day · Always Free</div>
+              <div className="wod-lbl">MoneySpeak · Word of the Day · Always Free</div>
               <div className="wod-term">{todayWord.term}</div>
               <div className="wod-ph">{todayWord.ph}</div>
               <div className="wod-def">{todayWord.def}</div>
