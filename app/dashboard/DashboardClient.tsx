@@ -137,7 +137,7 @@ export default function DashboardClient({ email, name, plan, key_, access }: Pro
     const isHovered = hoveredNav === id
     const style: React.CSSProperties = {
       display:'flex', alignItems:'center', gap:10,
-      padding:'11px 16px', borderRadius:7,
+      padding:'13px 16px', borderRadius:7,
       fontSize:14, fontWeight:500,
       color: active ? '#F8F4EC' : isHovered ? '#F8F4EC' : 'rgba(248,244,236,0.55)',
       cursor: locked ? 'default' : 'pointer',
@@ -215,7 +215,7 @@ export default function DashboardClient({ email, name, plan, key_, access }: Pro
           <div style={{ fontFamily:'monospace', fontSize:11, color:'rgba(248,244,236,0.52)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap', marginBottom:8 }}>{email}</div>
           {planDisplay && (
             <div style={{ display:'inline-flex', alignItems:'center', gap:5, padding:'3px 10px', background:'rgba(200,151,42,0.18)', border:'1px solid rgba(200,151,42,0.28)', borderRadius:100, fontFamily:'monospace', fontSize:9, letterSpacing:'0.12em', textTransform:'uppercase', color:'#E4B94A' }}>
-              ◈ {planDisplay}
+              {planDisplay}
             </div>
           )}
         </div>
@@ -468,7 +468,7 @@ export default function DashboardClient({ email, name, plan, key_, access }: Pro
             style={{ width:'100%', display:'none', alignItems:'center', justifyContent:'space-between', padding:'16px 20px', background:'#0A3D22', border:'none', borderRadius:10, cursor:'pointer', fontFamily:'inherit', marginBottom:2, textAlign:'left' }}>
             <div style={{ display:'flex', alignItems:'center', gap:12 }}>
               <div>
-                <div style={{ fontFamily:'monospace', fontSize:9, letterSpacing:'0.18em', textTransform:'uppercase', color:'rgba(228,185,74,0.65)', marginBottom:4 }}>◈ Today&apos;s term</div>
+                <div style={{ fontFamily:'monospace', fontSize:9, letterSpacing:'0.18em', textTransform:'uppercase', color:'rgba(228,185,74,0.65)', marginBottom:4 }}>Today&apos;s term</div>
                 <div style={{ fontFamily:'Georgia,serif', fontSize:22, fontWeight:700, color:'#F8F4EC', letterSpacing:'-0.01em' }}>{todayWord.term}</div>
                 <div style={{ fontSize:13, color:'rgba(248,244,236,0.55)', marginTop:4, fontStyle:'italic' }}>{todayWord.def}</div>
               </div>
@@ -482,7 +482,7 @@ export default function DashboardClient({ email, name, plan, key_, access }: Pro
             <div style={{ position:'relative', zIndex:1, display:'grid', gridTemplateColumns:'1fr 1fr', gap:40, alignItems:'start' }} className="wod-inner">
               <div>
                 <div style={{ fontFamily:'monospace', fontSize:10, letterSpacing:'0.2em', textTransform:'uppercase', color:'rgba(228,185,74,0.7)', marginBottom:12, display:'flex', alignItems:'center', gap:8 }}>
-                  ◈ MoneySpeak — Today&apos;s Term <span style={{ flex:1, height:1, background:'rgba(228,185,74,0.18)', display:'block' }}/>
+                  MoneySpeak — Today&apos;s Term <span style={{ flex:1, height:1, background:'rgba(228,185,74,0.18)', display:'block' }}/>
                 </div>
                 <div style={{ fontFamily:'Georgia,serif', fontSize:'clamp(30px,3.2vw,44px)', fontWeight:700, color:'#F8F4EC', letterSpacing:'-0.02em', marginBottom:6 }}>{todayWord.term}</div>
                 <div style={{ fontFamily:'monospace', fontSize:11, color:'rgba(248,244,236,0.35)', marginBottom:14 }}>{todayWord.ph}</div>
