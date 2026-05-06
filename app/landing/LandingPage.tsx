@@ -197,19 +197,42 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
         </div>
       </nav>
 
+      {/* ── MOBILE MENU OVERLAY ── */}
+      {menuOpen && (
+        <div
+          style={{position:'fixed',inset:0,zIndex:488,background:'transparent'}}
+          onClick={() => setMenuOpen(false)}
+          aria-hidden="true"
+        />
+      )}
       {/* ── MOBILE MENU ── */}
       <div className={`mmenu${menuOpen ? ' open':''}`}>
-        <button onClick={() => showPage('home')}>Home</button>
-        <button onClick={() => showPage('about')}>About</button>
-        <button onClick={() => showPage('products')}>Products</button>
-        <button onClick={() => scrollToSection('pricing')}>Pricing</button>
-        <button onClick={() => showPage('contact')}>Contact</button>
+        <button onClick={() => showPage('home')} className={page==='home'?'mm-act':''}>
+          <span className="mm-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></span>
+          Home
+        </button>
+        <button onClick={() => showPage('about')} className={page==='about'?'mm-act':''}>
+          <span className="mm-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></span>
+          About
+        </button>
+        <button onClick={() => showPage('products')} className={page==='products'?'mm-act':''}>
+          <span className="mm-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="9" height="9" rx="1"/><rect x="13" y="3" width="9" height="9" rx="1"/><rect x="2" y="13" width="9" height="9" rx="1"/><rect x="13" y="13" width="9" height="9" rx="1"/></svg></span>
+          Products
+        </button>
+        <button onClick={() => scrollToSection('pricing')}>
+          <span className="mm-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></span>
+          Pricing
+        </button>
+        <button onClick={() => showPage('contact')} className={page==='contact'?'mm-act':''}>
+          <span className="mm-icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></span>
+          Contact
+        </button>
         <div className="mm-actions">
           {isSignedIn
             ? <a href="/dashboard" className="btn btn-f">My Dashboard →</a>
             : <>
-                <a href="/login"   className="btn btn-o">Sign in</a>
-                <button onClick={() => scrollToSection('how-steps')} className="btn btn-f">Get started →</button>
+                <a href="/login"   className="btn btn-o" style={{color:'var(--forest)'}}>Sign in</a>
+                <button onClick={() => scrollToSection('how-steps')} className="btn btn-f" style={{color:'var(--cream)'}}>Get started →</button>
               </>
           }
         </div>
@@ -418,15 +441,32 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
             </div>
             <div className="sapa-outcomes">
               {[
-                {icon:'📖', title:'You understand every term',         body:'Someone mentions EBITDA, yield, or equity in a meeting and you know exactly what they mean — and what it means for your money.'},
-                {icon:'📊', title:'You analyse before you invest',     body:'Before putting a single naira into any company, you open their annual report and run the numbers. You know what you are buying and why.'},
-                {icon:'💼', title:'You know your real business profit', body:'You stop celebrating sales and start tracking what actually stayed in your pocket after every expense has been removed.'},
-                {icon:'🛡️', title:'Nobody can easily mislead you',     body:'You recognise the signs of a financial trap before you walk into it. Guaranteed returns. Pressure tactics. Vague explanations. You know them all.'},
+                {
+                  svg: <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="12" y1="7" x2="16" y2="7"/><line x1="12" y1="11" x2="16" y2="11"/></svg>,
+                  title: 'You finally understand the words',
+                  body: 'EBITDA. Yield. Equity. Liquidity. When people say these in a meeting — or in the news — you will not just nod. You will understand what it means for your pocket.',
+                },
+                {
+                  svg: <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+                  title: 'You check before you invest',
+                  body: 'Someone drops a hot stock tip in the group. Before, you would have followed. Now you open the annual report, run the numbers, and decide for yourself. You know what you are buying.',
+                },
+                {
+                  svg: <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>,
+                  title: 'Your business stops lying to you',
+                  body: 'Big sales. Small account. You have felt this confusion. When you understand your real numbers — cost, margin, actual profit — December no longer steals what January was supposed to keep.',
+                },
+                {
+                  svg: <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+                  title: 'Nobody can easily deceive you again',
+                  body: '"Guaranteed 30% monthly return." "Send your money to invest." You will hear these and know exactly what they are — before you lose a single kobo to them.',
+                },
               ].map((o,i) => (
                 <div className={`sapa-outcome reveal${i>0?' d'+i:''}`} key={o.title}>
-                  <span className="sapa-outcome-icon">{o.icon}</span>
+                  <span className="sapa-outcome-icon">{o.svg}</span>
                   <div className="sapa-outcome-text">
-                    <strong>{o.title}</strong>{o.body}
+                    <strong>{o.title}</strong>
+                    <span>{o.body}</span>
                   </div>
                 </div>
               ))}
@@ -835,7 +875,6 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           </div>
         </section>
       </div>
-      </div>{/* /home */}
 
       {/* ══════════ ABOUT ══════════ */}
       <div className={`page pt${page==='about'?' active':''}`}>
@@ -954,7 +993,6 @@ export default function LandingPage({ isSignedIn }: { isSignedIn?: boolean }) {
           </div>
         </section>
       </div>
-      </div>{/* /products */}
 
       {/* ══════════ CONTACT ══════════ */}
       <div className={`page pt${page==='contact'?' active':''}`}>
